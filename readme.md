@@ -140,7 +140,7 @@ example:
 
 ```javascript
 
-var wintersmith = require('wintersmith);
+var wintersmith = require('wintersmith');
 
 var options = {
   'output': '/var/www/pub',
