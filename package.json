@@ -1,0 +1,38 @@
+{
+  "name": "wintersmith",
+  "version": "0.1.0",
+  "author": "Johan Nordberg <its@johan-nordberg.com>",
+  "description": "A flexible static site generator.",
+  "license": "MIT",
+  "main": "./main.js",
+  "keywords": [
+    "static",
+    "generator",
+    "markdown",
+    "jade"
+  ],
+  "bin": {
+    "wintersmith": "./bin/wintersmith"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jnordberg/wintersmith.git"
+  },
+  "dependencies": {
+    "marked": "git://github.com/jnordberg/marked.git",
+    "async": "git://github.com/jnordberg/async.git",
+    "highlight": "0.2.x",
+    "jade": "0.20.x",
+    "ncp": "0.2.x",
+    "rimraf": "2.x.x",
+    "coffee-script": "1.2.x",
+    "winston": "0.5.x",
+    "colors": "0.x.x",
+    "glob": "3.0.x",
+    "union": "0.1.x",
+    "flatiron": "0.1.x"
+  },
+  "engine": {
+    "node": ">=0.4"
+  }
+}
