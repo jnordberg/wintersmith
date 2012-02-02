@@ -60,6 +60,7 @@ All paths can either be relative or absolute. Relative paths will be resolved fr
 An article is a markdown file combined with metadata on top
 
 example:
+
 ```markdown
 title: My first post
 date: 2012-12-12 12:12
