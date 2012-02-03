@@ -1,4 +1,4 @@
-# Wintersmith
+#![Wintersmith](http://jnordberg.github.com/wintersmith/img/wintersmith.svg)
 
 A flexible static site generator.
 
@@ -12,46 +12,89 @@ A flexible static site generator.
  * Highly configurable
  * FAST!
 
-## Get going
+## Quickstart
 
-Simple steps to getting started:
+First install wintersmith using [npm](http://npmjs.org/):
 
-	[sudo] npm install wintersmith -g
-	wintersmith new ~/my-site
-	cd ~/my-site
-	wintersmith preview
+```bash
+$ npm install wintersmith -g
+```
 
-Now point your browser to `http://localhost:8080` and start editing templates and adding articles. When you are done run `wintersmith build` and the site will be generated.
+This will install wintersmith globally on your system so that you can access the `wintersmith` command from anywhere. Once that is complete run:
 
-Also give the old `--help` a look.
+```bash
+$ wintersmith new <path>
+```
+
+Where `<path>` is the location you want the site to be generated. This creates a skeleton site with a basic set of templates and some articles, while not strictly needed it's a good starting point.
+
+Now enter the directory and start the preview server:
+
+```bash
+$ cd <path>
+$ wintersmith preview
+```
+
+At this point you are ready to start customizing your site. Point your browser to `http://localhost:8080` and start editing templates and articles.
+
+When done run:
+
+```bash
+$ wintersmith build
+```
+
+This generates your site and places it in the `build/` directory - all ready to be copied to your webserver!
+
+And remember to give the old `--help` a look :-)
 
 ## Config
 
-Configuration can be done with command-line options, a config file or both. The config file will be looked for as `config.json` in the root of your site. (you can set a custom path using `--config`)
+Configuration can be done with command-line options, a config file or both. The config file will be looked for as `config.json` in the root of your site (you can set a custom path using `--config`).
 
 ### Options
 
- * output
-	* output directory, this is where the generated site is output
-	* default: `./build`
- * articles
-	* article directory, where to look for markdown files
-    * default: `./articles`
- * templates
-    * template directory, where to look for Jade templates
-    * default: `./templates`
- * static
-    * static file directory, all static content for your site (css, images, etc)
-    * default: `./static`
- * locals
-    * javascript object to pass to all templates when rendering, useful for storing metadata for your site. can also be a path to a json file
-    * default: `{}`
- * rebuild
-	* if set all articles will be rebuilt
-	* default: `false`
- * clean
-	* if set output directory will emptied before build starts
-	* default: `false`
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Default</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>output</td>
+    <td>./build</td>
+    <td>output directory, this is where the generated site is output</td>
+  </tr>
+  <tr>
+    <td>articles</td>
+    <td>./articles</td>
+    <td>article directory, where to look for markdown files</td>
+  </tr>
+  <tr>
+    <td>templates</td>
+    <td>./templates</td>
+    <td>template directory, where to look for Jade templates</td>
+  </tr>
+  <tr>
+    <td>static</td>
+    <td>./static</td>
+    <td>static file directory, all static content for your site (css, images, etc)</td>
+  </tr>
+  <tr>
+    <td>locals</td>
+    <td>{}</td>
+    <td>javascript object to pass to all templates when rendering, useful for storing metadata for your site. can also be a path to a json file</td>
+  </tr>
+  <tr>
+    <td>rebuild</td>
+    <td>false</td>
+    <td>whether to force a rebuild of all articles</td>
+  </tr>
+  <tr>
+    <td>clean</td>
+    <td>false</td>
+    <td>whether to empty output directory before building</td>
+  </tr>
+</table>
 
 All paths can either be relative or absolute. Relative paths will be resolved from the current directory or `--chdir` if set.
 
@@ -186,7 +229,7 @@ Check the `package.json` for a complete list.
 
 ----
 
-*Copyright 2012 FFFF00 Agents AB*
+*© 2012 FFFF00 Agents AB*
 
 
 
