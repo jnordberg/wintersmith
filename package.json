@@ -14,6 +14,12 @@
   "bin": {
     "wintersmith": "./bin/wintersmith"
   },
+  "scripts": {
+    "prepublish": "./bin/dev/compile_coffee"
+  },
+  "directories": {
+    "lib": "./lib/"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/jnordberg/wintersmith.git"
@@ -25,12 +31,14 @@
     "jade": "0.20.x",
     "ncp": "0.2.x",
     "rimraf": "2.x.x",
-    "coffee-script": "1.2.x",
     "winston": "0.5.x",
     "colors": "0.x.x",
     "glob": "3.0.x",
     "union": "0.1.x",
     "flatiron": "0.1.x"
+  },
+  "devDependencies": {
+    "coffee-script": "1.2.x"
   },
   "engine": {
     "node": ">=0.4"

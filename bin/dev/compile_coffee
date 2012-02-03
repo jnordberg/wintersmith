@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+if [ -f ./node_modules/.bin/coffee ]; then
+  echo "Compiling CoffeScript"
+  ./node_modules/.bin/coffee -o ./lib -b -c ./src
+  exit $?
+else
+  echo "CoffeScript package missing. Run npm install --dev"
+  exit 1
+fi
