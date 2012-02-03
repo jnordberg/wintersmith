@@ -4,7 +4,7 @@
   "author": "Johan Nordberg <its@johan-nordberg.com>",
   "description": "A flexible static site generator.",
   "license": "MIT",
-  "main": "./main.js",
+  "main": "./lib/",
   "keywords": [
     "static",
     "generator",
