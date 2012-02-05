@@ -29,13 +29,13 @@ parseMetadata = (metadata, callback) ->
   catch error
     callback error
 
-parseMarkdownSync = (content, baseURL) ->
+parseMarkdownSync = (content, baseUrl) ->
   ### takes markdown *content* and returns html using *baseURL* for any relative urls
       returns html ###
 
   marked.inlineLexer.formatUrl = (url) ->
     if is_relative url
-      return path.join baseURL, url
+      return path.join baseUrl, url
     else
       return url
 
@@ -57,7 +57,7 @@ module.exports = (content, callback) ->
   async.parallel
     metadata: (callback) ->
       parseMetadata content.slice(0, split_idx), callback
-    body: (callback) ->
+    markdown: (callback) ->
       callback null, content.slice(split_idx + 2)
   , callback
 

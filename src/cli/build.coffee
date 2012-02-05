@@ -15,7 +15,6 @@ usage = """
   options:
 
     -o, --output [path]           directory to write build-output (defaults to ./output)
-    -r, --rebuild                 force rebuild of all articles
     -X, --clean                   clean before building (warning: will recursively delete everything at output path)
     #{ commonOptions.join('\n') }
 
@@ -30,7 +29,7 @@ usage = """
     $ wintersmith build -o /var/www/public/ -T extra_data.json -C ~/my-blog
 
     or using both (command-line options will override config options):
-    $ wintersmith build --config another_config.json --rebuild
+    $ wintersmith build --config another_config.json --clean
 """
 
 build = ->

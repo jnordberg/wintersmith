@@ -10,21 +10,15 @@ defaults =
   config:
     alias: 'c'
     default: './config.json'
-  articles:
-    alias: 'a'
-    default: './articles'
+  contents:
+    alias: 'i'
+    default: './contents'
   templates:
     alias: 't'
     default: './templates'
-  static:
-    alias: 's'
-    default: './static'
   locals:
     alias: 'T'
     default: {}
-  rebuild:
-    alias: 'r'
-    default: false
   clean:
     alias: 'X'
     default: false
@@ -35,8 +29,7 @@ defaults =
 exports.commonOptions = [
   "-C, --chdir [path]            change the working directory"
   "  -c, --config [path]           path to config (defaults to #{ defaults.config.default })"
-  "  -a, --articles [path]         article location (defaults to #{ defaults.articles.default })"
-  "  -s, --static [path]           static resource location (defaults to #{ defaults.static.default })"
+  "  -i, --contents [path]         contents location (defaults to #{ defaults.contents.default })"
   "  -t, --templates [path]        template location (defaults to #{ defaults.templates.default })"
   "  -T, --template-data [path]    optional path to json file containing template context data"
 ]
@@ -77,7 +70,7 @@ exports.getOptions = (argv={}, callback) ->
         if argv[key]?
           options[key] = argv[key]
         # expand paths
-        if ['output', 'config', 'articles', 'templates', 'static'].indexOf(key) != -1
+        if ['output', 'config', 'contents', 'templates'].indexOf(key) != -1
           options[key] = path.join workDir, options[key]
       callback null, options
     (options, callback) ->
@@ -96,7 +89,7 @@ exports.getOptions = (argv={}, callback) ->
     (options, callback) ->
       logger.verbose 'resolved options:', options
       logger.verbose 'checking that all paths are valid'
-      paths = ['output', 'articles', 'templates', 'static']
+      paths = ['output', 'contents', 'templates']
       async.forEach paths, (filepath, callback) ->
         path.exists options[filepath], (exists) ->
           if exists
