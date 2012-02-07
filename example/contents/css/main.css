@@ -1,0 +1,246 @@
+
+h1, h2, h3, h4, h5, h6, p, blockquote, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+  color: #252824;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  line-height: 36px;
+}
+
+h1 {
+  margin-bottom: 18px;
+  font-size: 30px;
+}
+
+h2 {
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  font-size: 13px;
+}
+
+a {
+  color: #225a93;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+a img {
+  border: none;
+}
+
+p {
+  margin-bottom: 9px;
+}
+
+
+#container {
+  min-width: 300px;
+}
+
+body > header {
+  border-bottom: 2px solid #0c3a7f;
+  background-color: #647ba2;
+  padding-top: 5px;
+  color: #fff;
+  background: rgb(23,72,146);
+  background: -moz-linear-gradient(top,  rgba(23,72,146,1) 0%, rgba(28,86,149,1) 25%, rgba(37,93,161,1) 50%, rgba(51,107,164,1) 75%, rgba(54,111,165,1) 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(23,72,146,1)), color-stop(25%,rgba(28,86,149,1)), color-stop(50%,rgba(37,93,161,1)), color-stop(75%,rgba(51,107,164,1)), color-stop(100%,rgba(54,111,165,1)));
+  background: -webkit-linear-gradient(top,  rgba(23,72,146,1) 0%,rgba(28,86,149,1) 25%,rgba(37,93,161,1) 50%,rgba(51,107,164,1) 75%,rgba(54,111,165,1) 100%);
+  background: -o-linear-gradient(top,  rgba(23,72,146,1) 0%,rgba(28,86,149,1) 25%,rgba(37,93,161,1) 50%,rgba(51,107,164,1) 75%,rgba(54,111,165,1) 100%);
+  background: -ms-linear-gradient(top,  rgba(23,72,146,1) 0%,rgba(28,86,149,1) 25%,rgba(37,93,161,1) 50%,rgba(51,107,164,1) 75%,rgba(54,111,165,1) 100%);
+  background: linear-gradient(top,  rgba(23,72,146,1) 0%,rgba(28,86,149,1) 25%,rgba(37,93,161,1) 50%,rgba(51,107,164,1) 75%,rgba(54,111,165,1) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#174892', endColorstr='#366fa5',GradientType=0 );
+}
+
+body >footer *,
+body > header * {
+  margin: 0;
+  padding: 0;
+}
+
+body > header .inner {
+  margin: 15px 40px;
+}
+
+
+body > footer {
+  margin: 0 40px;
+}
+
+body > footer .inner {
+  border-top: 1px solid #dfdfdf;
+  padding: 10px 0;
+  text-indent: 5px;
+  color: #b6b6b6;
+  font-style: italic;
+}
+
+body > header h1 {
+  font-family: 'Fredericka the Great', cursive;
+  font-size: 39px;
+  line-height: 39px;
+  text-shadow: rgba(255,255,255,0.3) 0 0 10px;
+}
+
+body > header p {
+  margin-top: 3px;
+  text-indent: 10px;
+  font-style: italic;
+}
+
+body > header a.back {
+  float: right;
+  text-decoration: none;
+  color: #fff;
+  margin-right: 10px;
+  margin-top: 20px;
+  opacity: 0.5;
+}
+body > header a.back:hover {
+  opacity: 1;
+  text-shadow: rgba(255,255,255,0.3) 0 0 10px;
+}
+
+#content {
+  margin: 40px;
+}
+
+article.post {
+  margin-bottom: 60px;
+}
+
+article.post .content img {
+  max-width: 100%;
+}
+
+article.post header {
+  margin-bottom: 22px;
+  border-bottom: 1px solid #dfdfdf;
+}
+
+article.post header a {
+  color: #252824;
+  text-decoration: none;
+}
+
+article.post header a:hover {
+  text-shadow: none;
+  text-decoration: underline;
+}
+
+hr {
+  margin: 0 0 19px;
+  border: 0;
+  border-bottom: 1px solid #dfdfdf;
+}
+
+blockquote {
+  padding: 13px 13px 21px 15px;
+  margin-bottom: 18px;
+  font-family:georgia,serif;
+  font-style: italic;
+}
+
+blockquote:before {
+  content:"\201C";
+  font-size:40px;
+  margin-left:-10px;
+  font-family:georgia,serif;
+  color:#eee;
+}
+
+blockquote p {
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 18px;
+  margin-bottom: 0;
+  font-style: italic;
+}
+
+code, pre {
+  font-family: Menlo, Monaco, Andale Mono, Courier New, monospace;
+}
+
+code {
+  background-color: #eef3f9;
+  border: 1px solid #dfdfdf;
+  padding: 1px 3px;
+  font-size: 12px;
+  border-radius: 2px;
+}
+
+pre {
+  display: block;
+  padding: 14px;
+  margin: 0 0 18px;
+  line-height: 16px;
+  font-size: 11px;
+  border: 1px solid #dfdfdf;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  background-color: #eef3f9;
+}
+
+pre code {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+}
+
+.archive ul {
+  list-style: none;
+  margin: 0;
+  padding: 5px 20px;
+}
+.archive .year {
+  font-size: 18px;
+  margin-top: 10px;
+}
+
+
+@media screen and (min-width: 776px) {
+  body > header .inner,
+  body > footer .inner,
+  #content {
+    width: 676px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  body > header .inner {
+    margin: 30px auto;
+  }
+  body > header {
+    padding-top: 30px;
+  }
+  body > header h1 {
+    font-size: 58px;
+    line-height: 62px;
+    text-shadow: rgba(255,255,255,0.3) 0 0 20px;
+  }
+}

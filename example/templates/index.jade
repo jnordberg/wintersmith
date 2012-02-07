@@ -1,12 +1,21 @@
+extends layout
 
-- locals.title = 'My blogg'
-
-include _layout
-
-block body
-  =articles.length
-  for article in articles
-    include article
-    hr
-
-
+block content
+  //- underscore helps us filter and sort our articles
+  - var articles = _.chain(contents.articles.directories).map(function(item) {
+  -   // map articles to index pages of subdirectories of 'articles'
+  -   return item.index
+  - }).compact().sortBy(function(item) { // compact removes any directories w/o an index
+  -   // sort them by date
+  -   return -item.date
+  - }).first(5).value() // and finally take the first 5
+  each article in articles
+    article.post
+      header
+        h2
+          a(href=article.url)= article.title
+        p= article.metadata.author
+      section.content!= article.intro
+      if article.hasMore
+        p.read-more
+          a(href=article.url) read more

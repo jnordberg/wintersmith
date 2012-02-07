@@ -1,8 +1,14 @@
-include _layout
 
-block body
-  h1
-    =article.title
-  article
-    !=article.html
+extends layout
 
+block prepend title
+  #{ page.title } -
+
+block header
+  a.back(href='/') << back to index
+  h1= page.title
+  p written by: #{ page.metadata.author }
+
+block content
+  article.post
+    section.content!= page.html

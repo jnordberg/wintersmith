@@ -1,0 +1,27 @@
+
+extends layout
+
+block content
+  != page.html
+  - var archive = _.chain(contents.articles.directories).map(function(item) {
+  -   return item.index
+  - }).compact().sortBy(function(item) {
+  -   return -item.date
+  - }).groupBy(function(item) {
+  -   return item.date.getFullYear()
+  - }).value()
+  - var map = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+
+  section.archive
+    ul
+      each year in _.chain(archive).keys().reverse().value()
+        li.year= year
+        - var months = _.groupBy(archive[year], function(item) { return map[item.date.getMonth()] })
+        ul
+          each articles, month in months
+            li
+              strong= month
+              each article in articles
+                br
+                a(href=article.url)= article.title
+

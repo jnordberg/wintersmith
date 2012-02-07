@@ -1,0 +1,9 @@
+
+extends layout
+
+block content
+  article.post
+    header
+      h1= page.title
+      p= page.metadata.author
+    section.content!= page.html

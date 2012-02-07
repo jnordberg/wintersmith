@@ -1,0 +1,24 @@
+!!! 5
+html(lang='en')
+  head
+    block head
+      meta(charset='utf-8')
+      title
+        block title
+          = locals.name
+      link(rel='stylesheet', href='http://fonts.googleapis.com/css?family=Fredericka+the+Great')
+      link(rel='stylesheet', href='/css/github.css')
+      link(rel='stylesheet', href='/css/main.css')
+  body
+    header
+      div.inner
+        block header
+          h1= locals.name
+          p= locals.description
+    div#content
+      block content
+        h2 Welcome to zombocom!
+    footer
+      div.inner
+        block footer
+          p &copy; #{ new Date().getFullYear() } #{ locals.owner }

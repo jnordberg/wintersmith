@@ -1,6 +1,7 @@
 title: Hello World
 author: The Wintersmith
 date: 2012-01-31 15:00
+template: article
 
 Welcome to your new wintersmith site. Have a look at the readme in the repository root for additional information.
 
@@ -8,6 +9,24 @@ An article can either be a markdown file in the articles folder or a directory w
 index.md any other contents in the directory will be copied over to the build output (useful for images, styles, etc).
 
 An article is written with github flavored markdown with metadata on top, example:
+
+```
+var myvar = 'something';
+function kamel(dromedar) {
+  switch (dromedar) {
+    when 'puckel':
+      break;
+    when 'ben':
+      break;
+    default:
+      eat(dromedar);
+  }
+  return /[a-z]/i.test(undefined);
+}
+
+
+
+```
 
 ```
 title: My new shiny blog
