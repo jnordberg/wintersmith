@@ -1,12 +1,11 @@
 
 util = require 'util'
-
 async = require 'async'
 fs = require 'fs'
 path = require 'path'
 url = require 'url'
 colors = require 'colors'
-
+mime = require 'mime'
 
 {loadTemplates} = require './templates'
 {ContentTree, Page, Resource} = require './content'
@@ -43,7 +42,7 @@ setup = (options, callback) ->
         , (result) ->
           if result
             if result instanceof Resource
-              response.writeHead 200
+              response.writeHead 200, 'Content-Type': mime.lookup(result.filename)
               renderResource result, response, (error) ->
                 callback error, 200
             else
@@ -54,7 +53,7 @@ setup = (options, callback) ->
               renderPage result, templates, ctx, response, (error) ->
                 callback error, 200
           else
-            callback.final() # not handled
+            callback() # not handled
     ], callback
 
   requestHandler = (request, response) ->
