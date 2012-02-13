@@ -1,0 +1,23 @@
+extends layout
+
+block body
+  header
+    h1
+      img(src='img/wintersmith.svg', alt='Wintersmith')
+    hr
+    h2 The flexible site generator
+    div.download
+      a(href='https://github.com/jnordberg/wintersmith') Download on GitHub
+  section.content
+    - var sellingPoints = _.chain(contents['selling-points'].pages).sortBy(function(item) {
+    -   return item.metadata['sort-index'];
+    - }).value()
+    each point in sellingPoints
+      article
+        img(src=point.metadata.image, alt=point.title)
+        h3= point.title
+        p!= point.html
+  footer
+    p Made in -32°C (
+      a(href='http://marge.campus.ltu.se/temp/old_png/temp_201202.png') for real
+      )
