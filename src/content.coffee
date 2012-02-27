@@ -67,7 +67,7 @@ class Page extends Model
     @metadata.title or 'Untitled'
 
   @property 'template', ->
-    @metadata.template or 'page'
+    @metadata.template or 'none'
 
   @property 'date', ->
     new Date(@metadata.date or 0)
