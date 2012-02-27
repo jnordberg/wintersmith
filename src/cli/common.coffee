@@ -58,15 +58,16 @@ exports.getOptions = (argv, callback) ->
         # ovveride conf and default options with any command line options
         if argv[key]?
           options[key] = argv[key]
-        # expand paths
-        if ['output', 'config', 'contents', 'templates'].indexOf(key) != -1
-          options[key] = path.join workDir, options[key]
       # pass along extra arguments from argv
       for key of argv
         # don't include optimist stuff
         if key[0] == '_' or key[0] == '$'
           continue
         options[key] ?= argv[key]
+      # expand paths
+      for key in ['output', 'config', 'contents', 'templates']
+        if options[key]
+          options[key] = path.join workDir, options[key]
       callback null, options
     (options, callback) ->
       # load locals json if neccessary
