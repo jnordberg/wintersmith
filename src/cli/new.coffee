@@ -1,6 +1,5 @@
 
 async = require 'async'
-{app} = require 'flatiron'
 {ncp} = require 'ncp'
 fs = require 'fs'
 path = require 'path'
@@ -23,8 +22,17 @@ usage = """
 
 """
 
-createSite = (location) ->
+options =
+  force:
+    alias: 'f'
+
+createSite = (argv) ->
   ### copy example directory to *location* ###
+
+  for val in process.argv[3..]
+    if val[0] == '-'
+      continue
+    location = val
 
   if !location.length
     logger.error 'you must specify a location'
@@ -32,7 +40,6 @@ createSite = (location) ->
 
   from = path.join __dirname, '../../example'
   to = path.resolve location
-  force = (app.argv.f or app.argv.force) or false
 
   logger.info "initializing new wintersmith site in #{ to }"
 
@@ -40,7 +47,7 @@ createSite = (location) ->
     (callback) ->
       logger.verbose "checking validity of #{ to }"
       path.exists to, (exists) ->
-        if exists and !force
+        if exists and !argv.force
           callback new Error "#{ to } already exists. Add --force to overwrite"
         else
           callback()
@@ -55,4 +62,4 @@ createSite = (location) ->
 
 module.exports = createSite
 module.exports.usage = usage
-module.exports.name = 'new'
+module.exports.options = options

@@ -1,11 +1,8 @@
 
 async = require 'async'
-{app} = require 'flatiron'
-rimraf = require 'rimraf'
-fs = require 'fs'
-{logger} = require '../common' # lib common
-{getOptions, commonOptions} = require './common' # cli common
-
+util = require 'util'
+{logger, extend} = require '../common' # lib common
+{getOptions, commonUsage, commonOptions} = require './common' # cli common
 
 usage = """
 
@@ -14,7 +11,7 @@ usage = """
   options:
 
     -p, --port [port]             port to run server on (defaults to 8080)
-    #{ commonOptions.join('\n') }
+    #{ commonUsage }
 
     all options can also be set in the config file
 
@@ -25,15 +22,21 @@ usage = """
 
 """
 
-preview = ->
+options =
+  port:
+    alias: 'p'
+    default: 8080
+
+extend options, commonOptions
+
+preview = (argv) ->
   server = require '../server'
   logger.info 'starting preview server'
 
   async.waterfall [
     # load options
-    async.apply getOptions, app.argv
+    async.apply getOptions, argv
     (options, callback) ->
-      options.port = (app.argv.p or app.argv.port) or 8080
       server.run options, callback
   ], (error) ->
     if error
@@ -41,4 +44,4 @@ preview = ->
 
 module.exports = preview
 module.exports.usage = usage
-module.exports.name = 'preview'
+module.exports.options = options

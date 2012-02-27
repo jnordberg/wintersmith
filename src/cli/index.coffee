@@ -1,6 +1,6 @@
 
-flatiron = require 'flatiron'
 path = require 'path'
+optimist = require 'optimist'
 {logger, transports, readJSON} = require './../common'
 
 usage = """
@@ -21,41 +21,48 @@ usage = """
     -q, --quiet     only output critical errors
     -V, --version   output version and exit
     -h, --help      show help
+
 """
 
+globalOptions =
+  verbose:
+    alias: 'v'
+  quiet:
+    alias: 'q'
+  version:
+    alias: 'V'
+  help:
+    alias: 'h'
+
 main = ->
-  process.on 'uncaughtException', (error) ->
-    # flatiron hooks into this somewhere and outputs json.. ¿que?
-    logger.error error.message, error
-    process.exit 0
 
-  app = flatiron.app
+  argv = optimist.options(globalOptions).argv
+  if argv._[0]?
+    try
+      cmd = require "./#{ argv._[0] }"
+    catch error
+      console.log "'#{ argv._[0] }' - no such command"
 
-  app.use flatiron.plugins.cli,
-    dir: __dirname
-    argv:
-      verbose: alias: 'v'
-      quiet: alias: 'q'
-      version: alias: 'V'
-      help: alias: 'h'
-    usage: usage
-
-  if app.argv.version
+  if argv.version
     readJSON path.join(__dirname, '../../package.json'), (error, result) ->
       if error
         logger.error error.message, error
       else
         console.log result.version
         process.exit 0
-    return # prevent app.start
+    return
 
-  if app.argv.verbose
+  if argv.help or !cmd
+    console.log if cmd then cmd.usage else usage
+    process.exit 0
+
+  if argv.verbose
     logger.transports.cli.level = 'verbose'
 
-  if app.argv.quiet
+  if argv.quiet
     logger.transports.cli.quiet = true
 
-  app.start
-    log: {transports: transports}
+  if cmd
+    cmd optimist.options(globalOptions).options(cmd.options).argv
 
 module.exports.main = main

@@ -1,11 +1,11 @@
 
 async = require 'async'
-{app} = require 'flatiron'
 rimraf = require 'rimraf'
 fs = require 'fs'
+path = require 'path'
 colors = require 'colors'
-{logger} = require '../common' # lib common
-{getOptions, commonOptions} = require './common' # cli common
+{logger, extend} = require '../common' # lib common
+{getOptions, commonOptions, commonUsage} = require './common' # cli common
 wintersmith = require '../'
 
 usage = """
@@ -16,7 +16,7 @@ usage = """
 
     -o, --output [path]           directory to write build-output (defaults to ./output)
     -X, --clean                   clean before building (warning: will recursively delete everything at output path)
-    #{ commonOptions.join('\n') }
+    #{ commonUsage }
 
     all options can also be set in the config file
 
@@ -32,15 +32,33 @@ usage = """
     $ wintersmith build --config another_config.json --clean
 """
 
-build = ->
+options =
+  output:
+    alias: 'o'
+    default: './build'
+  clean:
+    alias: 'X'
+    default: false
+
+extend options, commonOptions
+
+build = (argv) ->
   start = new Date()
   logger.info 'building site'
 
   async.waterfall [
     # load options
-    async.apply getOptions, app.argv
+    async.apply getOptions, argv
     (options, callback) ->
       async.waterfall [
+        (callback) ->
+          # create output dir if not existing
+          path.exists options.output, (exists) ->
+            if exists
+              callback()
+            else
+              logger.verbose "creating output directory #{ options.output }"
+              fs.mkdir options.output, callback
         (callback) ->
           if options.clean
             logger.verbose "cleaning - running rimraf on #{ options.output }"
@@ -64,5 +82,4 @@ build = ->
 
 module.exports = build
 module.exports.usage = usage
-module.exports.name = 'build'
-
+module.exports.options = options

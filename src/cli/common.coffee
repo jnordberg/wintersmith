@@ -3,10 +3,7 @@ path = require 'path'
 async = require 'async'
 {logger, readJSON} = require '../common'
 
-defaults =
-  output:
-    alias: 'o'
-    default: './build'
+exports.commonOptions = defaults =
   config:
     alias: 'c'
     default: './config.json'
@@ -17,31 +14,23 @@ defaults =
     alias: 't'
     default: './templates'
   locals:
-    alias: 'T'
+    alias: 'L'
     default: {}
-  clean:
-    alias: 'X'
-    default: false
   chdir:
     alias: 'C'
     default: null
 
-exports.commonOptions = [
+exports.commonUsage = [
   "-C, --chdir [path]            change the working directory"
   "  -c, --config [path]           path to config (defaults to #{ defaults.config.default })"
   "  -i, --contents [path]         contents location (defaults to #{ defaults.contents.default })"
   "  -t, --templates [path]        template location (defaults to #{ defaults.templates.default })"
-  "  -T, --template-data [path]    optional path to json file containing template context data"
-]
+  "  -L, --locals [path]           optional path to json file containing template context data"
+].join '\n'
 
-exports.getOptions = (argv={}, callback) ->
+exports.getOptions = (argv, callback) ->
   ### resolves options with the hierarchy: argv > configfile > defaults
       returns a options object ###
-
-  # normalize argv
-  for key, item of defaults
-    if argv[item.alias]?
-      argv[key] = argv[item.alias]
 
   workDir = path.resolve (argv.chdir or process.cwd())
   logger.verbose "resolving options - work directory: #{ workDir }"
@@ -53,10 +42,10 @@ exports.getOptions = (argv={}, callback) ->
   async.waterfall [
     (callback) ->
       # load config if present
-      configPath = path.join workDir, (argv.config or defaults.config.default)
+      configPath = path.join workDir, argv.config
       path.exists configPath, (exists) ->
         if exists
-          logger.verbose "loading config file: #{ configPath }"
+          logger.info "using config file: #{ configPath }"
           readJSON configPath, callback
         else
           logger.verbose "no config file found"
@@ -72,6 +61,12 @@ exports.getOptions = (argv={}, callback) ->
         # expand paths
         if ['output', 'config', 'contents', 'templates'].indexOf(key) != -1
           options[key] = path.join workDir, options[key]
+      # pass along extra arguments from argv
+      for key of argv
+        # don't include optimist stuff
+        if key[0] == '_' or key[0] == '$'
+          continue
+        options[key] ?= argv[key]
       callback null, options
     (options, callback) ->
       # load locals json if neccessary
@@ -88,8 +83,8 @@ exports.getOptions = (argv={}, callback) ->
         callback null, options
     (options, callback) ->
       logger.verbose 'resolved options:', options
-      logger.verbose 'checking that all paths are valid'
-      paths = ['output', 'contents', 'templates']
+      logger.verbose 'validating paths'
+      paths = ['contents', 'templates']
       async.forEach paths, (filepath, callback) ->
         path.exists options[filepath], (exists) ->
           if exists
