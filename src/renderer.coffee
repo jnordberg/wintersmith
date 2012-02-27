@@ -12,7 +12,7 @@ renderPage = (page, templates, locals, writeStream, callback) ->
   logger.verbose "render page #{ page.filename } with template '#{ page.template }'"
   async.waterfall [
     (callback) ->
-      template = templates["#{ page.template }.jade"]
+      template = templates[page.template]
       if not template?
         callback new Error "page '#{ page.filename }' specifies unknown template '#{ page.template }'"
       else
