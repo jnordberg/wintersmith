@@ -56,7 +56,7 @@ exports.getOptions = (argv, callback) ->
         # assing defaults to missing conf options
         options[key] ?= defaults[key].default
         # ovveride conf and default options with any command line options
-        if argv[key]?
+        if argv[key]? and argv[key] != defaults[key].default
           options[key] = argv[key]
       # pass along extra arguments from argv
       for key of argv

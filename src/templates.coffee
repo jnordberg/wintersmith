@@ -1,52 +1,60 @@
-fs = require 'fs'
-jade = require 'jade'
+
 async = require 'async'
 path = require 'path'
 glob = require 'glob'
 
-{logger} = require './common'
+{logger, extend} = require './common'
 
-compileTemplate = (filename, callback) ->
-  ### read template from disk and compile
-      returns compiled template ###
-  async.waterfall [
-    (callback) ->
-      fs.readFile filename, callback
-    (buffer, callback) ->
-      try
-        rv = jade.compile buffer.toString(),
-          filename: filename
-        callback null, rv
-      catch error
-        callback error
-  ], callback
+templatePlugins = []
+registerTemplatePlugin = (pattern, plugin) ->
+  ### add a template *plugin*, all files in the template directory matching the
+      glob *pattern* will be passed to the plugins fromFile function. ###
+  templatePlugins.push
+    pattern: pattern
+    class: plugin
+
+class TemplatePlugin
+
+  render: (locals, callback) ->
+    ### render template using *locals* and *callback* with a ReadStream or
+        Buffer containing the rendered contents ###
+    throw new Error 'not implemented'
+
+TemplatePlugin.fromFile = (filename, callback) ->
+  ### *callback* with a instance of <TemplatePlugin> created from *filename* ###
+  throw new Error 'not implemented'
 
 loadTemplates = (location, callback) ->
   ### load and compile all templates found in *location*
-      returns map of templates {name: fn} ###
+      returns map of templates {name: <TemplatePlugin> instance} ###
   rv = {}
   # glob options
   opts =
     cwd: location
     nosort: true
+
+  loadPluginTemplates = (plugin, callback) ->
+    async.waterfall [
+      async.apply glob, plugin.pattern, opts
+      (files, callback) ->
+        templates = {}
+        async.forEach files, (filename, callback) ->
+          logger.verbose "loading template: #{ filename }"
+          plugin.class.fromFile path.join(location, filename), (error, template) ->
+            templates[filename] = template
+            callback error
+        , (error) ->
+          callback error, templates
+    ], callback
+
   async.waterfall [
-    async.apply glob, '**/*.jade', opts
-    (files, callback) ->
-      async.filter files, (filename, callback) ->
-        # exclude templates starting with _ (useful for layout templates etc)
-        callback (path.basename(filename).substr(0, 1) != '_')
-      , (result) ->
-        callback null, result
-    (files, callback) ->
+    async.apply async.map, templatePlugins, loadPluginTemplates
+    (result, callback) ->
       templates = {}
-      async.forEach files, (filename, callback) ->
-        logger.verbose "loading template: #{ filename }"
-        compileTemplate path.join(location, filename), (error, template) ->
-          templates[filename] = template
-          callback error
-      , (error) ->
-        callback error, templates
+      extend templates, t for t in result
+      callback null, templates
   ], callback
 
-module.exports.compileTemplate = compileTemplate
 module.exports.loadTemplates = loadTemplates
+module.exports.TemplatePlugin = TemplatePlugin
+module.exports.registerTemplatePlugin = registerTemplatePlugin

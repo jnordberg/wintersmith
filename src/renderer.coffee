@@ -3,43 +3,9 @@ fs = require 'fs'
 util = require 'util'
 async = require 'async'
 path = require 'path'
-underscore = require 'underscore'
 
 {logger, extend, stripExtension} = require './common'
 {ContentTree} = require './content'
-
-renderPage = (page, templates, locals, writeStream, callback) ->
-  logger.verbose "render page #{ page.filename } with template '#{ page.template }'"
-  async.waterfall [
-    (callback) ->
-      template = templates[page.template]
-      if not template?
-        callback new Error "page '#{ page.filename }' specifies unknown template '#{ page.template }'"
-      else
-        callback null, template
-    (template, callback) ->
-      ctx = {page: page}
-      extend ctx, locals
-      renderTemplate template, ctx, callback
-    (buffer, callback) ->
-      writeStream.write buffer
-      writeStream.end()
-      callback()
-  ], callback
-
-renderResource = (resource, writeStream, callback) ->
-  logger.verbose "render resource #{ resource.filename }"
-  util.pump resource.readStream, writeStream, callback
-
-renderTemplate = (template, locals, callback) ->
-  ### render *template* with *locals*
-      returns template output buffer ###
-  try
-    locals._ = underscore # add underscore functionality to template context
-    rv = template locals
-    callback null, new Buffer(rv, 'utf8')
-  catch error
-    callback error
 
 render = (contents, templates, location, locals, callback) ->
   ### render ContentTree *contents* using *templates* to *location*
@@ -62,6 +28,23 @@ render = (contents, templates, location, locals, callback) ->
     destination = path.join location, filename
     renderPage page, templates, locals, fs.createWriteStream(destination), callback
 
+  renderPlugin = (content, callback) ->
+    destination = path.join location, content.filename
+    writeStream = fs.createWriteStream destination
+    logger.verbose "writing content #{ content.url } to #{ destination }"
+    content.render locals, contents, templates, (error, result) ->
+      if error
+        callback error
+      else if result instanceof fs.ReadStream
+        util.pump result, writeStream, callback
+      else if result instanceof Buffer
+        writeStream.write result
+        writeStream.end()
+        callback()
+      else
+        logger.verbose "skipping #{ content.url }"
+        callback()
+
   renderTree = (tree, callback) ->
     logger.verbose "rendering: #{ tree.filename }"
     async.waterfall [
@@ -72,16 +55,15 @@ render = (contents, templates, location, locals, callback) ->
           else
             callback error
       (callback) ->
-        async.parallel [
-          async.apply async.forEach, tree.pages, pageToFile
-          async.apply async.forEach, tree.resources, resourceToFile
-          async.apply async.forEach, tree.directories, renderTree
-        ], callback
+        async.forEach Object.keys(tree), (key, callback) ->
+          item = tree[key]
+          if item instanceof ContentTree
+            renderTree item, callback
+          else
+            renderPlugin item, callback
+        , callback
     ], callback
 
   renderTree contents, callback
 
 module.exports = render
-module.exports.renderTemplate = renderTemplate
-module.exports.renderResource = renderResource
-module.exports.renderPage = renderPage

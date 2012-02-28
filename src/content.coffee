@@ -3,13 +3,21 @@ async = require 'async'
 fs = require 'fs'
 path = require 'path'
 colors = require 'colors'
-parser = require './parser'
-{rfc822, stripExtension} = require './common'
+minimatch = require 'minimatch'
+{logger} = require './common'
 
-slugify = (s) ->
-  s = s.replace(/[^\w\s-]/g, '').trim().toLowerCase()
-  s = s.replace /[-\s]+/g, '-'
-  return s
+contentPlugins = []
+registerContentPlugin = (treeName, handles, plugin) ->
+  ### register a plugin. arguments:
+      *treeName* - name that will be shown in the content tree (eg. 'textFiles')
+                   generally a plural name is recommended since it will appear in the content-tree
+                   as an array of *plugin* instances (eg. contents.somedir.textFiles)
+      *handles*: glob-pattern to match (eg. '** / *.*(txt|text)' )
+      *plugin*: the <ContentPlugin> subclass ###
+  contentPlugins.push
+    treeName: treeName
+    pattern: handles
+    class: plugin
 
 class Model
   @property = (name, method) ->
@@ -18,102 +26,69 @@ class Model
       get: -> method.call @
       enumerable: true
 
-class Resource extends Model
+class ContentPlugin extends Model
 
-  constructor: (@filename, @fullPath) -> # store fullPath just so we dont need to open a readStream already
+  render: (locals, contents, templates, callback) ->
+    ### *callback* with a ReadStream/Buffer or null if the contents should not be rendered
+        *locals* rendering context variables
+        *contents* is the full content tree
+        *templates* is a map of all templates as: {filename: templateInstance} ###
+    throw new Error 'not implemented'
 
-  getUrl: (baseUrl='/') ->
-    path.join baseUrl, @filename
-
-  @property 'readStream', ->
-    fs.createReadStream @fullPath
-
-  @property 'url', ->
-    @getUrl()
-
-Resource.fromFile = (filename, base, callback) ->
-  if !callback?
-    callback = base
-    base = path.dirname filename
-  callback null, new Resource path.relative(base, filename), filename
-
-class Page extends Model
-
-  constructor: (@filename, @markdown, @metadata) ->
+  getFilename: ->
+    ### return filename for this content ###
+    throw new Error 'not implemented'
 
   getUrl: (base='/') ->
-    name = stripExtension(@filename)
-    if path.basename(name) is 'index'
-      url = path.dirname name
-    else
-      url = name + '.html'
-    path.join base, url
+    ### return url for this content relative to *base* ###
+    path.join base, @getFilename()
 
-  getLocation: (base='/') ->
-    path.join base, path.dirname(@filename)
+  # some shorthands
+  @property 'url', -> @getUrl()
+  @property 'filename', -> @getFilename()
 
-  getHtml: (base) ->
-    ### parse @markdown and return html. also resolves any relative urls to absolute ones ###
-    @_html ?= parser.parseMarkdownSync @markdown, @getLocation(base) # cache html
-    return @_html
+ContentPlugin.fromFile = (filename, base, callback) ->
+  ### *callback* with an instance of class. *filename* is the relative filename
+      from *base* wich is the working directory (content directory) ###
 
-  @property 'url', ->
-    @getUrl()
+class StaticFile extends ContentPlugin
+  ### static file handler, simply serves content as-is. last in chain ###
 
-  @property 'html', ->
-    @getHtml()
+  constructor: (@_filename, @_base) ->
 
-  @property 'title', ->
-    @metadata.title or 'Untitled'
+  getFilename: ->
+    @_filename
 
-  @property 'template', ->
-    @metadata.template or 'none'
+  render: (args..., callback) ->
+    # locals, contents etc not used in this plugin
+    try
+      rs = fs.createReadStream path.join(@_base, @_filename)
+    catch error
+      return callback error
+    callback null, rs
 
-  @property 'date', ->
-    new Date(@metadata.date or 0)
+StaticFile.fromFile = (filename, base, callback) ->
+  callback null, new StaticFile(filename, base)
 
-  @property 'rfc822date', ->
-    rfc822 @date
+registerContentPlugin 'files', '**/*', StaticFile
 
-  @property 'intro', ->
-    idx = ~@html.indexOf('<span class="more') or ~@html.indexOf('<h2')
-    if idx
-      return @html.substr 0, ~idx
-    else
-      return @html
-
-  @property 'hasMore', ->
-    @_hasMore ?= (@html.length > @intro.length)
-    return @_hasMore
-
-Page.fromFile = (filename, base, callback) ->
-  if !callback?
-    callback = base
-    base = path.dirname filename
-
-  async.waterfall [
-    (callback) ->
-      fs.readFile filename, callback
-    (buffer, callback) ->
-      parser buffer.toString(), callback
-    (result, callback) ->
-      {markdown, metadata} = result
-      callback null, new Page path.relative(base, filename), markdown, metadata
-  ], callback
+slugify = (s) ->
+  s = s.replace(/[^\w\s-]/g, '').trim().toLowerCase()
+  s = s.replace /[-\s]+/g, '-'
+  return s
 
 # Class ContentTree
-# not using Class since we need a clean prototype to iterate over
+# not using Class since we need a clean prototype
 ContentTree = (filename) ->
-  private = {}
-  ['pages', 'directories', 'resources'].forEach (name) =>
-    private[name] = []
-    Object.defineProperty @, name,
-      get: -> private[name]
+  private = {directories: []}
+  for plugin in contentPlugins
+    private[plugin.treeName] = []
+  Object.defineProperty @, '_',
+    get: -> private
   Object.defineProperty @, 'filename',
     get: -> filename
   Object.defineProperty @, 'index',
-    get: ->
-      @['index.md'] or @['index.markdown']
+    get: -> @['index.md'] or @['index.markdown']
 
 ContentTree.fromDirectory = (directory, base, callback) ->
   if !callback?
@@ -133,25 +108,26 @@ ContentTree.fromDirectory = (directory, base, callback) ->
             if stats.isDirectory()
               ContentTree.fromDirectory filename, base, (error, result) ->
                 tree[path.relative(directory, filename)] = result
-                tree.directories.push result
+                tree._.directories.push result
                 callback error
             else if stats.isFile()
-              ext = path.extname filename
               basename = path.basename filename
-              if ext == '.md' or ext == '.markdown'
-                Page.fromFile filename, base, (error, page) ->
-                  page.metadata.fstats = stats
-                  tree[basename] = page
-                  tree.pages.push page
-                  callback error
-              else if basename.substr(0, 1) isnt '.'
-                Resource.fromFile filename, base, (error, resource) ->
-                  resource.stats = stats
-                  tree[path.basename(filename)] = resource
-                  tree.resources.push resource
-                  callback error
-              else
-                # TODO: handle dotfiles
+              relname = path.relative base, filename
+              # iterate backwards over all content plugins
+              match = false
+              for i in [contentPlugins.length - 1..0] by -1
+                plugin = contentPlugins[i]
+                if minimatch relname, plugin.pattern, {dot: false} # TODO: dotfile plugin
+                  plugin.class.fromFile relname, base, (error, instance) ->
+                    if not error
+                      tree[basename] = instance
+                      tree._[plugin.treeName].push instance
+                    callback error
+                  match = true
+                  break
+              if not match
+                # no matching plugin
+                logger.verbose "no plugin to handle #{ filename }"
                 callback()
             else
               callback new Error "invalid file #{ filename }"
@@ -169,19 +145,26 @@ ContentTree.inspect = (tree, depth=0) ->
     if v instanceof ContentTree
       s = "#{ k }/\n".bold
       s += ContentTree.inspect v, depth + 1
-    else if v instanceof Page
+    else if v.template?
       s = k.green + " (url: #{ v.url }, template: #{ v.template })".grey
-    else
+    else if v instanceof StaticFile
       s = k + " (url: #{ v.url })".grey
+    else
+      s = k + " (url: #{ v.url })".cyan
     rv.push pad + s
   rv.join '\n'
 
-ContentTree.flatten = (tree) ->
-  items = tree.pages.concat tree.resources
-  for dir in tree.directories
-    items = items.concat ContentTree.flatten dir
-  return items
+util = require 'util'
 
-module.exports.Resource = Resource
-module.exports.Page = Page
+ContentTree.flatten = (tree) ->
+  rv = []
+  for key, value of tree
+    if value instanceof ContentTree
+      rv = rv.concat ContentTree.flatten value
+    else
+      rv.push value
+  return rv
+
 module.exports.ContentTree = ContentTree
+module.exports.ContentPlugin = ContentPlugin
+module.exports.registerContentPlugin = registerContentPlugin

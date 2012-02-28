@@ -1,10 +1,14 @@
 
 async = require 'async'
-
 {logger} = require './common'
-{Resource, Page, ContentTree} = require './content'
-{loadTemplates} = require './templates'
+{ContentTree, ContentPlugin, registerContentPlugin} = require './content'
+{TemplatePlugin, loadTemplates, registerTemplatePlugin} = require './templates'
 renderer = require './renderer'
+
+# register default  plugins
+registerContentPlugin 'pages', '**/*.*(markdown|md)', require('./plugins/markdown-page')
+registerContentPlugin 'pages', '**/*.json', require('./plugins/json-page')
+registerTemplatePlugin '**/*.jade', require('./plugins/jade-template')
 
 loadContents = (location, callback) ->
   ### traverse *location* and return a tree of contents ###
@@ -37,5 +41,7 @@ module.exports.renderer = renderer
 module.exports.loadTemplates = loadTemplates
 module.exports.loadContents= loadContents
 module.exports.ContentTree = ContentTree
-module.exports.Resource = Resource
-module.exports.Page = Page
+module.exports.ContentPlugin = ContentPlugin
+module.exports.TemplatePlugin = TemplatePlugin
+module.exports.registerContentPlugin = registerContentPlugin
+module.exports.registerTemplatePlugin = registerTemplatePlugin

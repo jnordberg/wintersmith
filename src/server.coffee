@@ -7,10 +7,10 @@ url = require 'url'
 colors = require 'colors'
 mime = require 'mime'
 
-{loadTemplates} = require './templates'
-{ContentTree, Page, Resource} = require './content'
 {logger, extend, stripExtension} = require './common'
-{renderResource, renderPage} = require './renderer'
+{loadTemplates, ContentTree} = require './'
+
+#{renderResource, renderPage} = require './renderer'
 
 colorCode = (code) ->
   s = code.toString()
@@ -41,17 +41,20 @@ setup = (options, callback) ->
           callback (uri is item.url)
         , (result) ->
           if result
-            if result instanceof Resource
-              response.writeHead 200, 'Content-Type': mime.lookup(result.filename)
-              renderResource result, response, (error) ->
-                callback error, 200
-            else
-              # page
-              ctx = {contents: contents}
-              extend ctx, options.locals
-              response.writeHead 200, 'Content-Type': 'text/html'
-              renderPage result, templates, ctx, response, (error) ->
-                callback error, 200
+            result.render options.locals, contents, templates, (error, res) ->
+              if error
+                callback error
+              else if res instanceof fs.ReadStream
+                response.writeHead 200, 'Content-Type': mime.lookup(result.filename)
+                util.pump res, response, (error) ->
+                  callback error, 200
+              else if res instanceof Buffer
+                response.writeHead 200, 'Content-Type': mime.lookup(result.filename)
+                response.write res
+                response.end()
+                callback null, 200
+              else
+                callback() # not handled
           else
             callback() # not handled
     ], callback
