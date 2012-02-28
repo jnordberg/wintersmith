@@ -1,7 +1,7 @@
 title: Hello World
 author: The Wintersmith
 date: 2012-01-31 15:00
-template: article
+template: article.jade
 
 Welcome to your new wintersmith site. Have a look at the readme in the repository root for additional information.
 

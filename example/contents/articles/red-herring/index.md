@@ -1,7 +1,7 @@
 title: A red herring
 author: Baker
 date: 2011-12-26 12:20
-template: article
+template: article.jade
 
 One day, while walking in the bamboo forest, an old, childless bamboo cutter called 竹取翁 came across a mysterious, shining stalk of bamboo.
 

@@ -1,7 +1,7 @@
 title: The tale of the bamboo-cutter
 author: Princess Kaguya
 date: 2011-05-01 12:00
-template: article
+template: article.jade
 
 
 ![image](Taketori_Monogatari.jpg)

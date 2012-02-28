@@ -1,4 +1,4 @@
-template: archive
+template: archive.jade
 
 ## The archives
 

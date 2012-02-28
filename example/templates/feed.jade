@@ -5,15 +5,16 @@ rss(version='2.0',
     xmlns:dc='http://purl.org/dc/elements/1.1/'
     xmlns:atom='http://www.w3.org/2005/Atom')
   channel
+    - var articles = contents.articles._.directories.map(function(item){ return item.index });
     title= locals.name
-    atom:link(href=locals.url + 'feed.xml', rel='self', type='application/rss+xml')
+    atom:link(href=locals.url + '/feed.xml', rel='self', type='application/rss+xml')
     link= locals.url
     description= locals.description
     pubDate= articles[0].rfc822date
     generator The mighty Wintersmith
     language en
     for article in articles
-      - var permalink = locals.url + article.slug
+      - var permalink = locals.url + article.url
       item
         title= article.title
         link= permalink
