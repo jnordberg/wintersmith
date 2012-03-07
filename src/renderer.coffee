@@ -30,16 +30,18 @@ render = (contents, templates, location, locals, callback) ->
 
   renderPlugin = (content, callback) ->
     destination = path.join location, content.filename
-    writeStream = fs.createWriteStream destination
     logger.verbose "writing content #{ content.url } to #{ destination }"
     content.render locals, contents, templates, (error, result) ->
       if error
         callback error
-      else if result instanceof fs.ReadStream
-        util.pump result, writeStream, callback
-      else if result instanceof Buffer
-        writeStream.write result
-        writeStream.end()
+      else if result instanceof fs.ReadStream or result instanceof Buffer
+        # TODO: use in-memory readstreams instead of buffers if possible
+        writeStream = fs.createWriteStream destination
+        if result instanceof fs.ReadStream
+          util.pump result, writeStream, callback
+        else
+          writeStream.write result
+          writeStream.end()
         callback()
       else
         logger.verbose "skipping #{ content.url }"
