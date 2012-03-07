@@ -1,0 +1,6 @@
+{
+  "template": "none",
+  "description": "i am json a page only accessible from the content tree",
+  "meta": "data",
+  "slugPrices": [23, 435, 234, 23]
+}
