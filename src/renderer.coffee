@@ -16,18 +16,6 @@ render = (contents, templates, location, locals, callback) ->
 
   locals.contents = contents # all pages have access to the content-tree
 
-  resourceToFile = (resource, callback) ->
-    destination = path.join(location, resource.filename)
-    renderResource resource, fs.createWriteStream(destination), callback
-
-  pageToFile = (page, callback) ->
-    if page.template == 'none'
-      logger.verbose "skipping page w/o template: #{ page.filename }"
-      return
-    filename = stripExtension(page.filename) + '.html'
-    destination = path.join location, filename
-    renderPage page, templates, locals, fs.createWriteStream(destination), callback
-
   renderPlugin = (content, callback) ->
     destination = path.join location, content.filename
     logger.verbose "writing content #{ content.url } to #{ destination }"
