@@ -19,6 +19,9 @@ exports.commonOptions = defaults =
   chdir:
     alias: 'C'
     default: null
+  plugins:
+    alias: 'P'
+    default: []
 
 exports.commonUsage = [
   "-C, --chdir [path]            change the working directory"
@@ -26,6 +29,7 @@ exports.commonUsage = [
   "  -i, --contents [path]         contents location (defaults to #{ defaults.contents.default })"
   "  -t, --templates [path]        template location (defaults to #{ defaults.templates.default })"
   "  -L, --locals [path]           optional path to json file containing template context data"
+  "  -P, --plugins                 comma separated list of modules to load as plugins"
 ].join '\n'
 
 exports.getOptions = (argv, callback) ->
@@ -34,10 +38,6 @@ exports.getOptions = (argv, callback) ->
 
   workDir = path.resolve (argv.chdir or process.cwd())
   logger.verbose "resolving options - work directory: #{ workDir }"
-
-  if argv.templateData?
-    argv.locals = argv.templateData
-    delete argv.templateData
 
   async.waterfall [
     (callback) ->
@@ -82,6 +82,10 @@ exports.getOptions = (argv, callback) ->
             callback null, options
       else
         callback null, options
+    (options, callback) ->
+      if typeof options.plugins is 'string'
+        options.plugins = options.plugins.split ','
+      callback null, options
     (options, callback) ->
       logger.verbose 'resolved options:', options
       logger.verbose 'validating paths'
