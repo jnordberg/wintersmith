@@ -10,9 +10,10 @@ A flexible static site generator.
  * Robust templating using [Jade](https://github.com/visionmedia/jade)
  * Preview server (no need to rebuild every time you make a change)
  * Highly configurable
+ * Extendable using plugins
  * FAST!
 
-## Quickstart
+## Quick-start
 
 First install wintersmith using [npm](http://npmjs.org/):
 
@@ -43,9 +44,37 @@ When done run:
 $ wintersmith build
 ```
 
-This generates your site and places it in the `build/` directory - all ready to be copied to your webserver!
+This generates your site and places it in the `build/` directory - all ready to be copied to your web server!
 
 And remember to give the old `--help` a look :-)
+
+## Overview
+
+A wintersmith site is built up of two main components, contents and templates.
+
+Contents is a directory where all the sites raw material goes (markdown files, images, javascript etc). This directory is then scanned to produce what's internally called a ContentTree.
+
+The ContentTree is a nested object built up of ContentPlugins and looks something like this:
+
+```javascript
+{
+  "myfile.md": {MarkdownPlugin} // plugin instance, subclass of ContentPlugin
+  "some-dir/": { // another ContentTree instance
+    "image.jpg": {StaticPlugin}
+    "random.file": {StaticPlugin}
+  }
+}
+```
+
+This content tree is provided in full to all plugins in turn when rendering. This gives you a lot of flexibility when writing plugins, you could for example write a plugin that generates a mosaic using images located in a specific directory.
+
+Wintersmith comes with a default Page plugin that renders markdown content using templates. This plugin takes markdown (combined with some metadata, more on this later) compiles it and provides it to a template along with the content tree and some utility functions.
+
+This brings us to the second component, the template directory. All templates found in this directory are loaded and are also passed to the content plugins when rendering.
+
+By default only `.jade` templates are loaded, but you can easily add template plugins to use a template engine of your choosing.
+
+Check the `examples/` directory for some inspiration on how to use wintersmith to build different kind of websites.
 
 ## Config
 
@@ -65,19 +94,14 @@ Configuration can be done with command-line options, a config file or both. The 
     <td>output directory, this is where the generated site is output</td>
   </tr>
   <tr>
-    <td>articles</td>
-    <td>./articles</td>
-    <td>article directory, where to look for markdown files</td>
+    <td>contents</td>
+    <td>./contents</td>
+    <td>contents directory, where to look for site contents (markdown, images, etc)</td>
   </tr>
   <tr>
     <td>templates</td>
     <td>./templates</td>
-    <td>template directory, where to look for Jade templates</td>
-  </tr>
-  <tr>
-    <td>static</td>
-    <td>./static</td>
-    <td>static file directory, all static content for your site (css, images, etc)</td>
+    <td>template directory, where to look for templates</td>
   </tr>
   <tr>
     <td>locals</td>
@@ -85,29 +109,24 @@ Configuration can be done with command-line options, a config file or both. The 
     <td>javascript object to pass to all templates when rendering, useful for storing metadata for your site. can also be a path to a json file</td>
   </tr>
   <tr>
-    <td>rebuild</td>
-    <td>false</td>
-    <td>whether to force a rebuild of all articles</td>
-  </tr>
-  <tr>
-    <td>clean</td>
-    <td>false</td>
-    <td>whether to empty output directory before building</td>
+    <td>plugins</td>
+    <td>[]</td>
+    <td>list of plugin modules to load</td>
   </tr>
 </table>
 
 All paths can either be relative or absolute. Relative paths will be resolved from the current directory or `--chdir` if set.
 
-## Articles
+## The Page plugin
 
-An article is a markdown file combined with metadata on top
-
-example:
+A page is either a markdown file with metadata on top or a json file located in the contents directory.
 
 ```markdown
 title: My first post
 date: 2012-12-12 12:12
 author: John Hjort <foo@bar.com>
+template: article.jade
+
 
 # Hello friends!
 
@@ -115,67 +134,123 @@ Life is wonderful, isn't it?
 
 ```
 
-### Article types
+or use json to simply pass metadata to a template:
 
-There are two article formats, either a markdown file in the root of your articles directory or a directory with a markdown index file.
+```json
+{
+  "template": "template.jade",
+  "meta": {
+  	"greta": 123,
+  	"peta": [1, 2, 3]
+  }
+}
+```
 
-If you use a directory all other contents in the it are copied when building, this allows you to easily add images, scripts etc specific to the article.
-
-File extensions can be either `.md` or `.markdown`
+Pages will be rendered as html, so for example `index.md` would be rendered to `index.html` and `some-dir/data.json` to `some-dir/data.html`.
 
 ### Links
 
-All relative links used will be resolved correctly when rendering. This means you can just place *image.png* in your article directory and simply include it in your markdown as `![my image](image.png)`
+All relative links in the markdown will be resolved correctly when rendering. This means you can just place *image.png* in the same directory and simply include it in your markdown as `![my image](image.png)`
 
 This is especially convenient when using a markdown editor (read [Mou](http://mouapp.com/) if you're on a mac).
 
 ### Metadata
 
-Metadata can be any `key: value` pair you want. And will be accessible in the article template as `article.metadata`.
+Metadata can be any `key: value` pair you want. And will be accessible in the article template as `page.metadata`.
 
-There are two special metadata keys. The first one is `date`, articles will be sorted by this value. The date is parsed using JavaScript's Date constructor - so you can be very flexible on how you write your dates.
+There are two special metadata keys, The first one is `template` which specifies what template to render the page with. If the key is omitted or set to `none` the page will not be rendered (but still available in the content tree).
 
-The second one is `slug`, if set it will override the location the article is built at (wich defaults to the articles filename)
+The second one is `filename` which can be used to override the output filename of the page. Useful if you need to output a `.xml` file or something similar.
 
-### The Article model
+### Templates
 
-Model for the article object passed to templates.
+When a page is rendered to a template the page instance is available as `page` in the template context. The content tree is also available as `contents` and the config.locals object as `locals`.
+
+[underscore.js](http://documentcloud.github.com/underscore/) is also available as `_` to provide some utility to aid you sorting and filtering the content tree.
+
+### The Page model
+
+The Page model (inherits from ContentPlugin)
 
 Properties:
 
+  * `metadata` – the metadata object
   * `title` - `metadata.title` or `Untitled`
-  * `date` - Date object from `metadata.date` or unix epoch time.
-  * `slug` - article url `metadata.slug` or slugified version of `filename`
-  * `filename` - path to article's markdown file
-  * `files` - array with paths to all files included in article
+  * `date` - Date object from `metadata.date` if set or unix epoch time.
   * `rfc822date` - a rfc-822 formatted string made from `date`
   * `body` - unparsed markdown content
-  * `html` - shortcut for `getHtml`
+  * `html` - parsed markdown content
 
-Methods:
+## Writing plugins
 
- * `getHtml(baseURL='/')` - parses `body` and resolves all relative urls using `baseURL`. Have a look at the example site's feed.jade to see how this can be used.
+Wintersmith has two types of plugins, content plugins that transform contents and template plugins that are provided to the content plugins to help render contents.
 
-## Templates
+### Content Plugins
 
-Templating are done using [Jade](https://github.com/visionmedia/jade) and all templates are rendered out to `<template-name>.html` with a few exceptions.
+A content plugin is a subclass of `ContentPlugin` and should provide a `fromFile` class method, a `render` instance method and a `getFilename` instance method.
 
-  * `article.jade`
-     this is the article template, rendered once for every article. the `article` object is available in its context.
+`render` is called with the content tree, template list, locals and a callback. Have a look in `src/contents.coffee` it's pretty well documented.
 
-  * `feed.jade`
-    RSS-feed, only difference from a normal template is that it's rendered to `/feed.xml`
+Content plugins are registered using the `registerContentPlugin` function.
 
-### Locals
+`function registerContentPlugin(group, pattern, plugin) { .. }`
 
-Locals are the template variables, you can extend them in the config file. Avalible in all templates as `locals`.
+*group*: is the name of the group to place the plugin in on the content tree (e.gprovide. `pages`)
 
-Also all templates except `article.jade` have `articles` defined which is an array containing all articles.
+*pattern*: is the [glob](https://github.com/isaacs/minimatch) pattern to match files with (e.g.
+`**/*.txt`)
+
+*plugin*: the `ContentPlugin` subclass
 
 
-## Static content
+### Template Plugins
 
-All files in the `options.static` directory are simply copied over to the root of output.
+A template plugins is a subclass of `TemplatePlugin` and should also provide a `fromFile` class method and a `render` instance method.
+
+Template plugins are registered using:
+
+`function registerTemplatePlugin(pattern, plugin) { .. }`
+
+where *pattern* is the glob pattern to match in the template directory and plugin is the plugin subclass.
+
+### Plugin Modules
+
+The easiest way to load a wintersmith plugin is to use the `plugins` config option.
+
+Example:
+
+`myplugin.coffee`
+
+```coffeescript
+
+module.exports = (wintersmith, callback) ->
+
+  class TextPlugin extends wintersmith.ContentPlugin
+
+    constructor: (@_filename, @_text) ->
+
+    getFilename: ->
+      @_filename
+
+    render: (locals, contents, templates, callback) ->
+      # do something with the text!
+      callback null, @_text
+
+  TextPlugin.fromFile = (filename, base, callback) ->
+    fs.readFile path.join(base, filename), (error, buffer) ->
+      if error
+        callback error
+      else
+        callback null, new TextPlugin filename, buffer.toString()
+
+  wintersmith.registerContentPlugin 'texts', '**/*.txt', TextPlugin
+  callback()
+
+```
+
+To use this plugin simply pass the path to the file to the cli tool (`--plugins ./myplugin.coffee`)
+
+You can also use globally or locally installed modules as plugins.
 
 ## Using wintersmith programmatically
 
@@ -187,10 +262,8 @@ var wintersmith = require('wintersmith');
 
 var options = {
   'output': '/var/www/pub',
-  'articles': '/foo/articles',
-  'templates': '/foo/templates',
-  'articles': '/foo/articles',
-  'static': '/foo/articles',
+  'contents': '/foo/contents',
+  'contents': '/foo/templates',
   'locals': {foo: 'bar'}
 };
 
@@ -202,9 +275,9 @@ wintersmith(options, callback(error) {
   }
 });
 
-// you can also use the api to get the articles for example
-wintersmith.loadArticles('path/to/articles', callback(error, articles) {
-  // do something with articles
+// you can also use the api to get the content tree
+wintersmith.loadContents('path/to/contents', callback(error, contents) {
+  // do something with the content tree
 });
 
 ```
@@ -215,9 +288,9 @@ There are more api methods defined, have a look at the source it's pretty well-c
 
 Wintersmith is written by [Johan Nordberg](http://johan-nordberg.com) using [CoffeeScript](http://coffeescript.org/) and licensed under the [MIT-license](http://en.wikipedia.org/wiki/MIT_License).
 
-The name is a nod to [blacksmith](http://en.wikipedia.org/wiki/MIT_License) which  inspired this project. (and [Terry Pratchett](http://www.terrypratchett.co.uk/) of course)
+The name is a nod to [blacksmith](https://github.com/flatiron/blacksmith) which inspired this project. (and [Terry Pratchett](http://www.terrypratchett.co.uk/) of course)
 
-Some of the great node.js projects that wintersmith uses:
+Some of the great node.js modules that wintersmith uses:
 
  * [async](https://github.com/caolan/async)
  * [marked](https://github.com/chjj/marked)
@@ -230,11 +303,3 @@ Check the `package.json` for a complete list.
 ----
 
 *© 2012 FFFF00 Agents AB*
-
-
-
-
-
-
-
-
