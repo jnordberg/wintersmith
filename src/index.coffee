@@ -8,7 +8,6 @@ renderer = require './renderer'
 # register default plugins
 registerContentPlugin 'pages', '**/*.*(markdown|md)', require('./plugins/markdown-page')
 registerContentPlugin 'pages', '**/*.json', require('./plugins/json-page')
-registerContentPlugin 'scripts', '**/*.coffee', require('./plugins/coffeescript')
 registerTemplatePlugin '**/*.jade', require('./plugins/jade-template')
 
 loadContents = (location, callback) ->
