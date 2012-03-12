@@ -85,7 +85,14 @@ exports.getOptions = (argv, callback) ->
     (options, callback) ->
       if typeof options.plugins is 'string'
         options.plugins = options.plugins.split ','
-      callback null, options
+      # resolve plugin paths if required as file
+      async.map options.plugins, (item, callback) ->
+        if item[...2] is './'
+          item = path.resolve path.join(workDir, item)
+        callback null, item
+      , (error, result) ->
+        options.plugins = result
+        callback error, options
     (options, callback) ->
       logger.verbose 'resolved options:', options
       logger.verbose 'validating paths'
@@ -99,3 +106,14 @@ exports.getOptions = (argv, callback) ->
       , (error) ->
         callback error, options
   ], callback
+
+exports.loadPlugins = (plugins, callback) ->
+  wintersmith = require './../'
+  async.forEach plugins, (plugin, callback) ->
+    logger.verbose "loading plugin: #{ plugin }"
+    try
+      module = require plugin
+    catch error
+      return callback error
+    module wintersmith, callback
+  , callback

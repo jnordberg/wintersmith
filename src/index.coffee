@@ -5,7 +5,7 @@ async = require 'async'
 {TemplatePlugin, loadTemplates, registerTemplatePlugin} = require './templates'
 renderer = require './renderer'
 
-# register default  plugins
+# register default plugins
 registerContentPlugin 'pages', '**/*.*(markdown|md)', require('./plugins/markdown-page')
 registerContentPlugin 'pages', '**/*.json', require('./plugins/json-page')
 registerContentPlugin 'scripts', '**/*.coffee', require('./plugins/coffeescript')
@@ -46,3 +46,4 @@ module.exports.ContentPlugin = ContentPlugin
 module.exports.TemplatePlugin = TemplatePlugin
 module.exports.registerContentPlugin = registerContentPlugin
 module.exports.registerTemplatePlugin = registerTemplatePlugin
+module.exports.logger = logger
