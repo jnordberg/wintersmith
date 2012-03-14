@@ -1,8 +1,8 @@
-title: Works awesome with Mou
+title: Markdown
 image: img/mou.svg
 template: none
 
-If you are a Mac user you might have heard of [Mou][1] - a markdown editor with a live preview.
-Add your sites stylesheet to Mou and get a live preview of your article while editing.
+No more fiddling around with WYSIWYG editors, the bundled markdown plugin makes editing a joy.
+And if you're a Mac user check out [Mou][1] – a wintersmith's best friend.
 
 [1]: http://mouapp.com/  "Mou - Markdown editor for web developers"

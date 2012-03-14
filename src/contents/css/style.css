@@ -12,10 +12,9 @@ html, body, body div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquot
 article, aside, figure, footer, header, hgroup, nav, section {display: block;}
 
 html {
-	/*overflow-y: scroll;*/
 	overflow-x: hidden;
-
 }
+
 ul {list-style: none;}
 blockquote, q {quotes: none;}
 blockquote:before,
@@ -184,7 +183,6 @@ header .download a:hover {
 }
 
 .content {
-	margin-top: 80px;
 	column-count: 1;
 	column-gap: 24px;
 	-webkit-column-count: 1;
@@ -198,8 +196,9 @@ header .download a:hover {
 	-moz-column-break-inside: avoid;
 	-webkit-column-break-inside: avoid;
 	clear: both;
-	margin: 24px;
-	margin-bottom: 48px;
+	min-height: 100px;
+	margin: 48px;
+	margin-top: 0;
 }
 
 .content article h3 {
@@ -209,14 +208,20 @@ header .download a:hover {
 }
 
 .content article img {
-	margin: 4px 24px 48px 0;
+	margin-top: 8px;
+	margin-right: 24px;
 	float: left;
 }
 
 .content article h3,
 .content article p {
-	margin-left: 85px;
+	margin-left: 90px;
 }
+
+.content article#templating img{
+	margin-left: 6px;
+}
+
 
 footer {
 	margin-bottom: 38px;
@@ -229,27 +234,16 @@ footer a {
 	color: #333;
 }
 
-
-/* Print styles!
--------------------------------------------------------------------------------*/
-@media print {
-
-
-
-}
-
-
-/* Media queries!
--------------------------------------------------------------------------------*/
-
 @media screen and (min-width: 980px) {
 	header,
 	.content {
 		width: 920px;
-		background: red;
 	}
 	.content {
 		margin: 0 auto;
+	}
+	.content article {
+		min-height: 120px;
 	}
 	header hr {
 		margin-top: 34px;
@@ -265,8 +259,11 @@ footer a {
 	}
 	header .download {
 		position: relative;
-		top: 	-40px;
+		top: -40px;
 		left: 200px;
+	}
+	footer {
+		margin-top: 48px;
 	}
 	.content {
 		column-count: 2;
@@ -284,7 +281,7 @@ footer a {
 	}
 	header {
 		margin-top: 24px;
-		background: blue;
+
 		text-align: left;
 	}
 	header hr {
@@ -295,10 +292,6 @@ footer a {
 	}
 	header h1 {
 		margin-bottom: 12px;
-	}
-	.content article,
-	.content article img {
-		margin-bottom: 24px;
 	}
 	header .download a {
 		display: block;
@@ -319,5 +312,23 @@ footer a {
 	header h2:before {
 		content: '- ';
 	}
+	.content article {
+		margin: 10px;
+		margin-top: 0;
+		margin-bottom: 30px;
+	}
 }
+
+
+@media screen and (max-device-width: 480px) {
+	header,
+	footer,
+	.content {
+		width: 480px;
+		margin: 0;
+		padding: 20px;
+	}
+
+}
+
 

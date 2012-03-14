@@ -1,2 +1,2 @@
-template: index
+template: index.jade
 
