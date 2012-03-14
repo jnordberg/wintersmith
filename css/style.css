@@ -1,0 +1,334 @@
+
+html, body, body div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp, small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, figure, footer, header, hgroup, menu, nav, section, time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+	background: transparent;
+}
+
+article, aside, figure, footer, header, hgroup, nav, section {display: block;}
+
+html {
+	overflow-x: hidden;
+}
+
+ul {list-style: none;}
+blockquote, q {quotes: none;}
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {content: ''; content: none;}
+
+a {margin: 0; padding: 0; font-size: 100%; vertical-align: baseline; background: transparent;}
+
+
+
+del {text-decoration: line-through;}
+
+abbr[title], dfn[title] {border-bottom: 1px dotted #000; cursor: help;}
+
+/* tables still need cellspacing="0" in the markup */
+table {border-collapse: collapse; border-spacing: 0;}
+th {font-weight: bold; vertical-align: bottom;}
+td {font-weight: normal; vertical-align: top;}
+
+hr {display: block; height: 1px; border: 0; border-top: 1px solid #ccc; margin: 1em 0; padding: 0;}
+
+input, select {vertical-align: middle;}
+
+pre {
+	white-space: pre; /* CSS2 */
+	white-space: pre-wrap; /* CSS 2.1 */
+	white-space: pre-line; /* CSS 3 (and 2.1 as well, actually) */
+	word-wrap: break-word; /* IE */
+}
+
+input[type="radio"] {vertical-align: text-bottom;}
+input[type="checkbox"] {vertical-align: bottom; *vertical-align: baseline;}
+.ie6 input {vertical-align: text-bottom;}
+
+select, input, textarea {font: 99% sans-serif;}
+
+table {font-size: inherit; font: 100%;}
+
+/* Accessible focus treatment
+	people.opera.com/patrickl/experiments/keyboard/test */
+a:hover, a:active {outline: none;}
+
+small {font-size: 85%;}
+
+strong, th {font-weight: bold;}
+
+td, td img {vertical-align: top;}
+
+/* Make sure sup and sub don't screw with your line-heights
+	gist.github.com/413930 */
+sub, sup {font-size: 75%; line-height: 0; position: relative;}
+sup {top: -0.5em;}
+sub {bottom: -0.25em;}
+
+/* standardize any monospaced elements */
+pre, code, kbd, samp {font-family: monospace, sans-serif;}
+
+/* hand cursor on clickable elements */
+.clickable,
+label,
+input[type=button],
+input[type=submit],
+button {cursor: pointer;}
+
+/* Webkit browsers add a 2px margin outside the chrome of form elements */
+button, input, select, textarea {margin: 0;}
+
+/* make buttons play nice in IE */
+button {width: auto; overflow: visible;}
+
+/* scale images in IE7 more attractively */
+.ie7 img {-ms-interpolation-mode: bicubic;}
+
+/* prevent BG image flicker upon hover */
+.ie6 html {filter: expression(document.execCommand("BackgroundImageCache", false, true));}
+
+/* let's clear some floats */
+.clearfix:before, .clearfix:after { content: "\0020"; display: block; height: 0; overflow: hidden; }
+.clearfix:after { clear: both; }
+.clearfix { zoom: 1; }
+
+.clear {
+	clear: both;
+}
+
+/* Ok, this is where the fun starts.
+-------------------------------------------------------------------------------*/
+
+/* new Linux- and Windows-friendly sans-serif font stack: http://mky.be/fontstack */
+body {font: 13px 'Menlo', monospace, fixed;}
+
+/* using local fonts? make sure to read up on Paul Irish's
+	Bulletproof @font-face syntax: http://mky.be/font-face/bulletproof/ */
+
+/* we like off-black for text */
+body, select, input, textarea {color: #333;}
+
+a {
+	color: #333;
+}
+
+a:hover {
+	font-weight: bold;
+}
+
+/* Custom text-selection colors (remove any text shadows: twitter.com/miketaylr/status/12228805301) */
+::-moz-selection{background: #00FFAA; color: #fff; text-shadow: none;}
+::selection {background: #00FFAA; color: #fff; text-shadow: none;}
+
+/*	j.mp/webkit-tap-highlight-color */
+a:link {-webkit-tap-highlight-color: #fcd700;}
+
+ins {background-color: #fcd700; color: #000; text-decoration: none;}
+mark {background-color: #fcd700; color: #000; font-style: italic; font-weight: bold;}
+
+
+header,
+footer,
+.content {
+	width: 560px;
+	margin: 0 auto;
+}
+
+header {
+	margin-top: 50px;
+	margin-bottom: 50px;
+	text-align: center;
+	overflow: hidden;
+}
+
+header h1 {
+	margin-right: 10px;
+	margin-bottom: 24px;
+}
+
+header hr {
+	background: #b2b2b2;
+	height: 8px;
+	margin: 0;
+	border-radius: 2px;
+}
+
+header h2 {
+	margin: 24px 14px;
+	font-size: 24px;
+	font-weight: normal;
+}
+
+header .download a {
+	display: inline-block;
+	font-size: 24px;
+	color: #000;
+	text-decoration: none;
+	padding: 14px 30px;
+	border-radius: 5px;
+	margin-top: 40px;
+	background-color: #00FFAA;
+}
+
+
+
+
+header .download a:hover {
+	background-color: #68fafa;
+}
+
+.content {
+	column-count: 1;
+	column-gap: 24px;
+	-webkit-column-count: 1;
+	-webkit-column-gap: 24px;
+	-moz-column-count: 1;
+	-moz-column-gap: 24px;
+}
+
+.content article {
+	column-break-inside: avoid;
+	-moz-column-break-inside: avoid;
+	-webkit-column-break-inside: avoid;
+	clear: both;
+	min-height: 100px;
+	margin: 48px;
+	margin-top: 0;
+}
+
+.content article h3 {
+	font-size: 18px;
+	margin-left: 90px;
+	line-height: 28px;
+}
+
+.content article img {
+	margin-top: 8px;
+	margin-right: 24px;
+	float: left;
+}
+
+.content article h3,
+.content article p {
+	margin-left: 90px;
+}
+
+.content article#templating img{
+	margin-left: 6px;
+}
+
+
+footer {
+	margin-bottom: 38px;
+	text-align: center;
+	clear: both;
+}
+
+footer a {
+	text-decoration: none;
+	color: #333;
+}
+
+@media screen and (min-width: 980px) {
+	header,
+	.content {
+		width: 920px;
+	}
+	.content {
+		margin: 0 auto;
+	}
+	.content article {
+		min-height: 120px;
+	}
+	header hr {
+		margin-top: 34px;
+	}
+	header img {
+		width: 650px;
+	}
+	header h2 {
+		position: relative;
+		left: -200px;
+		top: 40px;
+		margin: 0;
+	}
+	header .download {
+		position: relative;
+		top: -40px;
+		left: 200px;
+	}
+	footer {
+		margin-top: 48px;
+	}
+	.content {
+		column-count: 2;
+		-moz-column-count: 2;
+		-webkit-column-count: 2;
+	}
+}
+
+@media screen and (max-width: 580px), screen and (max-device-width: 480px) {
+	header,
+	footer,
+	.content {
+		width: auto;
+		margin: 24px;
+	}
+	header {
+		margin-top: 24px;
+
+		text-align: left;
+	}
+	header hr {
+		display: none;
+	}
+	header img {
+		max-width: 100%;
+	}
+	header h1 {
+		margin-bottom: 12px;
+	}
+	header .download a {
+		display: block;
+		font-size: 16px;
+		padding: 6px 10px;
+		width: auto;
+		margin: 24px 0;
+	}
+	footer {
+		margin-top: 48px;
+	}
+	header h2 {
+		font-size: 14px;
+		margin: 0;
+		text-align: right;
+		max-width: 490px;
+	}
+	header h2:before {
+		content: '- ';
+	}
+	.content article {
+		margin: 10px;
+		margin-top: 0;
+		margin-bottom: 30px;
+	}
+}
+
+
+@media screen and (max-device-width: 480px) {
+	header,
+	footer,
+	.content {
+		width: 480px;
+		margin: 0;
+		padding: 20px;
+	}
+
+}
+
+
