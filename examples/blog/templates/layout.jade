@@ -6,6 +6,7 @@ html(lang='en')
       title
         block title
           = locals.name
+      link(rel='alternate', href=locals.url+'/feed.xml', type='application/rss+xml', title=locals.description)
       link(rel='stylesheet', href='http://fonts.googleapis.com/css?family=Fredericka+the+Great')
       link(rel='stylesheet', href='/css/github.css')
       link(rel='stylesheet', href='/css/main.css')
