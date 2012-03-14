@@ -5,6 +5,8 @@ fs = require 'fs'
 path = require 'path'
 {logger} = require '../common' # lib common
 
+templateTypes = ['basic', 'blog']
+
 usage = """
 
   usage: wintersmith new [options] <path>
@@ -13,7 +15,10 @@ usage = """
 
   options:
 
-    -f, --force    overwrite existing files
+    -f, --force             overwrite existing files
+    -T, --template <name>   template to create new site from (defaults to 'blog')
+
+    avalible templates are: #{ templateTypes.join(', ') }
 
   example:
 
@@ -25,23 +30,26 @@ usage = """
 options =
   force:
     alias: 'f'
+  template:
+    alias: 'T'
+    default: 'blog'
 
 createSite = (argv) ->
   ### copy example directory to *location* ###
 
-  for val in process.argv[3..]
-    if val[0] == '-'
-      continue
-    location = val
-
-  if !location.length
+  location = argv._[1]
+  if !location? or !location.length
     logger.error 'you must specify a location'
     return
 
-  from = path.join __dirname, '../../example'
+  if argv.template not in templateTypes
+    logger.error "unknown template type #{ argv.template }"
+    return
+
+  from = path.join __dirname, '../../examples/' + argv.template
   to = path.resolve location
 
-  logger.info "initializing new wintersmith site in #{ to }"
+  logger.info "initializing new wintersmith site in #{ to } using template #{ argv.template }"
 
   async.waterfall [
     (callback) ->
