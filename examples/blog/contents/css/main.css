@@ -53,6 +53,13 @@ a img {
   border: none;
 }
 
+a#archive {
+  display: block;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+}
+
 p {
   margin-bottom: 9px;
 }
@@ -105,6 +112,14 @@ body > header h1 {
   font-size: 39px;
   line-height: 39px;
   text-shadow: rgba(255,255,255,0.3) 0 0 10px;
+}
+
+body > header a {
+  color: #fff;
+}
+
+body > header h1 a:hover {
+  text-decoration: none;
 }
 
 body > header p {
@@ -222,7 +237,6 @@ pre code {
   font-size: 18px;
   margin-top: 10px;
 }
-
 
 @media screen and (min-width: 776px) {
   body > header .inner,

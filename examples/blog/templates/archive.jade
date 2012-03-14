@@ -3,7 +3,7 @@ extends layout
 
 block content
   != page.html
-  - var archive = _.chain(contents.articles.directories).map(function(item) {
+  - var archive = _.chain(contents.articles._.directories).map(function(item) {
   -   return item.index
   - }).compact().sortBy(function(item) {
   -   return -item.date

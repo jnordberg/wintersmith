@@ -13,7 +13,8 @@ html(lang='en')
     header
       div.inner
         block header
-          h1= locals.name
+          h1
+            a(href=locals.url)= locals.name
           p= locals.description
     div#content
       block content

@@ -1,6 +1,7 @@
 extends layout
 
 block content
+  include author
   //- underscore helps us filter and sort our articles
   - var articles = _.chain(contents.articles._.directories).map(function(item) {
   -   // map articles to index pages of subdirectories of 'articles'
@@ -14,8 +15,10 @@ block content
       header
         h2
           a(href=article.url)= article.title
-        p= article.metadata.author
+        p
+          mixin author(article.metadata.author)
       section.content!= article.intro
       if article.hasMore
         p.read-more
           a(href=article.url) read more
+  a(href='archive.html')#archive Visit the archives!
