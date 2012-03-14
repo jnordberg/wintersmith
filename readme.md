@@ -1,6 +1,6 @@
 #![Wintersmith](http://jnordberg.github.com/wintersmith/img/wintersmith.svg)
 
-A flexible static site generator.
+A flexible static site generator – http://jnordberg.github.com/wintersmith/
 
 ## Features
 
