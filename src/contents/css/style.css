@@ -171,12 +171,9 @@ header .download a {
 	text-decoration: none;
 	padding: 14px 30px;
 	border-radius: 5px;
-	margin-top: 40px;
+	margin: 40px 0;
 	background-color: #00FFAA;
 }
-
-
-
 
 header .download a:hover {
 	background-color: #68fafa;
@@ -256,6 +253,9 @@ footer a {
 		left: -200px;
 		top: 40px;
 		margin: 0;
+	}
+	header .download a {
+		margin-bottom: 0;
 	}
 	header .download {
 		position: relative;
