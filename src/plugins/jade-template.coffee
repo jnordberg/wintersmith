@@ -2,6 +2,7 @@
 async = require 'async'
 jade = require 'jade'
 fs = require 'fs'
+path = require 'path'
 
 {TemplatePlugin} = require './../templates'
 
@@ -15,14 +16,15 @@ class JadeTemplate extends TemplatePlugin
     catch error
       callback error
 
-JadeTemplate.fromFile = (filename, callback) ->
+JadeTemplate.fromFile = (filename, base, callback) ->
+  fullpath = path.join base, filename
   async.waterfall [
     (callback) ->
-      fs.readFile filename, callback
+      fs.readFile fullpath, callback
     (buffer, callback) ->
       try
         rv = jade.compile buffer.toString(),
-          filename: filename
+          filename: fullpath
         callback null, new JadeTemplate rv
       catch error
         callback error
