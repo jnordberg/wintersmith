@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "marked": "git://github.com/jnordberg/marked.git",
-    "async": "git://github.com/jnordberg/async.git",
+    "async": "0.1.x",
     "highlight": "0.2.x",
     "jade": "0.20.x",
     "ncp": "0.2.3",
