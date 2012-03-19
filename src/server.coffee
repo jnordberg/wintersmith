@@ -72,6 +72,8 @@ setup = (options, callback) ->
         response.end if error? then error.message else '404 Not Found\n'
       delta = new Date() - start
       logger.info "#{ colorCode(responseCode) } #{ uri.bold } " + "#{ delta }ms".grey
+      if error
+        logger.error error.message, error
 
   return requestHandler
 
