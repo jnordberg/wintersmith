@@ -20,7 +20,7 @@ class TemplatePlugin
         Buffer containing the rendered contents ###
     throw new Error 'not implemented'
 
-TemplatePlugin.fromFile = (filename, callback) ->
+TemplatePlugin.fromFile = (filename, base, callback) ->
   ### *callback* with a instance of <TemplatePlugin> created from *filename* ###
   throw new Error 'not implemented'
 
@@ -40,7 +40,7 @@ loadTemplates = (location, callback) ->
         templates = {}
         async.forEach files, (filename, callback) ->
           logger.verbose "loading template: #{ filename }"
-          plugin.class.fromFile path.join(location, filename), (error, template) ->
+          plugin.class.fromFile filename, location, (error, template) ->
             templates[filename] = template
             callback error
         , (error) ->
