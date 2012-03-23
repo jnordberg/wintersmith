@@ -10,7 +10,7 @@ A flexible static site generator – http://jnordberg.github.com/wintersmith/
  * Robust templating using [Jade](https://github.com/visionmedia/jade)
  * Preview server (no need to rebuild every time you make a change)
  * Highly configurable
- * Extendable using plugins
+ * Extendable using [plugins](https://github.com/jnordberg/wintersmith/wiki/Plugins)
  * FAST!
 
 ## Quick-start
@@ -74,7 +74,7 @@ This brings us to the second component, the template directory. All templates fo
 
 By default only `.jade` templates are loaded, but you can easily add template plugins to use a template engine of your choosing.
 
-Check the `examples/` directory for some inspiration on how to use wintersmith to build different kind of websites.
+Check the `examples/` directory for some inspiration on how you can use wintersmith or the [showcase](https://github.com/jnordberg/wintersmith/wiki/Showcase) to see what others are doing.
 
 ## Config
 
@@ -156,7 +156,7 @@ This is especially convenient when using a markdown editor (read [Mou](http://mo
 
 ### Metadata
 
-Metadata can be any `key: value` pair you want. And will be accessible in the article template as `page.metadata`.
+Metadata can be any `key: value` pair you want. And will be accessible in the template as `page.metadata`.
 
 There are two special metadata keys, The first one is `template` which specifies what template to render the page with. If the key is omitted or set to `none` the page will not be rendered (but still available in the content tree).
 
@@ -174,16 +174,39 @@ The Page model (inherits from ContentPlugin)
 
 Properties:
 
-  * `metadata` – the metadata object
-  * `title` - `metadata.title` or `Untitled`
-  * `date` - Date object from `metadata.date` if set or unix epoch time.
-  * `rfc822date` - a rfc-822 formatted string made from `date`
-  * `body` - unparsed markdown content
-  * `html` - parsed markdown content
+<table>
+  <tr>
+    <td>metadata</td>
+    <td>the metadata object</td>
+  </tr>
+  <tr>
+    <td>title</td>
+    <td>`metadata.title` or `Untitled`</td>
+  </tr>
+  <tr>
+    <td>date</td>
+    <td>Date object from `metadata.date` if set or unix epoch time</td>
+  </tr>
+  <tr>
+    <td>rfc822date</td>
+    <td>a rfc-822 formatted string made from `date`</td>
+  </tr>
+  <tr>
+    <td>body</td>
+    <td>unparsed markdown content</td>
+  </tr>
+  <tr>
+    <td>html</td>
+    <td>parsed markdown content</td>
+  </tr>
+</table>
 
 ## Writing plugins
 
 Wintersmith has two types of plugins, content plugins that transform contents and template plugins that are provided to the content plugins to help render contents.
+
+A list of 3rd party plugins can be found on [the wiki](https://github.com/jnordberg/wintersmith/wiki/Plugins).
+
 
 ### Content Plugins
 
@@ -193,14 +216,36 @@ A content plugin is a subclass of `ContentPlugin` and should provide a `fromFile
 
 Content plugins are registered using the `registerContentPlugin` function.
 
-`function registerContentPlugin(group, pattern, plugin) { .. }`
+<table>
+  <tr>
+    <th colspan=2>registerContentPlugin(group, pattern, plugin)</th>
+  </tr>
+  <tr>
+    <td>group</td>
+    <td>
+      <p><em>string</em> - plugin group name
 
-*group*: is the name of the group to place the plugin in on the content tree (e.gprovide. `pages`)
+      <p>Groups are used to easily access a specific type of conent in the tree. The content tree has a special property <code>_</code> that contains
+      returns a object with all plugin groups as <code>{groupname: [pluginInstance, ..], ..}</code>
 
-*pattern*: is the [glob](https://github.com/isaacs/minimatch) pattern to match files with (e.g.
-`**/*.txt`)
+      <p>For example you can use <code>contents.somedir._.pages</code> to get an array of all pages in a directory.
+    </td>
+  </tr>
+  <tr>
+    <td>pattern</td>
+    <td>
+      <p><em>string</em> - glob pattern (e.g. <code>**/*.txt</code>)
 
-*plugin*: the `ContentPlugin` subclass
+      <p>Glob pattern used to match files that should be handled by the plugin. Uses the [minimatch](https://github.com/isaacs/minimatch) module.
+    </td>
+  </tr>
+  <tr>
+    <td>plugin</td>
+    <td>
+      <p><em>class</em> - the ContentPlugin subclass
+    </td>
+  </tr>
+</table>
 
 
 ### Template Plugins
@@ -234,7 +279,7 @@ module.exports = (wintersmith, callback) ->
 
     render: (locals, contents, templates, callback) ->
       # do something with the text!
-      callback null, @_text
+      callback null, new Buffer @_text
 
   TextPlugin.fromFile = (filename, base, callback) ->
     fs.readFile path.join(base, filename), (error, buffer) ->
@@ -243,8 +288,8 @@ module.exports = (wintersmith, callback) ->
       else
         callback null, new TextPlugin filename, buffer.toString()
 
-  wintersmith.registerContentPlugin 'texts', '**/*.txt', TextPlugin
-  callback()
+  wintersmith.registerContentPlugin 'text', '**/*.txt', TextPlugin
+  callback() # tell the plugin manager we are done
 
 ```
 
