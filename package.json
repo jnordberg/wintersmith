@@ -44,6 +44,6 @@
     "coffee-script": "1.2.x"
   },
   "engine": {
-    "node": ">=0.4"
+    "node": ">=0.6"
   }
 }
