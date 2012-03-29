@@ -67,7 +67,7 @@ exports.getOptions = (argv, callback) ->
       # expand paths
       for key in ['output', 'config', 'contents', 'templates']
         if options[key]
-          options[key] = path.join workDir, options[key]
+          options[key] = path.resolve workDir, options[key]
       callback null, options
     (options, callback) ->
       # load locals json if neccessary
@@ -88,7 +88,7 @@ exports.getOptions = (argv, callback) ->
       # resolve plugin paths if required as file
       async.map options.plugins, (item, callback) ->
         if item[...2] is './'
-          item = path.resolve path.join(workDir, item)
+          item = path.resolve workDir, item
         callback null, item
       , (error, result) ->
         options.plugins = result
