@@ -1,6 +1,6 @@
 {
   "name": "wintersmith",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": "Johan Nordberg <its@johan-nordberg.com>",
   "description": "A flexible static site generator.",
   "license": "MIT",
