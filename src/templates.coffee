@@ -34,6 +34,7 @@ loadTemplates = (location, callback) ->
     nosort: true
 
   loadPluginTemplates = (plugin, callback) ->
+    ### scans *location* and loads any templates for *plugin* if its glob pattern matches ###
     async.waterfall [
       async.apply glob, plugin.pattern, opts
       (files, callback) ->

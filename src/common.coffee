@@ -18,6 +18,8 @@ stripExtension = (filename) ->
 exports.stripExtension = stripExtension
 
 rfc822 = (date) ->
+  ### return a rfc822 representation of a javascript Date object
+      http://www.w3.org/Protocols/rfc822/#z28 ###
   pad = (i) -> if i < 10 then '0' + i else i
   tzoffset = (offset) ->
     hours = Math.floor offset / 60
@@ -38,25 +40,6 @@ rfc822 = (date) ->
   ].join ' '
 
 exports.rfc822 = rfc822
-
-copyFile = (source, destination, overwrite, callback) ->
-  if !callback?
-    callback = overwrite
-    overwrite = false
-
-  path.exists destination, (exists) ->
-    if exists and !overwrite
-      callback new Error "File #{ destination } already exists."
-    else
-      fs.stat source, (error) ->
-        if error
-          callback error
-        else
-          read = fs.createReadStream source
-          write = fs.createWriteStream destination
-          util.pump read, write, callback
-
-exports.copyFile = copyFile
 
 class cli extends winston.Transport
 
@@ -86,8 +69,7 @@ class cli extends winston.Transport
           msg = msg.yellow
       if meta
         msg += util.format ' %j', meta
-      if level != 'help' then msg = '  ' + msg # flatiron pads help messages :/
-      process.stdout.write msg + '\n'
+      process.stdout.write "  #{ msg }\n"
 
     @emit 'logged'
     callback null, true
@@ -101,6 +83,7 @@ exports.logger = new winston.Logger
   transports: transports
 
 exports.readJSON = (filename, callback) ->
+  ### read and try to parse *filename* as json ###
   async.waterfall [
     (callback) ->
       fs.readFile filename, callback

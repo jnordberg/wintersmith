@@ -101,9 +101,11 @@ ContentTree.fromDirectory = (directory, base, callback) ->
     callback = base
     base = directory
 
+  # create the base tree from *directory*
   tree = new ContentTree path.relative(base, directory)
 
   async.waterfall [
+    # read directory
     async.apply fs.readdir, directory
     (filenames, callback) ->
       async.forEach filenames, (filename, callback) ->
@@ -112,14 +114,17 @@ ContentTree.fromDirectory = (directory, base, callback) ->
           async.apply fs.lstat, filename
           (stats, callback) ->
             if stats.isDirectory()
+              # recursively map directories to content tree instances
               ContentTree.fromDirectory filename, base, (error, result) ->
                 tree[path.relative(directory, filename)] = result
                 tree._.directories.push result
                 callback error
             else if stats.isFile()
+              # map any files found to content plugins
               basename = path.basename filename
               relname = path.relative base, filename
               # iterate backwards over all content plugins
+              # and check if any plugin can handle this file
               match = false
               for i in [contentPlugins.length - 1..0] by -1
                 plugin = contentPlugins[i]
@@ -143,6 +148,7 @@ ContentTree.fromDirectory = (directory, base, callback) ->
     callback error, tree
 
 ContentTree.inspect = (tree, depth=0) ->
+  ### return a pretty formatted string representing the content *tree* ###
   rv = []
   pad = ''
   for i in [0..depth]
@@ -163,6 +169,7 @@ ContentTree.inspect = (tree, depth=0) ->
 util = require 'util'
 
 ContentTree.flatten = (tree) ->
+  ### return all the items in the *tree* as an array of content plugins ###
   rv = []
   for key, value of tree
     if value instanceof ContentTree

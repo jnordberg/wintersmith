@@ -14,7 +14,7 @@ render = (contents, templates, location, locals, callback) ->
   logger.verbose "rendering into: #{ location }"
   logger.info "rendering tree:\n#{ ContentTree.inspect(contents, 1) }\n"
 
-  locals.contents = contents # all pages have access to the content-tree
+  locals.contents = contents # all plugins have access to the content-tree
 
   renderPlugin = (content, callback) ->
     ### render *content* plugin, calls *callback* with true if a file is written;
@@ -42,12 +42,14 @@ render = (contents, templates, location, locals, callback) ->
     directory = path.join location, tree.filename
     async.waterfall [
       (callback) ->
+        # create directory for tree
         fs.mkdir directory, (error) ->
           if not error or error.code == 'EEXIST'
             callback()
           else
             callback error
       (callback) ->
+        # recursively render tree and its plugins
         async.map Object.keys(tree), (key, callback) ->
           item = tree[key]
           if item instanceof ContentTree

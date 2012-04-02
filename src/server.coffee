@@ -10,8 +10,6 @@ mime = require 'mime'
 {logger, extend, stripExtension} = require './common'
 {loadTemplates, ContentTree} = require './'
 
-#{renderResource, renderPage} = require './renderer'
-
 colorCode = (code) ->
   s = code.toString()
   switch Math.floor code / 100
@@ -31,11 +29,13 @@ setup = (options, callback) ->
     logger.verbose "contentHandler: #{ uri }"
     async.waterfall [
       (callback) ->
+        # load contents and templates
         async.parallel
           templates: async.apply loadTemplates, options.templates
           contents: async.apply ContentTree.fromDirectory, options.contents
         , callback
       (result, callback) ->
+        # render if uri matches
         {contents, templates} = result
         async.detect ContentTree.flatten(contents), (item, callback) ->
           callback (uri is item.url)
