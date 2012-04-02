@@ -3,12 +3,13 @@
 marked = require 'marked';
 async = require 'async'
 path = require 'path'
+url = require 'url'
 fs = require 'fs'
 Page = require './page'
 
-is_relative = (url) ->
-  ### returns true if *url* is relative; otherwise false ###
-  !/(^\w+:)|(^\/)/.test url
+is_relative = (uri) ->
+  ### returns true if *uri* is relative; otherwise false ###
+  !/(^\w+:)|(^\/)/.test uri
 
 parseMetadata = (metadata, callback) ->
   ### takes *metadata* in the format:
@@ -46,11 +47,11 @@ parseMarkdownSync = (content, baseUrl) ->
   ### takes markdown *content* and returns html using *baseUrl* for any relative urls
       returns html ###
 
-  marked.inlineLexer.formatUrl = (url) ->
-    if is_relative url
-      return path.join baseUrl, url
+  marked.inlineLexer.formatUrl = (uri) ->
+    if is_relative uri
+      return url.resolve baseUrl, uri
     else
-      return url
+      return uri
 
   tokens = marked.lexer content
 
@@ -65,8 +66,9 @@ parseMarkdownSync = (content, baseUrl) ->
 
 class MarkdownPage extends Page
 
-  getLocation: (base='/') ->
-    path.join base, path.dirname(@_filename)
+  getLocation: (base) ->
+    uri = @getUrl base
+    return uri[0..uri.lastIndexOf('/')]
 
   getHtml: (base) ->
     ### parse @markdown and return html. also resolves any relative urls to absolute ones ###

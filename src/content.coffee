@@ -2,6 +2,7 @@
 async = require 'async'
 fs = require 'fs'
 path = require 'path'
+url = require 'url'
 colors = require 'colors'
 minimatch = require 'minimatch'
 {logger} = require './common'
@@ -41,7 +42,12 @@ class ContentPlugin extends Model
 
   getUrl: (base='/') ->
     ### return url for this content relative to *base* ###
-    path.join base, @getFilename()
+    filename = @getFilename()
+    if not base.match /\/$/
+      base += '/'
+    if process.platform is 'win32'
+      filename = filename.replace /\\/g, '/' #'
+    url.resolve base, filename
 
   # some shorthands
   @property 'url', -> @getUrl()

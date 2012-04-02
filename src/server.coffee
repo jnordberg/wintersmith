@@ -27,7 +27,7 @@ colorCode = (code) ->
 setup = (options, callback) ->
 
   contentHandler = (request, response, callback) ->
-    uri = url.parse(request.url).pathname.replace /(.+)\/$/, '$1'
+    uri = url.parse(request.url).pathname
     logger.verbose "contentHandler: #{ uri }"
     async.waterfall [
       (callback) ->

@@ -18,12 +18,8 @@ class Page extends ContentPlugin
   getHtml: (base='/') ->
     @_content
 
-  getUrl: (base='/') ->
-    if path.basename(@filename) is 'index.html'
-      name = path.dirname @filename
-    else
-      name = @filename
-    path.join base, name
+  getUrl: (base) ->
+    super(base).replace /index\.html$/, ''
 
   render: (locals, contents, templates, callback) ->
     if @template == 'none'
