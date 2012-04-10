@@ -28,7 +28,7 @@
     "marked": "git://github.com/jnordberg/marked.git",
     "async": "0.1.x",
     "highlight": "0.2.x",
-    "jade": "0.22.x",
+    "jade": "0.22.0",
     "ncp": "0.2.x",
     "rimraf": "2.x.x",
     "winston": "0.5.x",
