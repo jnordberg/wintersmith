@@ -1,4 +1,3 @@
-
 async = require 'async'
 {ncp} = require 'ncp'
 fs = require 'fs'
@@ -18,7 +17,7 @@ usage = """
     -f, --force             overwrite existing files
     -T, --template <name>   template to create new site from (defaults to 'blog')
 
-    avalible templates are: #{ templateTypes.join(', ') }
+    available templates are: #{ templateTypes.join(', ') }
 
   example:
 
