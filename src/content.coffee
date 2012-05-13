@@ -86,11 +86,11 @@ slugify = (s) ->
 # Class ContentTree
 # not using Class since we need a clean prototype
 ContentTree = (filename) ->
-  private = {directories: []}
+  groups = {directories: []}
   for plugin in contentPlugins
-    private[plugin.treeName] = []
+    groups[plugin.treeName] = []
   Object.defineProperty @, '_',
-    get: -> private
+    get: -> groups
   Object.defineProperty @, 'filename',
     get: -> filename
   Object.defineProperty @, 'index',
