@@ -92,5 +92,7 @@ exports.readJSON = (filename, callback) ->
         rv = JSON.parse buffer.toString()
         callback null, rv
       catch error
+        error.filename = filename
+        error.message = "parsing #{ path.basename(filename) }: #{ error.message }"
         callback error
   ], callback
