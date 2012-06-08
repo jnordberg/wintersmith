@@ -131,7 +131,6 @@ a:link {-webkit-tap-highlight-color: #fcd700;}
 ins {background-color: #fcd700; color: #000; text-decoration: none;}
 mark {background-color: #fcd700; color: #000; font-style: italic; font-weight: bold;}
 
-
 header,
 footer,
 .content {
@@ -169,14 +168,15 @@ header .download a {
 	font-size: 24px;
 	color: #000;
 	text-decoration: none;
-	padding: 14px 30px;
+	padding: 10px 25px;
 	border-radius: 5px;
+	border: 4px solid #00FFAA;
 	margin: 40px 0;
 	background-color: #00FFAA;
 }
 
 header .download a:hover {
-	background-color: #68fafa;
+	border-color: #333;
 }
 
 .content {
@@ -215,10 +215,9 @@ header .download a:hover {
 	margin-left: 90px;
 }
 
-.content article#templating img{
+.content article#templating img {
 	margin-left: 6px;
 }
-
 
 footer {
 	margin-bottom: 38px;
@@ -240,7 +239,7 @@ footer a {
 		margin: 0 auto;
 	}
 	.content article {
-		min-height: 120px;
+		min-height: 140px;
 	}
 	header hr {
 		margin-top: 34px;
