@@ -1,6 +1,9 @@
 title: Templating
 image: img/template.svg
-template: none
+order: 2
 
-Templating using Jade, use powerful features such as extendable blocks
-and mixins to make your designs modular and reusable.
+Use your favourite template engine, currently there is support for [Jade][1] (bundled) and [Swig][2] ([plugin][3])
+
+[1]: http://jade-lang.com/  "Jade - Template Engine"
+[2]: http://paularmstrong.github.com/swig/ "Swig JavaScript Template Engine"
+[3]: https://github.com/jnordberg/wintersmith/wiki/Plugins  "Wintersmith plugins"

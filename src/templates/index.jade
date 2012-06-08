@@ -7,16 +7,13 @@ block body
     hr
     h2 The flexible site generator
     div.download
-      a(href='https://github.com/jnordberg/wintersmith') Download on GitHub
+      a(href='https://github.com/jnordberg/wintersmith') Download & docs
   section.content
     - var sellingPoints = _.chain(contents['selling-points']._.pages).sortBy(function(item) {
-    -   return item.metadata['sort-index'];
+    -   return item.metadata['order'];
     - }).value()
-    each point in sellingPoints
-      article(id=point.title.toLowerCase().replace(' ', '-'))
-        img(src=point.metadata.image, alt=point.title)
-        h3= point.title
-        p!= point.html
+    each sellingPoint in sellingPoints
+      include partials/selling-point
   footer
     p Made in -32°C (
       a(href='http://marge.campus.ltu.se/temp/old_png/temp_201202.png') for real

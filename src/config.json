@@ -1,6 +1,7 @@
 {
   "output": "./../",
   "locals": {
-    "url": "http://jnordberg.github.com/wintersmith"
+    "url": "http://jnordberg.github.com/wintersmith",
+    "description": "Flexible Node.js static site generator"
   }
 }
