@@ -108,6 +108,7 @@ exports.getOptions = (argv, callback) ->
   ], callback
 
 exports.loadPlugins = (plugins, callback) ->
+  require 'coffee-script' # so that we can load .coffee files as plugins directly
   wintersmith = require './../'
   async.forEach plugins, (plugin, callback) ->
     logger.verbose "loading plugin: #{ plugin }"
