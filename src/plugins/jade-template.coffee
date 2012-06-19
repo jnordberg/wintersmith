@@ -21,12 +21,12 @@ JadeTemplate.fromFile = (filename, base, callback) ->
   async.waterfall [
     (callback) ->
       fs.readFile fullpath, callback
-    (buffer, callback) ->
+    (buffer, callback) =>
       try
         rv = jade.compile buffer.toString(),
           filename: fullpath
           pretty: true
-        callback null, new JadeTemplate rv
+        callback null, new this rv
       catch error
         callback error
   ], callback

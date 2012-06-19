@@ -81,9 +81,9 @@ MarkdownPage.fromFile = (filename, base, callback) ->
       fs.readFile path.join(base, filename), callback
     (buffer, callback) ->
       extractMetadata buffer.toString(), callback
-    (result, callback) ->
+    (result, callback) =>
       {markdown, metadata} = result
-      page = new MarkdownPage filename, markdown, metadata
+      page = new this filename, markdown, metadata
       callback null, page
   ], callback
 

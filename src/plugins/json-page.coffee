@@ -9,8 +9,8 @@ class JsonPage extends Page
 JsonPage.fromFile = (filename, base, callback) ->
   async.waterfall [
     async.apply readJSON, path.join(base, filename)
-    (metadata, callback) ->
-      page = new JsonPage filename, metadata.content or '', metadata
+    (metadata, callback) =>
+      page = new this filename, metadata.content or '', metadata
       callback null, page
   ], callback
 
