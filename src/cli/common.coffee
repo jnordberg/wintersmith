@@ -19,6 +19,9 @@ exports.commonOptions = defaults =
   chdir:
     alias: 'C'
     default: null
+  require:
+    alias: 'P'
+    default: []
   plugins:
     alias: 'P'
     default: []
@@ -29,6 +32,7 @@ exports.commonUsage = [
   "  -i, --contents [path]         contents location (defaults to #{ defaults.contents.default })"
   "  -t, --templates [path]        template location (defaults to #{ defaults.templates.default })"
   "  -L, --locals [path]           optional path to json file containing template context data"
+  "  -R, --require                 comma separated list of modules to add to the template context"
   "  -P, --plugins                 comma separated list of modules to load as plugins"
 ].join '\n'
 
@@ -38,6 +42,12 @@ exports.getOptions = (argv, callback) ->
 
   workDir = path.resolve (argv.chdir or process.cwd())
   logger.verbose "resolving options - work directory: #{ workDir }"
+
+  resolveModule = (moduleName, callback) ->
+    if moduleName[...2] is './'
+      callback null, path.resolve workDir, moduleName
+    else
+      callback null, moduleName
 
   async.waterfall [
     (callback) ->
@@ -82,15 +92,32 @@ exports.getOptions = (argv, callback) ->
             callback null, options
       else
         callback null, options
+
+    # provide modules specefied with the require option to the template context
+    (options, callback) ->
+      if typeof options.require is 'string'
+        options.require = options.require.split ','
+      # resolve module paths
+      async.map options.require, resolveModule, (error, result) ->
+        options.require = result
+        callback error, options
+    (options, callback) ->
+      # load modules and add them to options.locals
+      async.forEach options.require, (moduleName, callback) ->
+        logger.verbose "loading module #{ moduleName }"
+        try
+          options.locals[moduleName] = require moduleName
+          callback()
+        catch error
+          callback error
+      , (error) ->
+        callback error, options
+
     (options, callback) ->
       if typeof options.plugins is 'string'
         options.plugins = options.plugins.split ','
       # resolve plugin paths if required as file
-      async.map options.plugins, (item, callback) ->
-        if item[...2] is './'
-          item = path.resolve workDir, item
-        callback null, item
-      , (error, result) ->
+      async.map options.plugins, resolveModule, (error, result) ->
         options.plugins = result
         callback error, options
     (options, callback) ->
