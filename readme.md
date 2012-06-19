@@ -109,6 +109,11 @@ Configuration can be done with command-line options, a config file or both. The 
     <td>javascript object to pass to all templates when rendering, useful for storing metadata for your site. can also be a path to a json file</td>
   </tr>
   <tr>
+    <td>require</td>
+    <td>[]</td>
+    <td>list of modules to load and provide to the template context</td>
+  </tr>
+  <tr>
     <td>plugins</td>
     <td>[]</td>
     <td>list of plugin modules to load</td>
