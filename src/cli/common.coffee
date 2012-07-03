@@ -20,7 +20,7 @@ exports.commonOptions = defaults =
     alias: 'C'
     default: null
   require:
-    alias: 'P'
+    alias: 'R'
     default: []
   plugins:
     alias: 'P'
