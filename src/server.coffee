@@ -81,7 +81,7 @@ run = (options) ->
   http = require 'http'
   server = http.createServer setup options
   server.listen options.port
-  serverUrl = "http://localhost:#{ options.port }/".bold
+  serverUrl = "http://#{ options.domain }:#{ options.port }/".bold
   logger.info "server running on: #{ serverUrl }"
 
 module.exports = setup
