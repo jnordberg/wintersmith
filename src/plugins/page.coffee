@@ -20,6 +20,15 @@ class Page extends ContentPlugin
 
   getUrl: (base) ->
     super(base).replace /index\.html$/, ''
+    
+  getIntro: (base) ->
+    @_html ?= @getHtml(base)
+    idx = ~@_html.indexOf('<span class="more') or ~@_html.indexOf('<h2') or ~@_html.indexOf('<hr')
+    if idx
+      @_intro = @_html.substr 0, ~idx
+    else
+      @_intro = @_html
+    return @_intro
 
   render: (locals, contents, templates, callback) ->
     if @template == 'none'
@@ -61,14 +70,12 @@ class Page extends ContentPlugin
     rfc822 @date
 
   @property 'intro', ->
-    idx = ~@html.indexOf('<span class="more') or ~@html.indexOf('<h2')
-    if idx
-      return @html.substr 0, ~idx
-    else
-      return @html
+    @getIntro()
 
   @property 'hasMore', ->
-    @_hasMore ?= (@html.length > @intro.length)
+    @_html ?= @getHtml()
+    @_intro ?= @getIntro()
+    @_hasMore ?= (@_html.length > @_intro.length)
     return @_hasMore
 
 module.exports = Page
