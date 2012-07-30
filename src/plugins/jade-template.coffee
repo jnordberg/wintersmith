@@ -1,4 +1,3 @@
-
 async = require 'async'
 jade = require 'jade'
 fs = require 'fs'
@@ -32,4 +31,3 @@ JadeTemplate.fromFile = (filename, base, callback) ->
   ], callback
 
 module.exports = JadeTemplate
-

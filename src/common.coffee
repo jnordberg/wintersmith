@@ -1,4 +1,3 @@
-
 winston = require 'winston'
 colors = require 'colors'
 util = require 'util'
