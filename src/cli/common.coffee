@@ -104,9 +104,8 @@ exports.getOptions = (argv, callback) ->
     (options, callback) ->
       # load modules and add them to options.locals
       async.forEach options.require, (moduleName, callback) ->
-        logger.verbose "loading module #{ moduleName }"
-        tmp = moduleName.split('/')
-        moduleAlias = tmp[tmp.length-1]
+        moduleAlias = moduleName.split('/')[-1..]
+        logger.verbose "loading module #{ moduleName } available in locals as: #{ moduleAlias }"
         try
           options.locals[moduleAlias] = require moduleName
           callback()
