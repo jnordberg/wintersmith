@@ -34,6 +34,11 @@ loadPlugins = (plugins, callback) ->
     module wintersmith, callback
   , callback
 
+defaultOptions =
+  plugins: []
+  ignore: []
+  locals: {}
+
 module.exports = (options, callback) ->
   ### build all contents and templates
       *options*:
@@ -43,6 +48,10 @@ module.exports = (options, callback) ->
         templates: path to templates
         output: path to output directory
         locals: optional extra data to send to templates ###
+
+  # default options
+  for key of defaultOptions
+    options[key] ?= defaultOptions[key]
 
   logger.verbose 'running with options:', {options: options}
 
