@@ -1,4 +1,3 @@
-
 async = require 'async'
 {logger} = require './common'
 {ContentTree, ContentPlugin, registerContentPlugin} = require './content'
