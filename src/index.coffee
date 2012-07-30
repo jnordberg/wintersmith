@@ -4,6 +4,7 @@ async = require 'async'
 {ContentTree, ContentPlugin, registerContentPlugin} = require './content'
 {TemplatePlugin, loadTemplates, registerTemplatePlugin} = require './templates'
 renderer = require './renderer'
+{loadPlugins} = require './cli/common' # cli common
 
 defaultPlugins =
   Page: require('./plugins/markdown-page')
@@ -28,7 +29,10 @@ module.exports = (options, callback) ->
         ignore: list of files/pattern in contents directory to ignore
         templates: path to templates
         output: path to output directory
+        plugins: array of paths to plugins
         locals: optional extra data to send to templates ###
+
+  options.plugins = options.plugins ? []
 
   logger.verbose 'running with options:', {options: options}
 
@@ -42,6 +46,7 @@ module.exports = (options, callback) ->
       async.parallel
         contents: async.apply ContentTree.fromDirectory, options.contents, contentOptions
         templates: async.apply loadTemplates, options.templates
+        plugins: async.apply loadPlugins, options.plugins
       , callback
     (result, callback) ->
       renderer result.contents, result.templates, options.output, options.locals, callback
