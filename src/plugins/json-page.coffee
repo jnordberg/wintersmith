@@ -1,4 +1,3 @@
-
 path = require 'path'
 async = require 'async'
 Page = require './page'

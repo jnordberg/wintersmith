@@ -1,4 +1,3 @@
-
 async = require 'async'
 path = require 'path'
 glob = require 'glob'

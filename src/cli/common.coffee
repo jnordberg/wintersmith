@@ -1,16 +1,15 @@
-
 path = require 'path'
 async = require 'async'
 {logger, readJSON} = require '../common'
 
 exports.commonOptions = defaults =
-  config:
+   config:
     alias: 'c'
-    default: './config.json'
-  contents:
+  default: './config.json'
+ contents:
     alias: 'i'
-    default: './contents'
-  templates:
+  default: './contents'
+templates:
     alias: 't'
     default: './templates'
   locals:

@@ -1,4 +1,3 @@
-
 {Highlight} = require 'highlight'
 marked = require 'marked';
 async = require 'async'

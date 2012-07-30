@@ -1,4 +1,3 @@
-
 util = require 'util'
 async = require 'async'
 fs = require 'fs'

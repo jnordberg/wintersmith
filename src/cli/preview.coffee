@@ -1,4 +1,3 @@
-
 async = require 'async'
 util = require 'util'
 {logger, extend} = require '../common' # lib common
