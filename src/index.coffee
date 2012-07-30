@@ -1,6 +1,6 @@
 
 async = require 'async'
-{logger} = require './common'
+{extend, logger, rfc822, readJSON} = require './common'
 {ContentTree, ContentPlugin, registerContentPlugin} = require './content'
 {TemplatePlugin, loadTemplates, registerTemplatePlugin} = require './templates'
 renderer = require './renderer'
@@ -74,7 +74,7 @@ module.exports = (options, callback) ->
 # expose api
 module.exports.renderer = renderer
 module.exports.loadTemplates = loadTemplates
-module.exports.loadContents= loadContents
+module.exports.loadContents = loadContents
 module.exports.loadPlugins = loadPlugins
 module.exports.ContentTree = ContentTree
 module.exports.ContentPlugin = ContentPlugin
@@ -82,4 +82,7 @@ module.exports.TemplatePlugin = TemplatePlugin
 module.exports.defaultPlugins = defaultPlugins
 module.exports.registerContentPlugin = registerContentPlugin
 module.exports.registerTemplatePlugin = registerTemplatePlugin
+module.exports.extend = extend
+module.exports.rfc822 = rfc822
 module.exports.logger = logger
+module.exports.readJSON = readJSON
