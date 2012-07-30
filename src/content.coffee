@@ -94,7 +94,9 @@ ContentTree = (filename) ->
   Object.defineProperty @, 'filename',
     get: -> filename
   Object.defineProperty @, 'index',
-    get: -> @['index.md'] or @['index.markdown']
+    get: ->
+      for key, item of this
+        if key[0...5] is 'index' then return item
 
 ContentTree.fromDirectory = (directory, base, callback) ->
   if !callback?
