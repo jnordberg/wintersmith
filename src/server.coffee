@@ -23,6 +23,11 @@ colorCode = (code) ->
       return s
 
 setup = (options, callback) ->
+  ### returns a wintersmith http middleware ###
+
+  # options passed to ContentTree.fromDirectory
+  contentOptions =
+    ignore: options.ignore
 
   contentHandler = (request, response, callback) ->
     uri = url.parse(request.url).pathname
@@ -32,7 +37,7 @@ setup = (options, callback) ->
         # load contents and templates
         async.parallel
           templates: async.apply loadTemplates, options.templates
-          contents: async.apply ContentTree.fromDirectory, options.contents
+          contents: async.apply ContentTree.fromDirectory, options.contents, contentOptions
         , callback
       (result, callback) ->
         # render if uri matches

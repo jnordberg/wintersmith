@@ -25,17 +25,22 @@ module.exports = (options, callback) ->
   ### build all contents and templates
       *options*:
         contents: path to contents
+        ignore: list of files/pattern in contents directory to ignore
         templates: path to templates
         output: path to output directory
         locals: optional extra data to send to templates ###
 
   logger.verbose 'running with options:', {options: options}
 
+  # options passed to ContentTree.fromDirectory
+  contentOptions =
+    ignore: options.ignore
+
   # load templates & contents then render
   async.waterfall [
     (callback) ->
       async.parallel
-        contents: async.apply loadContents, options.contents
+        contents: async.apply ContentTree.fromDirectory, options.contents, contentOptions
         templates: async.apply loadTemplates, options.templates
       , callback
     (result, callback) ->

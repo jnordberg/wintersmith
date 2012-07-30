@@ -25,6 +25,9 @@ exports.commonOptions = defaults =
   plugins:
     alias: 'P'
     default: []
+  ignore:
+    alias: 'I'
+    default: []
 
 exports.commonUsage = [
   "-C, --chdir [path]            change the working directory"
@@ -34,6 +37,7 @@ exports.commonUsage = [
   "  -L, --locals [path]           optional path to json file containing template context data"
   "  -R, --require                 comma separated list of modules to add to the template context"
   "  -P, --plugins                 comma separated list of modules to load as plugins"
+  "  -I, --ignore                  comma separated list of files/glob-patterns to ignore"
 ].join '\n'
 
 exports.getOptions = (argv, callback) ->
@@ -121,6 +125,13 @@ exports.getOptions = (argv, callback) ->
       async.map options.plugins, resolveModule, (error, result) ->
         options.plugins = result
         callback error, options
+
+    (options, callback) ->
+      # split list of files to ignore if needed
+      if typeof options.ignore is 'string'
+        options.ignore = options.ignore.split ','
+      callback null, options
+
     (options, callback) ->
       logger.verbose 'resolved options:', options
       logger.verbose 'validating paths'
