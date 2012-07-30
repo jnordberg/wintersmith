@@ -1,9 +1,8 @@
-
-async = require 'async'
-{logger} = require './common'
-{ContentTree, ContentPlugin, registerContentPlugin} = require './content'
-{TemplatePlugin, loadTemplates, registerTemplatePlugin} = require './templates'
+async    = require 'async'
 renderer = require './renderer'
+{extend, stripExtension, rfc822, logger, readJSON}      = require './common'
+{ContentTree, ContentPlugin, registerContentPlugin}     = require './content'
+{TemplatePlugin, loadTemplates, registerTemplatePlugin} = require './templates'
 
 defaultPlugins =
   Page: require('./plugins/markdown-page')
@@ -43,13 +42,26 @@ module.exports = (options, callback) ->
   ], callback
 
 # expose api
-module.exports.renderer = renderer
-module.exports.loadTemplates = loadTemplates
-module.exports.loadContents= loadContents
-module.exports.ContentTree = ContentTree
-module.exports.ContentPlugin = ContentPlugin
+module.exports.ContentTree    = ContentTree
+module.exports.ContentPlugin  = ContentPlugin
 module.exports.TemplatePlugin = TemplatePlugin
+module.exports.renderer       = renderer
+module.exports.loadTemplates  = loadTemplates
+module.exports.loadContents   = loadContents
 module.exports.defaultPlugins = defaultPlugins
-module.exports.registerContentPlugin = registerContentPlugin
+module.exports.registerContentPlugin  = registerContentPlugin
 module.exports.registerTemplatePlugin = registerTemplatePlugin
-module.exports.logger = logger
+# expose common api
+module.exports.extend         = extend
+module.exports.stripExtension = stripExtension
+module.exports.rfc822         = rfc822
+module.exports.logger         = logger
+module.exports.readJSON       = readJSON
+# expose our plugins
+module.exports.Page         = require './plugins/markdown-page'
+module.exports.MarkdownPage = require './plugins/markdown-page'
+module.exports.JsonPage     = require './plugins/json-page'
+module.exports.JadeTemplate = require './plugins/jade-template'
+# expose some deps, so plugins dont' need their owns
+module.exports.async = async
+module.exports._ = require 'underscore'
