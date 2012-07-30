@@ -21,11 +21,25 @@ loadContents = (location, callback) ->
   logger.verbose "loading contents in #{ location }"
   ContentTree.fromDirectory location, callback
 
+loadPlugins = (plugins, callback) ->
+  if plugins.length
+    require 'coffee-script' # so that we can load .coffee files as plugins directly
+    wintersmith = require './../'
+  async.forEach plugins, (plugin, callback) ->
+    logger.verbose "loading plugin: #{ plugin }"
+    try
+      module = require plugin
+    catch error
+      return callback error
+    module wintersmith, callback
+  , callback
+
 module.exports = (options, callback) ->
   ### build all contents and templates
       *options*:
         contents: path to contents
         ignore: list of files/pattern in contents directory to ignore
+        plugins: array of paths to plugins to load
         templates: path to templates
         output: path to output directory
         locals: optional extra data to send to templates ###
@@ -42,6 +56,7 @@ module.exports = (options, callback) ->
       async.parallel
         contents: async.apply ContentTree.fromDirectory, options.contents, contentOptions
         templates: async.apply loadTemplates, options.templates
+        plugins: async.apply loadPlugins, options.plugins
       , callback
     (result, callback) ->
       renderer result.contents, result.templates, options.output, options.locals, callback
@@ -51,6 +66,7 @@ module.exports = (options, callback) ->
 module.exports.renderer = renderer
 module.exports.loadTemplates = loadTemplates
 module.exports.loadContents= loadContents
+module.exports.loadPlugins = loadPlugins
 module.exports.ContentTree = ContentTree
 module.exports.ContentPlugin = ContentPlugin
 module.exports.TemplatePlugin = TemplatePlugin

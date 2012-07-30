@@ -5,7 +5,7 @@ fs = require 'fs'
 path = require 'path'
 colors = require 'colors'
 {logger, extend} = require '../common' # lib common
-{getOptions, commonOptions, commonUsage, loadPlugins} = require './common' # cli common
+{getOptions, commonOptions, commonUsage} = require './common' # cli common
 wintersmith = require '../'
 
 usage = """
@@ -68,8 +68,6 @@ build = (argv) ->
             ], callback
           else
             callback()
-        # load plugins
-        async.apply loadPlugins, options.plugins
         (callback) ->
           # start building
           wintersmith options, callback

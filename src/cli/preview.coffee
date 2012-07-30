@@ -2,7 +2,7 @@
 async = require 'async'
 util = require 'util'
 {logger, extend} = require '../common' # lib common
-{getOptions, commonUsage, commonOptions, loadPlugins} = require './common' # cli common
+{getOptions, commonUsage, commonOptions} = require './common' # cli common
 
 usage = """
 
@@ -40,10 +40,6 @@ preview = (argv) ->
   async.waterfall [
     # load options
     async.apply getOptions, argv
-    (options, callback) ->
-      # load plugins
-      loadPlugins options.plugins, (error) ->
-        callback error, options
     (options, callback) ->
       server.run options, callback
   ], (error) ->

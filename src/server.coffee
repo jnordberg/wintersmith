@@ -8,7 +8,7 @@ colors = require 'colors'
 mime = require 'mime'
 
 {logger, extend, stripExtension} = require './common'
-{loadTemplates, ContentTree} = require './'
+{loadTemplates, loadPlugins, ContentTree} = require './'
 
 colorCode = (code) ->
   s = code.toString()
@@ -84,10 +84,15 @@ setup = (options, callback) ->
 
 run = (options) ->
   http = require 'http'
-  server = http.createServer setup options
-  server.listen options.port
-  serverUrl = "http://#{ options.domain }:#{ options.port }/".bold
-  logger.info "server running on: #{ serverUrl }"
+  logger.verbose 'setting up server'
+  async.waterfall [
+    async.apply loadPlugins, options.plugins
+    (callback) ->
+      server = http.createServer setup options
+      server.listen options.port
+      serverUrl = "http://#{ options.domain }:#{ options.port }/".bold
+      logger.info "server running on: #{ serverUrl }"
+  ]
 
 module.exports = setup
 module.exports.run = run
