@@ -1,4 +1,3 @@
-
 async = require 'async'
 {extend, logger, rfc822, readJSON} = require './common'
 {ContentTree, ContentPlugin, registerContentPlugin} = require './content'

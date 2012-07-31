@@ -1,4 +1,3 @@
-
 async = require 'async'
 fs = require 'fs'
 path = require 'path'

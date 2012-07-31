@@ -1,4 +1,3 @@
-
 path = require 'path'
 async = require 'async'
 underscore = require 'underscore'

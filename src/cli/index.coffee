@@ -1,4 +1,3 @@
-
 path = require 'path'
 optimist = require 'optimist'
 {logger, transports, readJSON} = require './../common'
