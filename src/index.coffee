@@ -22,16 +22,16 @@ loadContents = (location, callback) ->
   ContentTree.fromDirectory location, callback
 
 loadPlugins = (plugins, callback) ->
-  if plugins.length
-    require 'coffee-script' # so that we can load .coffee files as plugins directly
-    wintersmith = require './../'
-  async.forEach plugins, (plugin, callback) ->
-    logger.verbose "loading plugin: #{ plugin }"
+  # load coffeescript so that we can load .coffee files as plugins directly
+  if plugins?.length then require 'coffee-script'
+  async.forEach plugins, (pluginPath, callback) ->
+    logger.verbose "loading plugin: #{ pluginPath }"
     try
-      module = require plugin
+      plugin = require pluginPath
     catch error
-      return callback error
-    module wintersmith, callback
+      callback error
+      return
+    plugin module.exports, callback
   , callback
 
 defaultOptions =
@@ -61,11 +61,11 @@ module.exports = (options, callback) ->
 
   # load templates & contents then render
   async.waterfall [
+    async.apply loadPlugins, options.plugins
     (callback) ->
       async.parallel
         contents: async.apply ContentTree.fromDirectory, options.contents, contentOptions
         templates: async.apply loadTemplates, options.templates
-        plugins: async.apply loadPlugins, options.plugins
       , callback
     (result, callback) ->
       renderer result.contents, result.templates, options.output, options.locals, callback

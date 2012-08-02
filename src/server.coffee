@@ -87,12 +87,14 @@ run = (options) ->
   logger.verbose 'setting up server'
   async.waterfall [
     async.apply loadPlugins, options.plugins
-    (callback) ->
+  ], (error) ->
+    if error
+      logger.error error.message, error
+    else
       server = http.createServer setup options
       server.listen options.port
       serverUrl = "http://#{ options.domain }:#{ options.port }/".bold
       logger.info "server running on: #{ serverUrl }"
-  ]
 
 module.exports = setup
 module.exports.run = run
