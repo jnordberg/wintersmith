@@ -9,7 +9,7 @@ Page = require './page'
 
 is_relative = (uri) ->
   ### returns true if *uri* is relative; otherwise false ###
-  !/(^\w+:)|(^\/)/.test uri
+  (url.parse(uri).protocol == undefined)
 
 parseMetadata = (metadata, callback) ->
   ### takes *metadata* in the format:
