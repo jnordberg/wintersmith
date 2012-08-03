@@ -118,6 +118,11 @@ Configuration can be done with command-line options, a config file or both. The 
     <td>[]</td>
     <td>list of plugin modules to load</td>
   </tr>
+  <tr>
+    <td>ignore</td>
+    <td>[]</td>
+    <td>list of files/globpatterns in contents to ignore</td>
+  </tr>
 </table>
 
 All paths can either be relative or absolute. Relative paths will be resolved from the current directory or `--chdir` if set.
