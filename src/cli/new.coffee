@@ -2,6 +2,7 @@ async = require 'async'
 {ncp} = require 'ncp'
 fs = require 'fs'
 path = require 'path'
+{fileExists} = require './common' # cli common
 {logger} = require '../common' # lib common
 
 templateTypes = ['basic', 'blog']
@@ -53,7 +54,7 @@ createSite = (argv) ->
   async.waterfall [
     (callback) ->
       logger.verbose "checking validity of #{ to }"
-      path.exists to, (exists) ->
+      fileExists to, (exists) ->
         if exists and !argv.force
           callback new Error "#{ to } already exists. Add --force to overwrite"
         else

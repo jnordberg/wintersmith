@@ -1,7 +1,10 @@
 
+fs = require 'fs'
 path = require 'path'
 async = require 'async'
 {logger, readJSON} = require '../common'
+
+exports.fileExists = fileExists = fs.exists or path.exists
 
 exports.commonOptions = defaults =
   config:
@@ -57,7 +60,7 @@ exports.getOptions = (argv, callback) ->
     (callback) ->
       # load config if present
       configPath = path.join workDir, argv.config
-      path.exists configPath, (exists) ->
+      fileExists configPath, (exists) ->
         if exists
           logger.info "using config file: #{ configPath }"
           readJSON configPath, callback
@@ -137,7 +140,7 @@ exports.getOptions = (argv, callback) ->
       logger.verbose 'validating paths'
       paths = ['contents', 'templates']
       async.forEach paths, (filepath, callback) ->
-        path.exists options[filepath], (exists) ->
+        fileExists options[filepath], (exists) ->
           if exists
             callback()
           else

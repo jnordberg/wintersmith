@@ -5,7 +5,7 @@ fs = require 'fs'
 path = require 'path'
 colors = require 'colors'
 {logger, extend} = require '../common' # lib common
-{getOptions, commonOptions, commonUsage} = require './common' # cli common
+{getOptions, commonOptions, commonUsage, fileExists} = require './common' # cli common
 wintersmith = require '../'
 
 usage = """
@@ -53,7 +53,7 @@ build = (argv) ->
       async.waterfall [
         (callback) ->
           # create output dir if not existing
-          path.exists options.output, (exists) ->
+          fileExists options.output, (exists) ->
             if exists
               callback()
             else
