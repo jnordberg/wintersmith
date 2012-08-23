@@ -4,38 +4,12 @@ async = require 'async'
 path = require 'path'
 url = require 'url'
 fs = require 'fs'
-yaml = require 'yaml'
+yaml = require 'yaml-front-matter'
 Page = require './page'
 
 is_relative = (uri) ->
   ### returns true if *uri* is relative; otherwise false ###
   !/(^\w+:)|(^\/)/.test uri
-
-parseMetadata = (metadata, callback) ->
-  ### takes *metadata* in the format:
-        key: value
-        foo: bar
-      returns parsed object ###
-
-  rv = {}
-  try
-    rv = yaml.eval metadata
-
-    callback null, rv
-
-  catch error
-    callback error
-
-extractMetadata = (content, callback) ->
-  # split metadata and markdown content
-  split_idx = content.indexOf '\n\n' # should probably make this a bit more robust
-
-  async.parallel
-    metadata: (callback) ->
-      parseMetadata content.slice(0, split_idx), callback
-    markdown: (callback) ->
-      callback null, content.slice(split_idx + 2)
-  , callback
 
 parseMarkdownSync = (content, baseUrl) ->
   ### takes markdown *content* and returns html using *baseUrl* for any relative urls
@@ -73,11 +47,10 @@ MarkdownPage.fromFile = (filename, base, callback) ->
   async.waterfall [
     (callback) ->
       fs.readFile path.join(base, filename), callback
-    (buffer, callback) ->
-      extractMetadata buffer.toString(), callback
-    (result, callback) =>
-      {markdown, metadata} = result
-      page = new this filename, markdown, metadata
+    (buffer, callback) =>
+      metadata = yaml.loadFront(buffer)
+      markdown = metadata.__content
+      page = new @ filename, markdown, metadata
       callback null, page
   ], callback
 
