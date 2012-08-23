@@ -1,10 +1,10 @@
-
 {Highlight} = require 'highlight'
 marked = require 'marked';
 async = require 'async'
 path = require 'path'
 url = require 'url'
 fs = require 'fs'
+yaml = require 'yaml'
 Page = require './page'
 
 is_relative = (uri) ->
@@ -19,13 +19,7 @@ parseMetadata = (metadata, callback) ->
 
   rv = {}
   try
-    lines = metadata.split '\n'
-
-    for line in lines
-      pos = line.indexOf ':'
-      key = line.slice(0, pos).toLowerCase()
-      value = line.slice(pos + 1).trim()
-      rv[key] = value
+    rv = yaml.eval metadata
 
     callback null, rv
 
