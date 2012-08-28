@@ -79,7 +79,7 @@ build = (argv, callback) ->
       stop = new Date()
       delta = stop - start
       logger.info "done in #{ delta.toString().bold } ms\n"
-      callback options
+      callback options if callback
 
 module.exports = build
 module.exports.usage = usage

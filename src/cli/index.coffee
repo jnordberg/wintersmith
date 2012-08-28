@@ -64,6 +64,6 @@ main = (callback) ->
 
   if cmd
     cmd optimist.options(globalOptions).options(cmd.options).argv, (options) ->
-      callback options
+      callback options if callback
 
 module.exports.main = main
