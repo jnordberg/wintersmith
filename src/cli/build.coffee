@@ -42,7 +42,7 @@ options =
 
 extend options, commonOptions
 
-build = (argv) ->
+build = (argv, callback) ->
   start = new Date()
   logger.info 'building site'
 
@@ -79,6 +79,7 @@ build = (argv) ->
       stop = new Date()
       delta = stop - start
       logger.info "done in #{ delta.toString().bold } ms\n"
+      callback options
 
 module.exports = build
 module.exports.usage = usage
