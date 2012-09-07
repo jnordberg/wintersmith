@@ -71,7 +71,11 @@ build = (argv, callback) ->
         (callback) ->
           # start building
           wintersmith options, callback
-      ], callback null, options
+      ], (error) ->
+        if error
+          logger.error error.message, error
+        else
+          callback null, options
   ], (error, options) ->
     if error
       logger.error error.message, error
