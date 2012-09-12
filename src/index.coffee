@@ -12,7 +12,7 @@ defaultPlugins =
   JadeTemplate: require('./plugins/jade-template')
 
 # register default plugins
-registerContentPlugin 'pages', '**/*.*(markdown|md)', defaultPlugins.MarkdownPage
+registerContentPlugin 'pages', '**/*.*(markdown|mkd|md)', defaultPlugins.MarkdownPage
 registerContentPlugin 'pages', '**/*.json', defaultPlugins.JsonPage
 registerTemplatePlugin '**/*.jade', defaultPlugins.JadeTemplate
 
