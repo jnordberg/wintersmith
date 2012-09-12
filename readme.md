@@ -1,3 +1,7 @@
+(This is a forked from the original Wintersmith git repo)
+
+* * *
+
 #![Wintersmith](http://jnordberg.github.com/wintersmith/img/wintersmith.svg)
 
 A flexible static site generator – http://jnordberg.github.com/wintersmith/
