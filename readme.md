@@ -1,4 +1,6 @@
-(This is a forked from the original Wintersmith git repo)
+This is a forked from the original Wintersmith git repo.
+
+* Added fix on feed.xml to sort article by date.
 
 * * *
 
