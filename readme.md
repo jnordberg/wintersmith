@@ -1,9 +1,3 @@
-This is a forked from the original Wintersmith git repo.
-
-* Added fix on feed.xml to sort article by date.
-
-* * *
-
 #![Wintersmith](http://jnordberg.github.com/wintersmith/img/wintersmith.svg)
 
 A flexible static site generator – http://jnordberg.github.com/wintersmith/
@@ -156,8 +150,8 @@ or use json to simply pass metadata to a template:
 {
   "template": "template.jade",
   "meta": {
-  	"greta": 123,
-  	"peta": [1, 2, 3]
+    "greta": 123,
+    "peta": [1, 2, 3]
   }
 }
 ```
@@ -332,7 +326,7 @@ wintersmith(options, callback(error) {
   if (error) {
     throw error;
   } else {
-	console.log('great success!');
+  console.log('great success!');
   }
 });
 
