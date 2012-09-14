@@ -1,6 +1,6 @@
 
 async = require 'async'
-{extend, logger, rfc822, readJSON} = require './common'
+{extend, logger, readJSON} = require './common'
 {ContentTree, ContentPlugin, registerContentPlugin} = require './content'
 {TemplatePlugin, loadTemplates, registerTemplatePlugin} = require './templates'
 renderer = require './renderer'
@@ -83,6 +83,5 @@ module.exports.defaultPlugins = defaultPlugins
 module.exports.registerContentPlugin = registerContentPlugin
 module.exports.registerTemplatePlugin = registerTemplatePlugin
 module.exports.extend = extend
-module.exports.rfc822 = rfc822
 module.exports.logger = logger
 module.exports.readJSON = readJSON
