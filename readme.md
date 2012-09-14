@@ -150,8 +150,8 @@ or use json to simply pass metadata to a template:
 {
   "template": "template.jade",
   "meta": {
-  	"greta": 123,
-  	"peta": [1, 2, 3]
+    "greta": 123,
+    "peta": [1, 2, 3]
   }
 }
 ```
@@ -326,7 +326,7 @@ wintersmith(options, callback(error) {
   if (error) {
     throw error;
   } else {
-	console.log('great success!');
+  console.log('great success!');
   }
 });
 

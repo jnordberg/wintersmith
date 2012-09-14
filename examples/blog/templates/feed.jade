@@ -4,8 +4,8 @@ rss(version='2.0',
     xmlns:wfw='http://wellformedweb.org/CommentAPI/',
     xmlns:dc='http://purl.org/dc/elements/1.1/'
     xmlns:atom='http://www.w3.org/2005/Atom')
-  channel
-    - var articles = contents.articles._.directories.map(function(item){ return item.index });
+  channel    
+    - var articles = _.chain(contents.articles._.directories).map(function(item){ return item.index }).sortBy(function(item) { return -item.date }).value();
     title= locals.name
     atom:link(href=locals.url + '/feed.xml', rel='self', type='application/rss+xml')
     link= locals.url
