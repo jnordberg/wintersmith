@@ -5,7 +5,7 @@ underscore = require 'underscore'
 moment = require 'moment'
 
 {ContentPlugin} = require './../content'
-{stripExtension, extend, rfc822} = require './../common'
+{stripExtension, extend} = require './../common'
 
 class Page extends ContentPlugin
   ### page content plugin, a page is a file that has
@@ -69,7 +69,7 @@ class Page extends ContentPlugin
     new Date(@_metadata.date or 0)
 
   @property 'rfc822date', ->
-    rfc822 @date
+    moment(@date).format('ddd, DD MMM YYYY HH:mm:ss ZZ')
 
   @property 'intro', ->
     @getIntro()
