@@ -3,6 +3,7 @@ path = require 'path'
 async = require 'async'
 underscore = require 'underscore'
 moment = require 'moment'
+marked = require 'marked'
 
 {ContentPlugin} = require './../content'
 {stripExtension, extend} = require './../common'
@@ -49,6 +50,7 @@ class Page extends ContentPlugin
           contents: contents
           _: underscore
           moment: moment
+          marked: marked
         extend ctx, locals
         template.render ctx, callback
     ], callback
