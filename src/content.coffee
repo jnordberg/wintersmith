@@ -86,17 +86,26 @@ slugify = (s) ->
 # Class ContentTree
 # not using Class since we need a clean prototype
 ContentTree = (filename) ->
+  parent = null
   groups = {directories: []}
+
   for plugin in contentPlugins
     groups[plugin.treeName] = []
-  Object.defineProperty @, '_',
+
+  Object.defineProperty this, '_',
     get: -> groups
-  Object.defineProperty @, 'filename',
+
+  Object.defineProperty this, 'filename',
     get: -> filename
-  Object.defineProperty @, 'index',
+
+  Object.defineProperty this, 'index',
     get: ->
       for key, item of this
         if key[0...5] is 'index' then return item
+
+  Object.defineProperty this, 'parent',
+    get: -> parent
+    set: (val) -> parent = val
 
 ContentTree.fromDirectory = (directory, args..., callback) ->
   ### recursively scan a *directory* and build a ContentTree
@@ -147,9 +156,11 @@ ContentTree.fromDirectory = (directory, args..., callback) ->
             if stats.isDirectory()
               # recursively map directories to content tree instances
               ContentTree.fromDirectory filename, base, options, (error, result) ->
+                result.parent = tree
                 tree[path.relative(directory, filename)] = result
                 tree._.directories.push result
                 callback error
+
             else if stats.isFile()
               # map any files found to content plugins
               basename = path.basename filename
@@ -163,6 +174,7 @@ ContentTree.fromDirectory = (directory, args..., callback) ->
                 if minimatch relname, plugin.pattern, minimatchOptions # TODO: dotfile plugin
                   plugin.class.fromFile relname, base, (error, instance) ->
                     if not error
+                      instance.parent = tree
                       tree[basename] = instance
                       tree._[plugin.treeName].push instance
                     callback error
