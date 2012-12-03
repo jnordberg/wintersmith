@@ -25,7 +25,7 @@
     "url": "https://github.com/jnordberg/wintersmith.git"
   },
   "dependencies": {
-    "marked": "git://github.com/jnordberg/marked.git",
+    "marked": "git+https://github.com/tlvince/marked.git#typogr",
     "coffee-script": "1.3.x",
     "async": "0.1.x",
     "highlight": "0.2.x",
@@ -39,7 +39,8 @@
     "underscore": "1.3.x",
     "minimatch": "0.2.x",
     "mime": "1.2.x",
-    "moment": "1.7.x"
+    "moment": "1.7.x",
+    "typogr": "0.5.x"
   },
   "engine": {
     "node": ">=0.6"

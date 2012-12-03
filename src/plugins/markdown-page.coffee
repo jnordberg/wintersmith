@@ -6,6 +6,7 @@ path = require 'path'
 url = require 'url'
 fs = require 'fs'
 Page = require './page'
+typogr = require 'typogr'
 
 is_relative = (uri) ->
   ### returns true if *uri* is relative; otherwise false ###
@@ -73,6 +74,7 @@ class MarkdownPage extends Page
   getHtml: (base) ->
     ### parse @markdown and return html. also resolves any relative urls to absolute ones ###
     @_html ?= parseMarkdownSync @_content, @getLocation(base) # cache html
+    @_html = typogr.typogrify(@_html)
     return @_html
 
 MarkdownPage.fromFile = (filename, base, callback) ->
