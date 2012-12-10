@@ -1,46 +1,45 @@
 
 {Highlight} = require 'highlight'
-marked = require 'marked';
+marked = require 'marked'
 async = require 'async'
 path = require 'path'
 url = require 'url'
 fs = require 'fs'
+yaml = require 'js-yaml'
+{logger} = require './../common'
 Page = require './page'
 
 is_relative = (uri) ->
   ### returns true if *uri* is relative; otherwise false ###
   (url.parse(uri).protocol == undefined)
 
-parseMetadata = (metadata, callback) ->
-  ### takes *metadata* in the format:
-        key: value
-        foo: bar
-      returns parsed object ###
-
-  rv = {}
+parseMetadata = (source, callback) ->
   try
-    lines = metadata.split '\n'
-
-    for line in lines
-      pos = line.indexOf ':'
-      key = line.slice(0, pos).toLowerCase()
-      value = line.slice(pos + 1).trim()
-      rv[key] = value
-
-    callback null, rv
-
+    callback null, yaml.load(source)
   catch error
     callback error
 
 extractMetadata = (content, callback) ->
   # split metadata and markdown content
-  split_idx = content.indexOf '\n\n' # should probably make this a bit more robust
+
+  if content[0...3] is '---'
+    # "Front Matter"
+    re = /^-{3}([\w\W]+)-{3}([\w\W]*)*/ # from js-yaml-front
+    result = re.exec content
+    metadata = result[1]
+    markdown = result[2]
+  else
+    # old style metadata
+    logger.warn 'Deprecation warning: page metadata should be encapsulated by three dashes (---)'
+    split_idx = content.indexOf '\n\n'
+    metadata = content.slice(0, split_idx)
+    markdown = content.slice(split_idx + 2)
 
   async.parallel
     metadata: (callback) ->
-      parseMetadata content.slice(0, split_idx), callback
+      parseMetadata metadata, callback
     markdown: (callback) ->
-      callback null, content.slice(split_idx + 2)
+      callback null, markdown
   , callback
 
 parseMarkdownSync = (content, baseUrl) ->
