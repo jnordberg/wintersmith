@@ -132,11 +132,12 @@ All paths can either be relative or absolute. Relative paths will be resolved fr
 A page is either a markdown file with metadata on top or a json file located in the contents directory.
 
 ```markdown
+---
 title: My first post
 date: 2012-12-12 12:12
 author: John Hjort <foo@bar.com>
 template: article.jade
-
+----
 
 # Hello friends!
 
@@ -166,7 +167,7 @@ This is especially convenient when using a markdown editor (read [Mou](http://mo
 
 ### Metadata
 
-Metadata can be any `key: value` pair you want. And will be accessible in the template as `page.metadata`.
+Metadata is parsed using [js-yaml](https://github.com/nodeca/js-yaml) and will be accessible in the template as `page.metadata`.
 
 There are two special metadata keys, The first one is `template` which specifies what template to render the page with. If the key is omitted or set to `none` the page will not be rendered (but still available in the content tree).
 
@@ -235,8 +236,7 @@ Content plugins are registered using the `registerContentPlugin` function.
     <td>
       <p><em>string</em> - plugin group name
 
-      <p>Groups are used to easily access a specific type of conent in the tree. The content tree has a special property <code>_</code> that contains
-      returns a object with all plugin groups as <code>{groupname: [pluginInstance, ..], ..}</code>
+      <p>Groups are used to easily access a specific type of content in the tree. The content tree has a special property <code>_</code> that returns a object with all plugin groups as <code>{groupname: [pluginInstance, ..], ..}</code>
 
       <p>For example you can use <code>contents.somedir._.pages</code> to get an array of all pages in a directory.
     </td>
@@ -319,6 +319,7 @@ var options = {
   'output': '/var/www/pub',
   'contents': '/foo/contents',
   'contents': '/foo/templates',
+  'plugins': ['some-plugin'],
   'locals': {foo: 'bar'}
 };
 
@@ -337,13 +338,13 @@ wintersmith.loadContents('path/to/contents', callback(error, contents) {
 
 ```
 
-There are more api methods defined, have a look at the source it's pretty well-commented.
+There are more API methods defined, have a look at the source it's pretty well-commented.
 
 ## About
 
 Wintersmith is written by [Johan Nordberg](http://johan-nordberg.com) using [CoffeeScript](http://coffeescript.org/) and licensed under the [MIT-license](http://en.wikipedia.org/wiki/MIT_License).
 
-The name is a nod to [blacksmith](https://github.com/flatiron/blacksmith) which inspired this project. (and [Terry Pratchett](http://www.terrypratchett.co.uk/) of course)
+The name is a nod to [blacksmith](https://github.com/flatiron/blacksmith) which inspired this project (and [Terry Pratchett](http://www.terrypratchett.co.uk/) of course).
 
 Some of the great node.js modules that wintersmith uses:
 
