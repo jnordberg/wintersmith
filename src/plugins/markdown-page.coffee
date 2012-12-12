@@ -24,10 +24,13 @@ extractMetadata = (content, callback) ->
 
   if content[0...3] is '---'
     # "Front Matter"
-    re = /^-{3}([\w\W]+)-{3}([\w\W]*)*/ # from js-yaml-front
-    result = re.exec content
-    metadata = result[1]
-    markdown = result[2]
+    result = content.match /-{3}\W+([\s\S]*?)\W+-{3}\W([\s\S]*)/
+    if result?.length is 3
+      metadata = result[1]
+      markdown = result[2]
+    else
+      metadata = ''
+      markdown = content
   else
     # old style metadata
     logger.warn 'Deprecation warning: page metadata should be encapsulated by three dashes (---)'
