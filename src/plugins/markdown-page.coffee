@@ -15,7 +15,7 @@ is_relative = (uri) ->
 
 parseMetadata = (source, callback) ->
   try
-    callback null, yaml.load(source)
+    callback null, yaml.load(source) or {}
   catch error
     callback error
 
