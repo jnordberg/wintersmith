@@ -1,4 +1,3 @@
-
 async = require 'async'
 jade = require 'jade'
 fs = require 'fs'
