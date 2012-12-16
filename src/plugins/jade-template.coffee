@@ -1,4 +1,3 @@
-
 async = require 'async'
 jade = require 'jade'
 fs = require 'fs'
@@ -25,7 +24,7 @@ JadeTemplate.fromFile = (filename, base, callback) ->
       try
         rv = jade.compile buffer.toString(),
           filename: fullpath
-          pretty: true
+          pretty: false
         callback null, new this rv
       catch error
         callback error
