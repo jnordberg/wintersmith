@@ -24,7 +24,7 @@ JadeTemplate.fromFile = (filename, base, callback) ->
       try
         rv = jade.compile buffer.toString(),
           filename: fullpath
-          pretty: false
+          pretty: true
         callback null, new this rv
       catch error
         callback error
