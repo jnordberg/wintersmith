@@ -1,4 +1,3 @@
-
 {Highlight} = require 'highlight'
 marked = require 'marked'
 async = require 'async'
@@ -24,7 +23,7 @@ extractMetadata = (content, callback) ->
 
   if content[0...3] is '---'
     # "Front Matter"
-    result = content.match /-{3}\W+([\s\S]*?)\W+-{3}\W([\s\S]*)/
+    result = content.match /-{3,}\s([\s\S]*?)-{3,}\s([\s\S]*)/
     if result?.length is 3
       metadata = result[1]
       markdown = result[2]
@@ -33,7 +32,7 @@ extractMetadata = (content, callback) ->
       markdown = content
   else
     # old style metadata
-    logger.warn 'Deprecation warning: page metadata should be encapsulated by three dashes (---)'
+    logger.warn 'Deprecation warning: page metadata should be encapsulated by at least three dashes (---)'
     split_idx = content.indexOf '\n\n'
     metadata = content.slice(0, split_idx)
     markdown = content.slice(split_idx + 2)
