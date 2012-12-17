@@ -14,7 +14,7 @@ usage = """
 
   options:
 
-    -o, --output [path]           directory to write build-output (defaults to ./output)
+    -o, --output [path]           directory to write build-output (defaults to ./build)
     -X, --clean                   clean before building (warning: will recursively delete everything at output path)
     #{ commonUsage }
 
@@ -30,6 +30,7 @@ usage = """
 
     or using both (command-line options will override config options):
     $ wintersmith build --config another_config.json --clean
+
 """
 
 options =
