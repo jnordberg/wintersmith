@@ -1,4 +1,4 @@
-{Highlight} = require 'highlight'
+hljs = require 'highlight.js'
 marked = require 'marked'
 async = require 'async'
 path = require 'path'
@@ -59,8 +59,10 @@ parseMarkdownSync = (content, baseUrl) ->
   for token in tokens
     switch token.type
       when 'code'
-        # token.lang is set since this is github markdown, but highlight has no way to manually set lang
-        token.text = Highlight token.text, '  ' # string is tab replacement
+        if token.lang?
+          token.text = hljs.highlight(token.lang, token.text).value
+        else
+          token.text = hljs.highlightAuto(token.text).value
         token.escaped = true
 
   return marked.parser tokens
