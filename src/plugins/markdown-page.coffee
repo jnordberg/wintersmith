@@ -12,38 +12,6 @@ is_relative = (uri) ->
   ### returns true if *uri* is relative; otherwise false ###
   (url.parse(uri).protocol == undefined)
 
-parseMetadata = (source, callback) ->
-  try
-    callback null, yaml.load(source) or {}
-  catch error
-    callback error
-
-extractMetadata = (content, callback) ->
-  # split metadata and markdown content
-
-  if content[0...3] is '---'
-    # "Front Matter"
-    result = content.match /-{3,}\s([\s\S]*?)-{3,}\s([\s\S]*)/
-    if result?.length is 3
-      metadata = result[1]
-      markdown = result[2]
-    else
-      metadata = ''
-      markdown = content
-  else
-    # old style metadata
-    logger.warn 'Deprecation warning: page metadata should be encapsulated by at least three dashes (---)'
-    split_idx = content.indexOf '\n\n'
-    metadata = content.slice(0, split_idx)
-    markdown = content.slice(split_idx + 2)
-
-  async.parallel
-    metadata: (callback) ->
-      parseMetadata metadata, callback
-    markdown: (callback) ->
-      callback null, markdown
-  , callback
-
 parseMarkdownSync = (content, baseUrl) ->
   ### takes markdown *content* and returns html using *baseUrl* for any relative urls
       returns html ###
@@ -83,11 +51,43 @@ MarkdownPage.fromFile = (filename, base, callback) ->
     (callback) ->
       fs.readFile path.join(base, filename), callback
     (buffer, callback) ->
-      extractMetadata buffer.toString(), callback
+      MarkdownPage.extractMetadata buffer.toString(), callback
     (result, callback) =>
       {markdown, metadata} = result
       page = new this filename, markdown, metadata
       callback null, page
   ], callback
+
+MarkdownPage.extractMetadata = (content, callback) ->
+  parseMetadata = (source, callback) ->
+    try
+      callback null, yaml.load(source) or {}
+    catch error
+      callback error
+  
+  # split metadata and markdown content
+
+  if content[0...3] is '---'
+    # "Front Matter"
+    result = content.match /-{3,}\s([\s\S]*?)-{3,}\s([\s\S]*)/
+    if result?.length is 3
+      metadata = result[1]
+      markdown = result[2]
+    else
+      metadata = ''
+      markdown = content
+  else
+    # old style metadata
+    logger.warn 'Deprecation warning: page metadata should be encapsulated by at least three dashes (---)'
+    split_idx = content.indexOf '\n\n'
+    metadata = content.slice(0, split_idx)
+    markdown = content.slice(split_idx + 2)
+
+  async.parallel
+    metadata: (callback) ->
+      parseMetadata metadata, callback
+    markdown: (callback) ->
+      callback null, markdown
+  , callback
 
 module.exports = MarkdownPage
