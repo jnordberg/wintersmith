@@ -1,5 +1,7 @@
+---
 title: Wintersmith
 template: index.jade
+---
 
 
 Hello World
