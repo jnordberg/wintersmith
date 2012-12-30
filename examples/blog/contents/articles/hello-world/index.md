@@ -1,7 +1,10 @@
+---
 title: Hello World
 author: the-wintersmith
 date: 2012-01-31 15:00
 template: article.jade
+---
+
 
 Welcome to your new wintersmith site mortal.
 
