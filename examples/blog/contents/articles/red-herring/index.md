@@ -1,7 +1,9 @@
+---
 title: A red herring
 author: baker
 date: 2011-12-26 12:20
 template: article.jade
+---
 
 A long time ago, when the world was young
 Someone put some food on their tong
