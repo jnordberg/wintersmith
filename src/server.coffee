@@ -1,4 +1,3 @@
-
 util = require 'util'
 async = require 'async'
 fs = require 'fs'
@@ -43,7 +42,7 @@ setup = (options, callback) ->
         # render if uri matches
         {contents, templates} = result
         async.detect ContentTree.flatten(contents), (item, callback) ->
-          callback (uri is item.url or (item.url[item.url.length - 1] is '/' and uri is (item.url + 'index.html')))
+          callback (uri is item.url or (uri[uri.length - 1] is '/' and (uri + 'index.html') is item.url))
         , (result) ->
           if result
             result.render options.locals, contents, templates, (error, res) ->
