@@ -24,7 +24,7 @@ loadContents = (location, callback) ->
 loadPlugins = (options, callback) ->
   # load coffeescript so that we can load .coffee files as plugins directly
   plugins = options.plugins
-  configs =
+  config =
     locals: options.locals,
     contents: options.contents,
     templates: options.templates,
@@ -38,7 +38,7 @@ loadPlugins = (options, callback) ->
     catch error
       callback error
       return
-    plugin module.exports, configs, callback
+    plugin extend({ config: config }, module.exports), callback
   , callback
 
 defaultOptions =
