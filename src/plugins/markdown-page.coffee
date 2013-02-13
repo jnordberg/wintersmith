@@ -69,7 +69,7 @@ MarkdownPage.extractMetadata = (content, callback) ->
 
   if content[0...3] is '---'
     # "Front Matter"
-    result = content.match /-{3,}\s([\s\S]*?)-{3,}\s([\s\S]*)/
+    result = content.match /^-{3,}\s([\s\S]*?)-{3,}(\s[\s\S]*|\s?)$/
     if result?.length is 3
       metadata = result[1]
       markdown = result[2]
