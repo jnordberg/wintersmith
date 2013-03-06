@@ -12,6 +12,7 @@ usage = """
 
     -p, --port [port]             port to run server on (defaults to 8080)
     -d, --domain [domain]         host to run server on (defaults to localhost)
+    -b, --baseurl [url]           serve from a given base url (defaults to /)
     #{ commonUsage }
 
     all options can also be set in the config file
@@ -30,6 +31,9 @@ options =
   domain:
     alias: 'd'
     default: 'localhost'
+  baseurl:
+    alias: 'b'
+    default: '/'
 
 extend options, commonOptions
 

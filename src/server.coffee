@@ -43,7 +43,8 @@ setup = (options, callback) ->
         # render if uri matches
         {contents, templates} = result
         async.detect ContentTree.flatten(contents), (item, callback) ->
-          callback (uri is item.url or (item.url[item.url.length - 1] is '/' and uri is (item.url + 'index.html')))
+          pathname = item.getUrl(options.baseurl)
+          callback (uri is pathname or (pathname[pathname.length - 1] is '/' and uri is (pathname + 'index.html')))
         , (result) ->
           if result
             result.render options.locals, contents, templates, (error, res) ->
