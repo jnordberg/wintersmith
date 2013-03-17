@@ -1,4 +1,3 @@
-
 fs = require 'fs'
 util = require 'util'
 async = require 'async'
@@ -33,7 +32,7 @@ render = (contents, templates, location, locals, callback) ->
         else
           writeStream.write result
           writeStream.end()
-        callback null, true
+          callback null, true
       else
         logger.verbose "skipping #{ content.url }"
         callback null, false
