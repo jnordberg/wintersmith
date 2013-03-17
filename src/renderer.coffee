@@ -51,7 +51,7 @@ render = (contents, templates, location, locals, callback) ->
             callback error
       (callback) ->
         # recursively render tree and its plugins
-        async.map Object.keys(tree), (key, callback) ->
+        async.mapLimit Object.keys(tree), 5, (key, callback) ->
           item = tree[key]
           if item instanceof ContentTree
             renderTree item, callback
