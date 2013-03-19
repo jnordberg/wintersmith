@@ -76,12 +76,6 @@ MarkdownPage.extractMetadata = (content, callback) ->
     else
       metadata = ''
       markdown = content
-  else
-    # old style metadata
-    logger.warn 'Deprecation warning: page metadata should be encapsulated by at least three dashes (---)'
-    split_idx = content.indexOf '\n\n'
-    metadata = content.slice(0, split_idx)
-    markdown = content.slice(split_idx + 2)
 
   async.parallel
     metadata: (callback) ->
