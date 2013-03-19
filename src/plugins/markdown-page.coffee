@@ -5,7 +5,7 @@ path = require 'path'
 url = require 'url'
 fs = require 'fs'
 yaml = require 'js-yaml'
-{logger} = require './../common'
+
 Page = require './page'
 
 is_relative = (uri) ->
@@ -46,15 +46,15 @@ class MarkdownPage extends Page
     @_html ?= parseMarkdownSync @_content, @getLocation(base) # cache html
     return @_html
 
-MarkdownPage.fromFile = (filename, base, callback) ->
+MarkdownPage.fromFile = (env, filepath, callback) ->
   async.waterfall [
     (callback) ->
-      fs.readFile path.join(base, filename), callback
+      fs.readFile filepath.full, callback
     (buffer, callback) ->
       MarkdownPage.extractMetadata buffer.toString(), callback
     (result, callback) =>
       {markdown, metadata} = result
-      page = new this filename, markdown, metadata
+      page = new this filepath, markdown, metadata
       callback null, page
   ], callback
 

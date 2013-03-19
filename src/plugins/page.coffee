@@ -5,24 +5,24 @@ underscore = require 'underscore'
 moment = require 'moment'
 marked = require 'marked'
 
-{ContentPlugin} = require './../content'
-{stripExtension, extend} = require './../common'
+{ContentPlugin} = require './../core/content'
+{stripExtension, extend} = require './../core/utils'
 
 class Page extends ContentPlugin
   ### page content plugin, a page is a file that has
       metadata, html and a template that renders it ###
 
-  constructor: (@_filename, @_content, @_metadata) ->
+  constructor: (@filepath, @_content, @_metadata) ->
 
   getFilename: ->
-    @_metadata.filename or stripExtension(@_filename) + '.html'
+    @_metadata.filename or stripExtension(@filepath.relative) + '.html'
 
   getHtml: (base='/') ->
     @_content
 
   getUrl: (base) ->
     super(base).replace /index\.html$/, ''
-    
+
   getIntro: (base) ->
     @_html ?= @getHtml(base)
     idx = ~@_html.indexOf('<span class="more') or ~@_html.indexOf('<h2') or ~@_html.indexOf('<hr')
@@ -32,7 +32,8 @@ class Page extends ContentPlugin
       @_intro = @_html
     return @_intro
 
-  render: (locals, contents, templates, callback) ->
+  view: (env, locals, contents, templates, callback) ->
+    # TODO: break out into render template view
     if @template == 'none'
       # dont render
       return callback null, null

@@ -1,16 +1,17 @@
 
 path = require 'path'
 async = require 'async'
+
 Page = require './page'
-{readJSON} = require './../common'
+{readJSON} = require './../core/utils'
 
 class JsonPage extends Page
 
-JsonPage.fromFile = (filename, base, callback) ->
+JsonPage.fromFile = (env, filepath, callback) ->
   async.waterfall [
-    async.apply readJSON, path.join(base, filename)
+    async.apply readJSON, filepath.full
     (metadata, callback) =>
-      page = new this filename, metadata.content or '', metadata
+      page = new this filepath, metadata.content or '', metadata
       callback null, page
   ], callback
 
