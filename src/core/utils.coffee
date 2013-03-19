@@ -1,65 +1,22 @@
+### utils.coffee ###
 
-winston = require 'winston'
-colors = require 'colors'
 util = require 'util'
 fs = require 'fs'
 path = require 'path'
 async = require 'async'
 
+fileExists = fs.exists or path.exists
+fileExistsSync = fs.existsSync or path.existsSync
+
 extend = (obj, mixin) ->
   for name, method of mixin
     obj[name] = method
 
-exports.extend = extend
-
 stripExtension = (filename) ->
   filename.replace /(.+)\.[^.]+$/, '$1'
 
-exports.stripExtension = stripExtension
-
-class cli extends winston.Transport
-
-  name: 'cli'
-
-  constructor: (options) ->
-    super(options)
-    @quiet = options.quiet or false
-
-  log: (level, msg, meta, callback) ->
-    if level == 'error'
-      process.stderr.write "\n  error".red + " #{ msg }\n"
-      if @level == 'verbose' && meta?
-        if meta.stack?
-          stack = meta.stack.substr meta.stack.indexOf('\n') + 1
-          process.stderr.write stack + "\n\n"
-        for key, value of meta
-          if key in ['message', 'stack']
-            continue
-          pval = util.inspect(value, false, 2, true).replace(/\n/g, '\n    ')
-          process.stderr.write "    #{ key }: #{ pval }\n"
-      else
-        process.stderr.write "\n"
-    else if !@quiet
-      switch level
-        when 'verbose'
-          msg = msg.yellow
-      if meta
-        msg += util.format ' %j', meta
-      process.stdout.write "  #{ msg }\n"
-
-    @emit 'logged'
-    callback null, true
-
-transports = exports.transports = [
-  new cli {level: 'info'}
-]
-
-exports.logger = new winston.Logger
-  exitOnError: true
-  transports: transports
-
-exports.readJSON = (filename, callback) ->
-  ### read and try to parse *filename* as json ###
+readJSON = (filename, callback) ->
+  ### Read and try to parse *filename* as JSON, *callback* with parsed object or error on fault. ###
   async.waterfall [
     (callback) ->
       fs.readFile filename, callback
@@ -72,3 +29,10 @@ exports.readJSON = (filename, callback) ->
         error.message = "parsing #{ path.basename(filename) }: #{ error.message }"
         callback error
   ], callback
+
+readJSONSync = (filename) ->
+  ### Synchronously read and try to parse *filename* as json. ###
+  buffer = fs.readFileSync filename
+  return JSON.parse buffer.toString()
+
+module.exports = {fileExists, fileExistsSync, extend, stripExtension, readJSON, readJSONSync}

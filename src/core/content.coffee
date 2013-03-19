@@ -1,3 +1,4 @@
+### content.coffee ###
 
 async = require 'async'
 fs = require 'fs'
@@ -5,92 +6,91 @@ path = require 'path'
 url = require 'url'
 colors = require 'colors'
 minimatch = require 'minimatch'
-{logger} = require './common'
 
-contentPlugins = []
-registerContentPlugin = (treeName, handles, plugin) ->
-  ### register a plugin. arguments:
-      *treeName* - name that will be shown in the content tree (eg. 'textFiles')
-                   generally a plural name is recommended since it will appear in the content-tree
-                   as an array of *plugin* instances (eg. contents.somedir.textFiles)
-      *handles*: glob-pattern to match (eg. '** / *.*(txt|text)' )
-      *plugin*: the <ContentPlugin> subclass ###
-  contentPlugins.push
-    treeName: treeName
-    pattern: handles
-    class: plugin
-
-class Model
-  @property = (name, method) ->
-    ### define read-only property with *name* ###
+class ContentPlugin
+  @property = (name, getter) ->
+    ### Define read-only property with *name*. ###
+    if typeof getter is 'string'
+      get = -> this[getter].call this
+    else
+      get = -> getter.call this
     Object.defineProperty @prototype, name,
-      get: -> method.call @
+      get: get
       enumerable: true
 
-class ContentPlugin extends Model
-
-  render: (locals, contents, templates, callback) ->
-    ### *callback* with a ReadStream/Buffer or null if the contents should not be rendered
-        *locals* rendering context variables
-        *contents* is the full content tree
-        *templates* is a map of all templates as: {filename: templateInstance} ###
-    throw new Error 'not implemented'
+  view: (env, locals, contents, templates, callback) ->
+    ### View that renders the plugin. Where *environment* is the current wintersmith environment,
+        *contents* is the content-tree and *templates* is a map of all templates as: {filename: templateInstance}.
+        *callback* should be called with a stream/buffer or null if this plugin instance should not be rendered. ###
+    throw new Error 'Not implemented.'
 
   getFilename: ->
-    ### return filename for this content ###
-    throw new Error 'not implemented'
+    ### Return filename for this content. This is where the result of the plugin's view will be written to. ###
+    throw new Error 'Not implemented.'
 
   getUrl: (base='/') ->
-    ### return url for this content relative to *base* ###
+    ### Return url for this content relative to *base*. ###
     filename = @getFilename()
     if not base.match /\/$/
       base += '/'
     if process.platform is 'win32'
       filename = filename.replace /\\/g, '/' #'
-    url.resolve base, filename
+    return url.resolve base, filename
 
-  # some shorthands
-  @property 'url', -> @getUrl()
-  @property 'filename', -> @getFilename()
+  getPluginColor: ->
+    ### Return vanity color used to identify the plugin when printing the content tree
+        choices are: bold, italic, underline, inverse, yellow, cyan, white, magenta,
+        green, red, grey, blue, rainbow, zebra or none. ###
+    return 'cyan'
 
-ContentPlugin.fromFile = (filename, base, callback) ->
-  ### *callback* with an instance of class. *filename* is the relative filename
-      from *base* wich is the working directory (content directory) ###
+  getPluginInfo: ->
+    ### Return plugin information. Also displayed in the content tree printout. ###
+    return "url: #{ @url }"
+
+  @property 'filename', 'getFilename'
+  @property 'pluginColor', 'getPluginColor'
+  @property 'pluginInfo', 'getPluginInfo'
+  @property 'url', 'getUrl'
+
+ContentPlugin.fromFile = (env, filepath, callback) ->
+  ### Calls *callback* with an instance of class. Where *env* is the current environment and
+      *filepath* is an object containing both the absolute and realative paths for the file.
+      E.g. {
+        full: "/home/foo/mysite/contents/somedir/somefile.ext",
+        relative: "somedir/somefile.ext"
+      } ###
+  throw new Error 'Not implemented.'
 
 class StaticFile extends ContentPlugin
-  ### static file handler, simply serves content as-is. last in chain ###
+  ### Static file handler, simply serves content as-is. Last in chain. ###
 
-  constructor: (@_filename, @_base) ->
+  constructor: (@env, @filepath) ->
 
-  getFilename: ->
-    @_filename
-
-  render: (args..., callback) ->
+  view: (args..., callback) ->
     # locals, contents etc not used in this plugin
     try
-      rs = fs.createReadStream path.join(@_base, @_filename)
+      rs = fs.createReadStream @filepath.full
     catch error
       return callback error
     callback null, rs
 
-StaticFile.fromFile = (filename, base, callback) ->
-  callback null, new StaticFile(filename, base)
+  getFilename: ->
+    @filepath.relative
 
-registerContentPlugin 'files', '**/*', StaticFile
+  getPluginColor: ->
+    'none'
 
-slugify = (s) ->
-  s = s.replace(/[^\w\s-]/g, '').trim().toLowerCase()
-  s = s.replace /[-\s]+/g, '-'
-  return s
+StaticFile.fromFile = (env, filepath, callback) ->
+  callback null, new StaticFile(env, filepath)
 
 # Class ContentTree
 # not using Class since we need a clean prototype
-ContentTree = (filename) ->
+ContentTree = (environment, filename) ->
   parent = null
-  groups = {directories: []}
+  groups = {directories: [], files: []}
 
-  for plugin in contentPlugins
-    groups[plugin.treeName] = []
+  for plugin in environment.contentPlugins
+    groups[plugin.group] = []
 
   Object.defineProperty this, '_',
     get: -> groups
@@ -101,119 +101,130 @@ ContentTree = (filename) ->
   Object.defineProperty this, 'index',
     get: ->
       for key, item of this
-        if key[0...5] is 'index' then return item
+        if key[0...6] is 'index.'
+          return item
+      return
 
   Object.defineProperty this, 'parent',
     get: -> parent
     set: (val) -> parent = val
 
-ContentTree.fromDirectory = (directory, args..., callback) ->
-  ### recursively scan a *directory* and build a ContentTree
-      *args...* are *base* and *options* ###
+ContentTree.fromDirectory = (env, directory, callback) ->
+  ### Recursively scan *directory* and build a ContentTree with enviroment *env*.
+      Calls *callback* with a nested ContentTree or an error if something went wrong. ###
 
-  # *base* and *options* are optional and can be passed in arbitrary order
-  for arg in args
-    switch typeof arg
-      when 'string'
-        base = arg
-      when 'object'
-        options = arg
-  base ?= directory
-  options ?= {}
-
-  # create the base tree from *directory*
-  tree = new ContentTree path.relative(base, directory)
+  reldir = env.relativeContentsPath directory
+  tree = new ContentTree env, reldir
 
   # options passed to minimatch for ignore and plugin matching
   minimatchOptions =
     dot: false
 
-  async.waterfall [
-    # read directory
-    async.apply fs.readdir, directory
-    (filenames, callback) ->
-      if options.ignore?
-        # exclude files matching ignore patterns
-        async.filter filenames, (filename, callback) ->
-          filename = path.join directory, filename
-          relname = path.relative base, filename
-          include = true
-          for pattern in options.ignore
-            if minimatch relname, pattern, minimatchOptions
-              logger.verbose "ignoring #{ relname } (matches: #{ pattern })"
-              include = false
+  readDirectory = (callback) ->
+    fs.readdir directory, callback
+
+  resolveFilenames = (filenames, callback) ->
+    async.map filenames, (filename, callback) ->
+      relname = path.join reldir, filename
+      callback null,
+        full: path.join env.contentsPath, relname
+        relative: relname
+    , callback
+
+  filterIgnored = (filenames, callback) ->
+    ### Exclude *filenames* matching ignore patterns in environment config. ###
+    if env.config.ignore.length > 0
+      async.filter filenames, (filename, callback) ->
+        include = true
+        for pattern in env.config.ignore
+          if minimatch filename.relative, pattern, minimatchOptions
+            env.logger.verbose "ignoring #{ filename.relative } (matches: #{ pattern })"
+            include = false
+            break
+        callback include
+      , (result) -> callback null, result
+    else
+      callback null, filenames
+
+  createInstance = (filepath, callback) ->
+    ### Create plugin or subtree instance for *filepath*. ###
+    async.waterfall [
+      async.apply fs.lstat, filepath.full
+      (stats, callback) ->
+        basename = path.basename filepath.relative
+
+        # recursively map directories to content tree instances
+        if stats.isDirectory()
+          ContentTree.fromDirectory env, filepath.full, (error, result) ->
+            result.parent = tree
+            tree[basename] = result
+            tree._.directories.push result # add instance to the directory group of its parent
+            callback error
+
+        # map files to content plugins
+        else if stats.isFile()
+          # iterate backwards over all content plugins and check if any plugin can handle this file
+          # any file not matched will be handled by the static file plug
+          plugin =
+            class: StaticFile
+            group: 'files'
+          for i in [env.contentPlugins.length - 1..0] by -1
+            if minimatch filepath.relative, env.contentPlugins[i].pattern, minimatchOptions
+              plugin = env.contentPlugins[i]
               break
-          callback include
-        , (result) -> callback null, result
-      else
-        callback null, filenames
-    (filenames, callback) ->
-      async.forEach filenames, (filename, callback) ->
-        filename = path.join directory, filename
-        async.waterfall [
-          async.apply fs.lstat, filename
-          (stats, callback) ->
-            if stats.isDirectory()
-              # recursively map directories to content tree instances
-              ContentTree.fromDirectory filename, base, options, (error, result) ->
-                result.parent = tree
-                tree[path.relative(directory, filename)] = result
-                tree._.directories.push result
-                callback error
 
-            else if stats.isFile()
-              # map any files found to content plugins
-              basename = path.basename filename
-              relname = path.relative base, filename
+          plugin.class.fromFile env, filepath, (error, instance) ->
+            if not error
+              instance.parent = tree
+              instance.__filename = filepath.full # internal, used by preview server to watch files
+              tree[basename] = instance
+              tree._[plugin.group].push instance
+            callback error
 
-              # iterate backwards over all content plugins
-              # and check if any plugin can handle this file
-              match = false
-              for i in [contentPlugins.length - 1..0] by -1
-                plugin = contentPlugins[i]
-                if minimatch relname, plugin.pattern, minimatchOptions # TODO: dotfile plugin
-                  plugin.class.fromFile relname, base, (error, instance) ->
-                    if not error
-                      instance.parent = tree
-                      tree[basename] = instance
-                      tree._[plugin.treeName].push instance
-                    callback error
-                  match = true
-                  break
-              if not match
-                # no matching plugin
-                logger.verbose "no plugin to handle #{ filename }"
-                callback()
-            else
-              callback new Error "invalid file #{ filename }"
-        ], callback
-      , callback
+        # This should never happen™
+        else
+          callback new Error "Invalid file #{ filepath.full }."
+
+    ], callback
+
+  createInstances = (filenames, callback) ->
+    async.forEach filenames, createInstance, callback
+
+  async.waterfall [
+    readDirectory
+    resolveFilenames
+    filterIgnored
+    createInstances
   ], (error) ->
     callback error, tree
 
 ContentTree.inspect = (tree, depth=0) ->
-  ### return a pretty formatted string representing the content *tree* ###
+  ### Return a pretty formatted string representing the content *tree*. ###
   rv = []
   pad = ''
   for i in [0..depth]
     pad += '  '
-  for k, v of tree
+  keys = Object.keys(tree).sort (a, b) ->
+    # sort items by type and name to keep directories on top
+    ad = tree[a] instanceof ContentTree
+    bd = tree[b] instanceof ContentTree
+    return bd - ad if ad isnt bd
+    return -1 if a < b
+    return 1 if a > b
+    return 0
+  for k in keys
+    v = tree[k]
     if v instanceof ContentTree
       s = "#{ k }/\n".bold
       s += ContentTree.inspect v, depth + 1
-    else if v.template?
-      s = k.green + " (url: #{ v.url }, template: #{ v.template })".grey
-    else if v instanceof StaticFile
-      s = k + " (url: #{ v.url })".grey
     else
-      s = k + " (url: #{ v.url })".cyan
+      s = if v.pluginColor isnt 'none' then k[v.pluginColor] else k
+      s += " (#{ v.pluginInfo })".grey
     rv.push pad + s
   rv.join '\n'
 
-util = require 'util'
-
 ContentTree.flatten = (tree) ->
-  ### return all the items in the *tree* as an array of content plugins ###
+  ### Return all the items in the *tree* as an array of content plugins. ###
   rv = []
   for key, value of tree
     if value instanceof ContentTree
@@ -222,6 +233,7 @@ ContentTree.flatten = (tree) ->
       rv.push value
   return rv
 
-module.exports.ContentTree = ContentTree
-module.exports.ContentPlugin = ContentPlugin
-module.exports.registerContentPlugin = registerContentPlugin
+### Exports ###
+
+exports.ContentTree = ContentTree
+exports.ContentPlugin = ContentPlugin
