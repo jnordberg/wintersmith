@@ -26,11 +26,14 @@ parseMarkdownSync = (content, baseUrl) ->
   for token in tokens
     switch token.type
       when 'code'
-        if token.lang?
-          token.text = hljs.highlight(token.lang, token.text).value
-        else
-          token.text = hljs.highlightAuto(token.text).value
-        token.escaped = true
+        try
+          if token.lang?
+            token.text = hljs.highlight(token.lang, token.text).value
+          else
+            token.text = hljs.highlightAuto(token.text).value
+          token.escaped = true
+        catch error
+          # hljs.highlight fails if lang is unknown
 
   return marked.parser tokens
 
