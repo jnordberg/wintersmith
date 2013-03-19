@@ -8,19 +8,18 @@ yaml = require 'js-yaml'
 
 Page = require './page'
 
-is_relative = (uri) ->
-  ### returns true if *uri* is relative; otherwise false ###
-  (url.parse(uri).protocol == undefined)
+# monkeypatch to add url resolving to marked
+marked.InlineLexer.prototype._outputLink = marked.InlineLexer.prototype.outputLink
+marked.InlineLexer.prototype._resolveLink = (href) -> href
+marked.InlineLexer.prototype.outputLink = (cap, link) ->
+  link.href = @_resolveLink link.href
+  return @_outputLink cap, link
 
 parseMarkdownSync = (content, baseUrl) ->
-  ### takes markdown *content* and returns html using *baseUrl* for any relative urls
-      returns html ###
+  ### Parse markdown *content* and resolve links using *baseUrl*, returns html. ###
 
-  marked.inlineLexer.formatUrl = (uri) ->
-    if is_relative uri
-      return url.resolve baseUrl, uri
-    else
-      return uri
+  marked.InlineLexer.prototype._resolveLink = (uri) ->
+    url.resolve baseUrl, uri
 
   tokens = marked.lexer content
 
@@ -64,7 +63,7 @@ MarkdownPage.extractMetadata = (content, callback) ->
       callback null, yaml.load(source) or {}
     catch error
       callback error
-  
+
   # split metadata and markdown content
 
   if content[0...3] is '---'
