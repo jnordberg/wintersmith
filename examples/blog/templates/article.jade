@@ -2,11 +2,11 @@
 extends layout
 
 block prepend title
-  | #{ page.title } - 
+  | #{ page.title } -
 
 block header
   include author
-  a.back(href='/') << back to index
+  a.back(href=contents.index.url) << back to index
   h1= page.title
   p
     | written by:
