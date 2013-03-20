@@ -20,6 +20,7 @@ class Environment
     @generators = []
     @templatePlugins = []
     @contentPlugins = []
+    @loadedPlugins = []
 
     @contentsPath = @resolvePath @config.contents
     @templatesPath = @resolvePath @config.templates
@@ -36,6 +37,13 @@ class Environment
   resolveContentsPath: (pathname) ->
     ### Resolve *pathname* in contents directory, returns an absolute path. ###
     path.resolve @contentsPath, pathname or ''
+
+  resolveModulePath: (moduleName) ->
+    ### Resolve path to *moduleName* if needed. ###
+    if moduleName[0] is '.'
+      @resolvePath moduleName
+    else
+      moduleName
 
   relativePath: (pathname) ->
     ### Resolve path relative to working directory. ###
@@ -75,6 +83,50 @@ class Environment
     ### Add a view to the environment. ###
     @views[name] = view
 
+  loadPluginModule: (module, callback) ->
+    ### Load a plugin *module* and add it to the environment. ###
+    done = (error) ->
+      if error?
+        if error.code is 'MODULE_NOT_FOUND'
+          error.message = "Can not find plugin '#{ module }'"
+        else
+          error.message = "Error loading plugin '#{ module }': #{ error.message }"
+      callback error
+    @logger.verbose "loading plugin module: #{ module }"
+    try
+      # load plugin module
+      fn = require @resolveModulePath module
+    catch error
+      if error.code is 'MODULE_NOT_FOUND' and module[0] isnt '.'
+        # also try in env's node_modules
+        try
+          fn = require @resolveModulePath "./node_modules/#{ module }"
+        catch error
+          done error
+          return
+      else
+        done error
+        return
+    try
+      # module loaded, run it
+      fn this, done
+    catch error
+      done error
+
+  loadPlugins: (callback) ->
+    ### Loads any plugin found in *@config.plugins* that is not already loaded. ###
+    async.forEachSeries @config.plugins, (module, callback) =>
+      if module not in @loadedPlugins
+        @loadPluginModule module, (error) =>
+          if error?
+            callback error
+          else
+            @loadedPlugins.push module
+            callback()
+      else
+        callback()
+    , callback
+
   getContents: (callback) ->
     ### Generate the content tree. Calls *callback* with the tree or error
         if something went wrong. ###
@@ -87,12 +139,6 @@ class Environment
 
   getLocals: (callback) ->
     ### Resolve locals. ###
-
-    resolveModule = (moduleName) =>
-      if moduleName[0] is '.'
-        @resolvePath moduleName
-      else
-        moduleName
 
     resolveLocals = (callback) =>
       ### Load locals json if neccessary. ###
@@ -124,12 +170,16 @@ class Environment
     ], callback
 
   load: (callback) ->
-    ### Convenience method to load contents, templates and locals. ###
-    async.parallel
-      contents: (callback) => @getContents callback
-      templates: (callback) => @getTemplates callback
-      locals: (callback) => @getLocals callback
-    , callback
+    ### Convenience method to load plugins, contents, templates and locals. ###
+    async.waterfall [
+      (callback) => @loadPlugins callback
+      (callback) =>
+        async.parallel
+          contents: (callback) => @getContents callback
+          templates: (callback) => @getTemplates callback
+          locals: (callback) => @getLocals callback
+        , callback
+    ], callback
 
   preview: (options, callback) ->
     ### Start the preview server. Calls *callback* when server is up and
