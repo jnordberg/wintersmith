@@ -11,7 +11,8 @@ class Node
     @edges = []
 
   addEdge: (node) ->
-    @edges.push node
+    if node not in @edges
+      @edges.push node
 
 class Graph
 
@@ -32,11 +33,16 @@ class Graph
     node.addEdge @nodeFor dependency
 
   dependenciesFor: (item) ->
-    ### return an array with all depdenencies for *item* ###
+    ### return a list of items that *item* depends on ###
     node = @nodeFor item
     resolved = @resolveNode node
     resolved.splice resolved.indexOf(node), 1
     return resolved.map (node) -> node.item
+
+  dependsOn: (item) ->
+    ### return a list of items depending on *item* ###
+    target = @nodeFor item
+    return @reverseLookup(target).map (node) -> node.item
 
   ### private ###
 
@@ -50,6 +56,14 @@ class Graph
         @resolveNode edge, resolved, seen
     resolved.push node
     return resolved
+
+  reverseLookup: (target) ->
+    rv = []
+    for id, node of @nodes
+      continue if node is target
+      if target in @resolveNode node
+        rv.push node
+    return rv
 
 class GraphHandler
 
@@ -133,7 +147,7 @@ buildGraph = (env, contents, templates, locals, callback) ->
   proxy = GraphHandler.proxy contents, (dep) ->
     graph.addDependency current, dep
 
-  locals.contents = proxy
+  locals.contents = proxy # TODO: don't modify locals
 
   async.eachSeries items, (item, callback) ->
     current = item
@@ -142,4 +156,6 @@ buildGraph = (env, contents, templates, locals, callback) ->
   , (error) ->
     callback error, graph
 
-exports.buildGraph = buildGraph
+### Exports ###
+
+module.exports = {Graph, GraphHandler, buildGraph}
