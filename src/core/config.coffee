@@ -23,7 +23,7 @@ class Config
     # path to the directory containing the templates
     templates: './templates'
     # directory to load custom views from
-    views: './views'
+    views: null
     # built product goes here
     output: './build'
 

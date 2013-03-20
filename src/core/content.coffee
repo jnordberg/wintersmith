@@ -18,16 +18,21 @@ class ContentPlugin
       get: get
       enumerable: true
 
-  view: (env, locals, contents, templates, callback) ->
-    ### View that renders the plugin. Where *environment* is the current wintersmith environment,
-        *contents* is the content-tree and *templates* is a map of all templates as: {filename: templateInstance}.
-        *callback* should be called with a stream/buffer or null if this plugin instance should not be rendered. ###
+  @property 'view', 'getView'
+  getView: ->
+    ### Return a view that renders the plugin. Either a string naming a exisitng view or a function:
+        `(env, locals, contents, templates, callback) ->`
+        Where *environment* is the current wintersmith environment, *contents* is the content-tree
+        and *templates* is a map of all templates as: {filename: templateInstance}. *callback* should be
+        called with a stream/buffer or null if this plugin instance should not be rendered. ###
     throw new Error 'Not implemented.'
 
+  @property 'filename', 'getFilename'
   getFilename: ->
     ### Return filename for this content. This is where the result of the plugin's view will be written to. ###
     throw new Error 'Not implemented.'
 
+  @property 'url', 'getUrl'
   getUrl: (base='/') ->
     ### Return url for this content relative to *base*. ###
     filename = @getFilename()
@@ -37,20 +42,17 @@ class ContentPlugin
       filename = filename.replace /\\/g, '/' #'
     return url.resolve base, filename
 
+  @property 'pluginColor', 'getPluginColor'
   getPluginColor: ->
     ### Return vanity color used to identify the plugin when printing the content tree
         choices are: bold, italic, underline, inverse, yellow, cyan, white, magenta,
         green, red, grey, blue, rainbow, zebra or none. ###
     return 'cyan'
 
+  @property 'pluginInfo', 'getPluginInfo'
   getPluginInfo: ->
     ### Return plugin information. Also displayed in the content tree printout. ###
     return "url: #{ @url }"
-
-  @property 'filename', 'getFilename'
-  @property 'pluginColor', 'getPluginColor'
-  @property 'pluginInfo', 'getPluginInfo'
-  @property 'url', 'getUrl'
 
 ContentPlugin.fromFile = (env, filepath, callback) ->
   ### Calls *callback* with an instance of class. Where *env* is the current environment and
@@ -66,13 +68,14 @@ class StaticFile extends ContentPlugin
 
   constructor: (@env, @filepath) ->
 
-  view: (args..., callback) ->
-    # locals, contents etc not used in this plugin
-    try
-      rs = fs.createReadStream @filepath.full
-    catch error
-      return callback error
-    callback null, rs
+  getView: ->
+    return (args..., callback) ->
+      # locals, contents etc not used in this plugin
+      try
+        rs = fs.createReadStream @filepath.full
+      catch error
+        return callback error
+      callback null, rs
 
   getFilename: ->
     @filepath.relative

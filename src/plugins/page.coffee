@@ -32,29 +32,30 @@ class Page extends ContentPlugin
       @_intro = @_html
     return @_intro
 
-  view: (env, locals, contents, templates, callback) ->
-    # TODO: break out into render template view
-    if @template == 'none'
-      # dont render
-      return callback null, null
+  getView: ->
+    return (env, locals, contents, templates, callback) ->
+      # TODO: break out into render template view
+      if @template == 'none'
+        # dont render
+        return callback null, null
 
-    async.waterfall [
-      (callback) =>
-        template = templates[@template]
-        if not template?
-          callback new Error "page '#{ @filename }' specifies unknown template '#{ @template }'"
-        else
-          callback null, template
-      (template, callback) =>
-        ctx =
-          page: @
-          contents: contents
-          _: underscore
-          moment: moment
-          marked: marked
-        extend ctx, locals
-        template.render ctx, callback
-    ], callback
+      async.waterfall [
+        (callback) =>
+          template = templates[@template]
+          if not template?
+            callback new Error "page '#{ @filename }' specifies unknown template '#{ @template }'"
+          else
+            callback null, template
+        (template, callback) =>
+          ctx =
+            page: @
+            contents: contents
+            _: underscore
+            moment: moment
+            marked: marked
+          extend ctx, locals
+          template.render ctx, callback
+      ], callback
 
   @property 'metadata', ->
     @_metadata

@@ -2,6 +2,7 @@
 
 path = require 'path'
 async = require 'async'
+fs = require 'fs'
 
 {Config} = require './config'
 {ContentTree} = require './content'
@@ -15,12 +16,13 @@ class Environment
   ### The Wintersmith environment. ###
 
   constructor: (@config, @workDir, @logger) ->
-    # todo load default views templates and plugs
     @views = {}
     @generators = []
     @templatePlugins = []
     @contentPlugins = []
-    @loadedPlugins = []
+
+    @pluginsLoaded = false
+    @viewsLoaded = false
 
     @contentsPath = @resolvePath @config.contents
     @templatesPath = @resolvePath @config.templates
@@ -92,7 +94,7 @@ class Environment
         else
           error.message = "Error loading plugin '#{ module }': #{ error.message }"
       callback error
-    @logger.verbose "loading plugin module: #{ module }"
+    @logger.verbose "loading plugin: #{ module }"
     try
       # load plugin module
       fn = require @resolveModulePath module
@@ -113,19 +115,36 @@ class Environment
     catch error
       done error
 
+  loadViewModule: (module, callback) ->
+    ### Load a view *module* and add it to the environment. ###
+    @logger.verbose "loading view: #{ module }"
+    try
+      fn = require @resolveModulePath module
+    catch error
+      error.message = "Error loading view '#{ module }': #{ error.message }"
+      callback error
+      return
+    @registerView path.basename(module), fn
+    callback()
+
   loadPlugins: (callback) ->
-    ### Loads any plugin found in *@config.plugins* that is not already loaded. ###
-    async.forEachSeries @config.plugins, (module, callback) =>
-      if module not in @loadedPlugins
-        @loadPluginModule module, (error) =>
-          if error?
-            callback error
-          else
-            @loadedPlugins.push module
-            callback()
-      else
-        callback()
-    , callback
+    ### Loads any plugin found in *@config.plugins*. ###
+    return callback() if @pluginsLoaded
+    async.forEachSeries @config.plugins, @loadPluginModule.bind(this), (error) =>
+      @pluginsLoaded = true if not error?
+      callback error
+
+  loadViews: (callback) ->
+    ### Loads files found in the *@config.views* directory and registers them as views. ###
+    return callback() if @viewsLoaded or not @config.views?
+    async.waterfall [
+      (callback) => fs.readdir @resolvePath(@config.views), callback
+      (filenames, callback) =>
+        modules = filenames.map (filename) => "#{ @config.views }/#{ filename }"
+        async.forEach modules, @loadViewModule.bind(this), (error) =>
+          @viewsLoaded = true if not error?
+          callback error
+    ], callback
 
   getContents: (callback) ->
     ### Generate the content tree. Calls *callback* with the tree or error
@@ -170,11 +189,12 @@ class Environment
     ], callback
 
   load: (callback) ->
-    ### Convenience method to load plugins, contents, templates and locals. ###
+    ### Convenience method to load plugins, views, contents, templates and locals. ###
     async.waterfall [
       (callback) => @loadPlugins callback
       (callback) =>
         async.parallel
+          _views: (callback) => @loadViews callback
           contents: (callback) => @getContents callback
           templates: (callback) => @getTemplates callback
           locals: (callback) => @getLocals callback
