@@ -2,7 +2,7 @@
 path = require 'path'
 async = require 'async'
 
-Page = require './page'
+{Page} = require './page'
 {readJSON} = require './../core/utils'
 
 class JsonPage extends Page

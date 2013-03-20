@@ -6,7 +6,7 @@ url = require 'url'
 fs = require 'fs'
 yaml = require 'js-yaml'
 
-Page = require './page'
+{Page} = require './page'
 
 # monkeypatch to add url resolving to marked
 marked.InlineLexer.prototype._outputLink = marked.InlineLexer.prototype.outputLink
@@ -69,15 +69,15 @@ MarkdownPage.extractMetadata = (content, callback) ->
 
   # split metadata and markdown content
 
+  metadata = ''
+  markdown = content
+
   if content[0...3] is '---'
     # "Front Matter"
     result = content.match /^-{3,}\s([\s\S]*?)-{3,}(\s[\s\S]*|\s?)$/
     if result?.length is 3
       metadata = result[1]
       markdown = result[2]
-    else
-      metadata = ''
-      markdown = content
 
   async.parallel
     metadata: (callback) ->

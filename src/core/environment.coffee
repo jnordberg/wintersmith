@@ -28,6 +28,8 @@ class Environment
     @templatesPath = @resolvePath @config.templates
 
     # TODO: better default plugin handling
+    {templateView} = require '../plugins/page'
+    @registerView 'template', templateView
     @registerTemplatePlugin '**/*.jade', require('../plugins/jade-template')
     @registerContentPlugin 'pages', '**/*.*(markdown|mkd|md)', require('../plugins/markdown-page')
     @registerContentPlugin 'pages', '**/*.json', require('../plugins/json-page')

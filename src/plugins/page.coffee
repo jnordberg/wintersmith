@@ -8,6 +8,27 @@ marked = require 'marked'
 {ContentPlugin} = require './../core/content'
 {stripExtension, extend} = require './../core/utils'
 
+templateView = (env, locals, contents, templates, callback) ->
+  if @template == 'none'
+    # dont render
+    return callback null, null
+
+  template = templates[@template]
+  if not template?
+    return callback new Error "page '#{ @filename }' specifies unknown template '#{ @template }'"
+
+  ctx =
+    page: this
+    contents: contents
+    _: underscore
+    moment: moment
+    marked: marked
+
+  extend ctx, locals
+
+  template.render ctx, callback
+
+
 class Page extends ContentPlugin
   ### page content plugin, a page is a file that has
       metadata, html and a template that renders it ###
@@ -33,29 +54,7 @@ class Page extends ContentPlugin
     return @_intro
 
   getView: ->
-    return (env, locals, contents, templates, callback) ->
-      # TODO: break out into render template view
-      if @template == 'none'
-        # dont render
-        return callback null, null
-
-      async.waterfall [
-        (callback) =>
-          template = templates[@template]
-          if not template?
-            callback new Error "page '#{ @filename }' specifies unknown template '#{ @template }'"
-          else
-            callback null, template
-        (template, callback) =>
-          ctx =
-            page: @
-            contents: contents
-            _: underscore
-            moment: moment
-            marked: marked
-          extend ctx, locals
-          template.render ctx, callback
-      ], callback
+    @_metadata.view or 'template'
 
   @property 'metadata', ->
     @_metadata
@@ -84,4 +83,6 @@ class Page extends ContentPlugin
     @_hasMore ?= (@_html.length > @_intro.length)
     return @_hasMore
 
-module.exports = Page
+### Exports ###
+
+module.exports = {Page, templateView}

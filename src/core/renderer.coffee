@@ -8,6 +8,15 @@ path = require 'path'
 {logger, extend, stripExtension} = require './utils'
 {ContentTree} = require './content'
 
+renderView = (env, content, locals, contents, templates, callback) ->
+  view = content.view
+  if typeof view is 'string'
+    view = env.views[view]
+    if not view?
+      callback new Error "content '#{ content.filename }' specifies unknown view '#{ view }'"
+      return
+  view.call content, env, locals, contents, templates, callback
+
 render = (env, outputDir, contents, templates, locals, callback) ->
   ### Render *contents* and *templates* using environment *env* to *outputDir*.
       The output directory will be created if it does not exist. ###
@@ -23,7 +32,7 @@ render = (env, outputDir, contents, templates, locals, callback) ->
         otherwise false. ###
     destination = path.join outputDir, content.filename # TODO: create intermediate directories if needed
     logger.verbose "writing content #{ content.url } to #{ destination }"
-    content.view env, locals, contents, templates, (error, result) ->
+    renderView env, content, locals, contents, templates, (error, result) ->
       if error
         callback error, false
       else if result instanceof fs.ReadStream or result instanceof Buffer
@@ -73,4 +82,4 @@ render = (env, outputDir, contents, templates, locals, callback) ->
 
 ### Exports ###
 
-exports.render = render
+module.exports = {render, renderView}
