@@ -12,6 +12,7 @@ utils = require './utils'
 {loadTemplates} = require './templates'
 {buildGraph} = require './graph'
 {logger} = require './logger'
+{runGenerator} = require './generator'
 
 {readJSON} = utils
 
@@ -87,12 +88,14 @@ class Environment
       pattern: pattern
       class: plugin
 
-  registerGenerator: (generator) ->
+  registerGenerator: (group, generator) ->
     ### Add a generator to the environment. The generator function is called with the env and the
         current content tree. It should return a object with nested ContentPlugin instances.
         These will be merged into the final content tree. Generators can also return filenames
         and a buffer/stream like: {filename: 'asd', stream: 'asd'}. See generator.coffee for more info ###
-    @generators.push generator
+    @generators.push
+      group: group
+      fn: generator
 
   registerView: (name, view) ->
     ### Add a view to the environment. ###
@@ -160,13 +163,18 @@ class Environment
     ], callback
 
   getContents: (callback) ->
-    ### Generate the content tree. Calls *callback* with the tree or error
-        if something went wrong. ###
-    # TODO: run generators
-    ContentTree.fromDirectory this, @resolveContentsPath(), callback
+    ### Build the ContentTree from *@contentsPath*, also runs any registered generators. ###
+    async.waterfall [
+      (callback) =>
+        ContentTree.fromDirectory this, @contentsPath, callback
+      (contents, callback) =>
+        async.forEachSeries @generators, (generator, callback) =>
+          runGenerator this, contents, generator, callback
+        , (error) -> callback error, contents
+    ], callback
 
   getTemplates: (callback) ->
-    ### Load templates ###
+    ### Load templates. ###
     loadTemplates this, callback
 
   getLocals: (callback) ->

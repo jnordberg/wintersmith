@@ -88,12 +88,15 @@ StaticFile.fromFile = (env, filepath, callback) ->
 
 # Class ContentTree
 # not using Class since we need a clean prototype
-ContentTree = (environment, filename) ->
+ContentTree = (env, filename) ->
   parent = null
   groups = {directories: [], files: []}
 
-  for plugin in environment.contentPlugins
+  for plugin in env.contentPlugins
     groups[plugin.group] = []
+
+  for generator in env.generators
+    groups[generator.group] = []
 
   Object.defineProperty this, '_',
     get: -> groups
