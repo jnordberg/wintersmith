@@ -4,16 +4,23 @@ path = require 'path'
 async = require 'async'
 fs = require 'fs'
 
+utils = require './utils'
+
 {Config} = require './config'
-{ContentTree} = require './content'
-{readJSON} = require './utils'
+{ContentPlugin, ContentTree} = require './content'
 {render} = require './renderer'
 {loadTemplates} = require './templates'
 {buildGraph} = require './graph'
 {logger} = require './logger'
 
+{readJSON} = utils
+
 class Environment
   ### The Wintersmith environment. ###
+
+  utils: utils
+  ContentTree: ContentTree
+  ContentPlugin: ContentPlugin
 
   constructor: (@config, @workDir, @logger) ->
     @views = {}
