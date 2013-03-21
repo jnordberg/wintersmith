@@ -25,6 +25,7 @@ class Environment
   constructor: (@config, @workDir, @logger) ->
     @views = {}
     @generators = []
+    @plugins = {}
     @templatePlugins = []
     @contentPlugins = []
 
@@ -70,7 +71,8 @@ class Environment
         factory method. The *group* argument is used to group the loaded instances under
         each directory. I.e. plugin instances with the group 'textFiles' can be found
         in `contents.somedir._.textFiles`. ###
-    @logger.verbose "registering template plugin that handles: #{ pattern }"
+    @logger.verbose "registering content plugin #{ plugin.name } that handles: #{ pattern }"
+    @plugins[plugin.name] = plugin
     @contentPlugins.push
       group: group
       pattern: pattern
@@ -79,6 +81,8 @@ class Environment
   registerTemplatePlugin: (pattern, plugin) ->
     ### Add a template *plugin* to the environment. All files in the template directory
         matching the glob *pattern* will be passed to the plugin's `fromFile` classmethod. ###
+    @logger.verbose "registering template plugin #{ plugin.name } that handles: #{ pattern }"
+    @plugins[plugin.name] = plugin
     @templatePlugins.push
       pattern: pattern
       class: plugin
