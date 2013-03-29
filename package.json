@@ -40,7 +40,8 @@
     "minimatch": "0.2.x",
     "mime": "1.2.x",
     "moment": "1.7.x",
-    "js-yaml": "1.0.x"
+    "js-yaml": "1.0.x",
+    "streams2": ">=0.1.1"
   },
   "engine": {
     "node": ">=0.6"
