@@ -28,8 +28,9 @@ render = (contents, templates, location, locals, callback) ->
         # TODO: use in-memory readstreams instead of buffers if possible
         writeStream = fs.createWriteStream destination
         if result instanceof fs.ReadStream
-          util.pump result, writeStream, (error) ->
+          result.on 'error', (error) ->
             callback error, true
+          result.pipe(writeStream)
         else
           writeStream.write result
           writeStream.end()

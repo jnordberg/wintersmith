@@ -51,8 +51,9 @@ setup = (options, callback) ->
                 callback error
               else if res instanceof fs.ReadStream
                 response.writeHead 200, 'Content-Type': mime.lookup(result.filename)
-                util.pump res, response, (error) ->
+                res.on 'error', (error) ->
                   callback error, 200
+                res.pipe response
               else if res instanceof Buffer
                 response.writeHead 200, 'Content-Type': mime.lookup(result.filename)
                 response.write res
