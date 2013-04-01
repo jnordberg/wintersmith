@@ -4,16 +4,17 @@ fs = require 'fs'
 util = require 'util'
 async = require 'async'
 path = require 'path'
+mkdirp = require 'mkdirp'
 
-{logger, extend, stripExtension} = require './utils'
 {ContentTree} = require './content'
 
 renderView = (env, content, locals, contents, templates, callback) ->
   view = content.view
   if typeof view is 'string'
+    name = view
     view = env.views[view]
     if not view?
-      callback new Error "content '#{ content.filename }' specifies unknown view '#{ view }'"
+      callback new Error "content '#{ content.filename }' specifies unknown view '#{ name }'"
       return
   view.call content, env, locals, contents, templates, callback
 
@@ -21,64 +22,31 @@ render = (env, outputDir, contents, templates, locals, callback) ->
   ### Render *contents* and *templates* using environment *env* to *outputDir*.
       The output directory will be created if it does not exist. ###
 
-  logger.info "rendering tree:\n#{ ContentTree.inspect(contents, 1) }\n"
-  logger.verbose "render output directory: #{ outputDir }"
-
-  locals.contents = contents # all plugins have access to the content-tree
-  renderTree contents, callback
+  env.logger.info "rendering tree:\n#{ ContentTree.inspect(contents, 1) }\n"
+  env.logger.verbose "render output directory: #{ outputDir }"
 
   renderPlugin = (content, callback) ->
-    ### render *content* plugin, calls *callback* with true if a file is written;
-        otherwise false. ###
-    destination = path.join outputDir, content.filename # TODO: create intermediate directories if needed
-    logger.verbose "writing content #{ content.url } to #{ destination }"
+    ### render *content* plugin, calls *callback* with true if a file is written; otherwise false. ###
+    destination = path.join outputDir, content.filename
+    env.logger.verbose "writing content #{ content.url } to #{ destination }"
     renderView env, content, locals, contents, templates, (error, result) ->
       if error
-        callback error, false
+        callback error
       else if result instanceof fs.ReadStream or result instanceof Buffer
+        mkdirp.sync path.dirname destination
         writeStream = fs.createWriteStream destination
         if result instanceof fs.ReadStream
-          result.pipe writeStream, (error) -> callback error, true
+          result.pipe writeStream, callback
         else
           writeStream.write result
           writeStream.end()
-          callback null, true
+          callback()
       else
-        logger.verbose "skipping #{ content.url }"
-        callback null, false
+        env.logger.verbose "skipping #{ content.url }"
+        callback()
 
-  renderTree = (tree, callback) ->
-    logger.verbose "rendering: #{ tree.filename }"
-    directory = path.join outputDir, tree.filename
-    async.waterfall [
-      (callback) ->
-        # create directory for tree
-        fs.mkdir directory, (error) ->
-          if not error or error.code == 'EEXIST'
-            callback()
-          else
-            callback error
-      (callback) ->
-        # recursively render tree and its plugins
-        async.map Object.keys(tree), (key, callback) ->
-          item = tree[key]
-          if item instanceof ContentTree
-            renderTree item, callback
-          else
-            renderPlugin item, callback
-        , callback
-      (written, callback) ->
-        # remove directory if no files where written to it
-        detector = (didWrite, callback) ->
-          callback !didWrite
-        async.every written, detector, (isEmpty) ->
-          if isEmpty
-            logger.verbose "removing empty directory #{ directory }"
-            fs.rmdir directory, callback
-          else
-            callback()
-    ], (error) ->
-      callback error, true
+  items = ContentTree.flatten contents
+  async.forEachLimit items, env.config.fileLimit, renderPlugin, callback
 
 ### Exports ###
 

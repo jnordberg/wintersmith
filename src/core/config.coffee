@@ -5,7 +5,6 @@ path = require 'path'
 async = require 'async'
 
 {readJSON, readJSONSync, fileExists, fileExistsSync} = require './utils'
-console.log fileExistsSync
 
 class Config
 
@@ -26,6 +25,10 @@ class Config
     views: null
     # built product goes here
     output: './build'
+
+
+    # max files to keep open at once
+    fileLimit: 100
 
   constructor: (options) ->
     for option, value of options
