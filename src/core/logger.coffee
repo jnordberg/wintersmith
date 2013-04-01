@@ -2,6 +2,7 @@
 
 colors = require 'colors'
 winston = require 'winston'
+util = require 'util'
 
 class cli extends winston.Transport
 
