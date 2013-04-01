@@ -35,4 +35,26 @@ readJSONSync = (filename) ->
   buffer = fs.readFileSync filename
   return JSON.parse buffer.toString()
 
-module.exports = {fileExists, fileExistsSync, extend, stripExtension, readJSON, readJSONSync}
+readdirRecursive = (directory, callback) ->
+  ### Returns an array representing *directory*, including subdirectories. ###
+  result = []
+  walk = (dir, callback) ->
+    async.waterfall [
+      async.apply fs.readdir, path.join(directory, dir)
+      (filenames, callback) ->
+        async.forEach filenames, (filename, callback) ->
+          relname = path.join dir, filename
+          async.waterfall [
+            async.apply fs.stat, path.join(directory, relname)
+            (stat, callback) ->
+              if stat.isDirectory()
+                walk relname, callback
+              else
+                result.push relname
+                callback()
+          ], callback
+        , callback
+    ], callback
+  walk '', (error) -> callback error, result
+
+module.exports = {fileExists, fileExistsSync, extend, stripExtension, readJSON, readJSONSync, readdirRecursive}
