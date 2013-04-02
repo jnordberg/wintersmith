@@ -27,8 +27,9 @@ class Config
     output: './build'
 
 
-    # max files to keep open at once
-    fileLimit: 100
+    # options prefixed with _ are undocumented and should generally not be modified
+    _fileLimit: 40 # max files to keep open at once
+
 
   constructor: (options) ->
     for option, value of options

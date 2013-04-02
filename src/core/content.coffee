@@ -122,6 +122,8 @@ ContentTree.fromDirectory = (env, directory, callback) ->
   reldir = env.relativeContentsPath directory
   tree = new ContentTree env, reldir
 
+  env.logger.verbose "creating content tree from #{ directory }"
+
   # options passed to minimatch for ignore and plugin matching
   minimatchOptions =
     dot: false
@@ -152,6 +154,29 @@ ContentTree.fromDirectory = (env, directory, callback) ->
     else
       callback null, filenames
 
+  loadContent = (filepath, callback) ->
+    ### Load content plugin for *filepath*. ###
+
+    env.logger.verbose "loading #{ filepath.relative }"
+
+    # any file not matched to a plugin will be handled by the static file plug
+    plugin =
+      class: StaticFile
+      group: 'files'
+
+    # iterate backwards over all content plugins and check if any plugin can handle this file
+    for i in [env.contentPlugins.length - 1..0] by -1
+      if minimatch filepath.relative, env.contentPlugins[i].pattern, minimatchOptions
+        plugin = env.contentPlugins[i]
+        break
+
+    # have the plugin's factory method create our instance
+    plugin.class.fromFile env, filepath, (error, instance) ->
+      # keep some references to the plugin and file used to create this instance
+      instance?.__plugin = plugin
+      instance?.__filename = filepath.full
+      callback error, instance
+
   createInstance = (filepath, callback) ->
     ### Create plugin or subtree instance for *filepath*. ###
     async.waterfall [
@@ -169,22 +194,11 @@ ContentTree.fromDirectory = (env, directory, callback) ->
 
         # map files to content plugins
         else if stats.isFile()
-          # iterate backwards over all content plugins and check if any plugin can handle this file
-          # any file not matched will be handled by the static file plug
-          plugin =
-            class: StaticFile
-            group: 'files'
-          for i in [env.contentPlugins.length - 1..0] by -1
-            if minimatch filepath.relative, env.contentPlugins[i].pattern, minimatchOptions
-              plugin = env.contentPlugins[i]
-              break
-
-          plugin.class.fromFile env, filepath, (error, instance) ->
+          loadContent filepath, (error, instance) ->
             if not error
               instance.parent = tree
-              instance.__filename = filepath.full # internal, used by preview server to watch files
               tree[basename] = instance
-              tree._[plugin.group].push instance
+              tree._[instance.__plugin.group].push instance
             callback error
 
         # This should never happen™
@@ -194,7 +208,9 @@ ContentTree.fromDirectory = (env, directory, callback) ->
     ], callback
 
   createInstances = (filenames, callback) ->
-    async.forEach filenames, createInstance, callback
+    # NOTE: the file limit is not really enforced here since this is a recursive function
+    #       but won't be a problem in 99% of cases, patches welcome :-)
+    async.forEachLimit filenames, env.config._fileLimit, createInstance, callback
 
   async.waterfall [
     readDirectory
@@ -241,5 +257,4 @@ ContentTree.flatten = (tree) ->
 
 ### Exports ###
 
-exports.ContentTree = ContentTree
-exports.ContentPlugin = ContentPlugin
+module.exports = {ContentTree, ContentPlugin}
