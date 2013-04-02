@@ -8,15 +8,25 @@ mkdirp = require 'mkdirp'
 
 {ContentTree} = require './content'
 
+pump = (source, destination, callback) ->
+  source.pipe destination
+  source.on 'error', (error) ->
+    callback? error
+    callback = null
+  source.on 'close', ->
+    callback?()
+    callback = null
+
 renderView = (env, content, locals, contents, templates, callback) ->
-  view = content.view
-  if typeof view is 'string'
-    name = view
-    view = env.views[view]
-    if not view?
-      callback new Error "content '#{ content.filename }' specifies unknown view '#{ name }'"
-      return
-  view.call content, env, locals, contents, templates, callback
+  setImmediate ->
+    view = content.view
+    if typeof view is 'string'
+      name = view
+      view = env.views[view]
+      if not view?
+        callback new Error "content '#{ content.filename }' specifies unknown view '#{ name }'"
+        return
+    view.call content, env, locals, contents, templates, callback
 
 render = (env, outputDir, contents, templates, locals, callback) ->
   ### Render *contents* and *templates* using environment *env* to *outputDir*.
@@ -27,16 +37,16 @@ render = (env, outputDir, contents, templates, locals, callback) ->
 
   renderPlugin = (content, callback) ->
     ### render *content* plugin, calls *callback* with true if a file is written; otherwise false. ###
-    destination = path.join outputDir, content.filename
-    env.logger.verbose "writing content #{ content.url } to #{ destination }"
     renderView env, content, locals, contents, templates, (error, result) ->
       if error
         callback error
       else if result instanceof fs.ReadStream or result instanceof Buffer
+        destination = path.join outputDir, content.filename
+        env.logger.verbose "writing content #{ content.url } to #{ destination }"
         mkdirp.sync path.dirname destination
         writeStream = fs.createWriteStream destination
         if result instanceof fs.ReadStream
-          result.pipe writeStream, callback
+          pump result, writeStream, callback
         else
           writeStream.write result
           writeStream.end()
@@ -46,7 +56,7 @@ render = (env, outputDir, contents, templates, locals, callback) ->
         callback()
 
   items = ContentTree.flatten contents
-  async.forEachLimit items, env.config.fileLimit, renderPlugin, callback
+  async.forEachLimit items, env.config._fileLimit, renderPlugin, callback
 
 ### Exports ###
 
