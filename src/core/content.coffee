@@ -7,6 +7,10 @@ url = require 'url'
 colors = require 'colors'
 minimatch = require 'minimatch'
 
+# options passed to minimatch for ignore and plugin matching
+minimatchOptions =
+  dot: false
+
 class ContentPlugin
   @property = (name, getter) ->
     ### Define read-only property with *name*. ###
@@ -86,6 +90,29 @@ class StaticFile extends ContentPlugin
 StaticFile.fromFile = (env, filepath, callback) ->
   callback null, new StaticFile(env, filepath)
 
+loadContent = (env, filepath, callback) ->
+  ### Helper that loads content plugin found in *filepath*. ###
+
+  #env.logger.verbose "loading #{ filepath.relative }"
+
+  # any file not matched to a plugin will be handled by the static file plug
+  plugin =
+    class: StaticFile
+    group: 'files'
+
+  # iterate backwards over all content plugins and check if any plugin can handle this file
+  for i in [env.contentPlugins.length - 1..0] by -1
+    if minimatch filepath.relative, env.contentPlugins[i].pattern, minimatchOptions
+      plugin = env.contentPlugins[i]
+      break
+
+  # have the plugin's factory method create our instance
+  plugin.class.fromFile env, filepath, (error, instance) ->
+    # keep some references to the plugin and file used to create this instance
+    instance?.__plugin = plugin
+    instance?.__filename = filepath.full
+    callback error, instance
+
 # Class ContentTree
 # not using Class since we need a clean prototype
 ContentTree = (env, filename) ->
@@ -124,10 +151,6 @@ ContentTree.fromDirectory = (env, directory, callback) ->
 
   env.logger.verbose "creating content tree from #{ directory }"
 
-  # options passed to minimatch for ignore and plugin matching
-  minimatchOptions =
-    dot: false
-
   readDirectory = (callback) ->
     fs.readdir directory, callback
 
@@ -154,62 +177,40 @@ ContentTree.fromDirectory = (env, directory, callback) ->
     else
       callback null, filenames
 
-  loadContent = (filepath, callback) ->
-    ### Load content plugin for *filepath*. ###
-
-    env.logger.verbose "loading #{ filepath.relative }"
-
-    # any file not matched to a plugin will be handled by the static file plug
-    plugin =
-      class: StaticFile
-      group: 'files'
-
-    # iterate backwards over all content plugins and check if any plugin can handle this file
-    for i in [env.contentPlugins.length - 1..0] by -1
-      if minimatch filepath.relative, env.contentPlugins[i].pattern, minimatchOptions
-        plugin = env.contentPlugins[i]
-        break
-
-    # have the plugin's factory method create our instance
-    plugin.class.fromFile env, filepath, (error, instance) ->
-      # keep some references to the plugin and file used to create this instance
-      instance?.__plugin = plugin
-      instance?.__filename = filepath.full
-      callback error, instance
-
   createInstance = (filepath, callback) ->
     ### Create plugin or subtree instance for *filepath*. ###
-    async.waterfall [
-      async.apply fs.lstat, filepath.full
-      (stats, callback) ->
-        basename = path.basename filepath.relative
+    setImmediate ->
+      async.waterfall [
+        async.apply fs.lstat, filepath.full
+        (stats, callback) ->
+          basename = path.basename filepath.relative
 
-        # recursively map directories to content tree instances
-        if stats.isDirectory()
-          ContentTree.fromDirectory env, filepath.full, (error, result) ->
-            result.parent = tree
-            tree[basename] = result
-            tree._.directories.push result # add instance to the directory group of its parent
-            callback error
+          # recursively map directories to content tree instances
+          if stats.isDirectory()
+            ContentTree.fromDirectory env, filepath.full, (error, result) ->
+              result.parent = tree
+              tree[basename] = result
+              tree._.directories.push result # add instance to the directory group of its parent
+              callback error
 
-        # map files to content plugins
-        else if stats.isFile()
-          loadContent filepath, (error, instance) ->
-            if not error
-              instance.parent = tree
-              tree[basename] = instance
-              tree._[instance.__plugin.group].push instance
-            callback error
+          # map files to content plugins
+          else if stats.isFile()
+            loadContent env, filepath, (error, instance) ->
+              if not error
+                instance.parent = tree
+                tree[basename] = instance
+                tree._[instance.__plugin.group].push instance
+              callback error
 
-        # This should never happen™
-        else
-          callback new Error "Invalid file #{ filepath.full }."
-
-    ], callback
+          # This should never happen™
+          else
+            callback new Error "Invalid file #{ filepath.full }."
+      ], callback
 
   createInstances = (filenames, callback) ->
     # NOTE: the file limit is not really enforced here since this is a recursive function
     #       but won't be a problem in 99% of cases, patches welcome :-)
+    # TODO: actually this has to be fixed, we want an error to stop instance creation
     async.forEachLimit filenames, env.config._fileLimit, createInstance, callback
 
   async.waterfall [
@@ -279,4 +280,4 @@ ContentTree.merge = (env, root, tree) ->
 
 ### Exports ###
 
-module.exports = {ContentTree, ContentPlugin}
+module.exports = {ContentTree, ContentPlugin, loadContent}
