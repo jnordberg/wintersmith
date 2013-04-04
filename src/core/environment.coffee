@@ -168,9 +168,17 @@ class Environment
       (callback) =>
         ContentTree.fromDirectory this, @contentsPath, callback
       (contents, callback) =>
-        async.forEachSeries @generators, (generator, callback) =>
+        async.mapSeries @generators, (generator, callback) =>
           runGenerator this, contents, generator, callback
-        , (error) -> callback error, contents
+        , (error, generated) =>
+          return callback error if error?
+          try
+            tree = generated.reduce (prev, current) =>
+              ContentTree.merge this, prev, current
+            ContentTree.merge this, contents, tree
+          catch error
+            return callback error
+          callback null, contents
     ], callback
 
   getTemplates: (callback) ->

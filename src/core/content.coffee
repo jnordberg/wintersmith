@@ -255,6 +255,28 @@ ContentTree.flatten = (tree) ->
       rv.push value
   return rv
 
+ContentTree.merge = (env, root, tree) ->
+  ### Merge *tree* into *root* tree. ###
+  for key, item of tree
+    if item instanceof ContentPlugin
+      if root[key]?
+        env.logger.warn "overwriting '#{ key }' when merging trees"
+      root[key] = item
+      root[key].parent = root
+      root._[item.__plugin.group].push item
+    else if item instanceof ContentTree
+      if not root[key]?
+        root[key] = new ContentTree env, key
+        root[key].parent = root
+        root[key].parent._.directories.push root[key]
+      if root[key] instanceof ContentTree
+        ContentTree.merge env, root[key], item
+      else
+        env.logger.warn "trying to overwrite file with directory '#{ key }', ignoring"
+    else
+      throw new Error "Invalid item in tree for '#{ key }'"
+  return
+
 ### Exports ###
 
 module.exports = {ContentTree, ContentPlugin}
