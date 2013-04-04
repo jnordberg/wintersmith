@@ -47,15 +47,19 @@ Config.fromFile = (path, callback) ->
         else
           callback new Error "Config file at '#{ path }' does not exist."
     (options, callback) ->
-      callback null, new Config options
+      config = new Config options
+      config.__filename = path
+      callback null, config
   ], callback
 
 Config.fromFileSync = (path) ->
   ### Read config from *path* as JSON return a Config instance. ###
   if not fileExistsSync path
     throw new Error "Config file at '#{ path }' does not exist."
-  return new Config readJSONSync path
+  config = new Config readJSONSync path
+  config.__filename = path
+  return config
 
 ### Exports ###
 
-exports.Config = Config
+module.exports = {Config}
