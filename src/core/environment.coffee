@@ -227,9 +227,11 @@ class Environment
         , callback
     ], callback
 
-  preview: (options, callback) ->
+  preview: (callback) ->
     ### Start the preview server. Calls *callback* when server is up and
         running or if an error occurs. ###
+    server = require './server'
+    server.run this, callback
 
   build: (outputDir, callback) ->
     ### Build the content tree and render it to *outputDir*. ###

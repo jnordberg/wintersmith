@@ -1,14 +1,18 @@
+### server.coffee ###
 
-util = require 'util'
 async = require 'async'
-fs = require 'fs'
-path = require 'path'
-url = require 'url'
+chokidar = require 'chokidar'
 colors = require 'colors'
+http = require 'http'
 mime = require 'mime'
+url = require 'url'
+{Stream} = require 'stream'
 
-{logger, extend, stripExtension} = require './common'
-{loadTemplates, loadPlugins, ContentTree} = require './'
+{Config} = require './config'
+{ContentTree, ContentPlugin, loadContent} = require './content'
+{pump} = require './utils'
+{renderView} = require './renderer'
+{runGenerator} = require './generator'
 
 colorCode = (code) ->
   s = code.toString()
@@ -22,79 +26,290 @@ colorCode = (code) ->
     else
       return s
 
-setup = (options, callback) ->
-  ### returns a wintersmith http middleware ###
+sleep = (callback) -> setTimeout callback, 50
 
-  # options passed to ContentTree.fromDirectory
-  contentOptions =
-    ignore: options.ignore
+normalizeUrl = (anUrl) ->
+  anUrl += 'index.html' if anUrl[anUrl.length - 1] is '/'
+  return anUrl
+
+urlEqual = (urlA, urlB) ->
+  normalizeUrl(urlA) is normalizeUrl(urlB)
+
+keyForValue = (object, value) ->
+  for key of object
+    return key if object[key] is value
+  return null
+
+replaceInArray = (array, oldItem, newItem)  ->
+  idx = array.indexOf oldItem
+  return false if idx is -1
+  array[idx] = newItem
+  return true
+
+buildLookupMap = (contents) ->
+  map = {}
+  for item in ContentTree.flatten(contents)
+    map[normalizeUrl(item.url)] = item
+  return map
+
+setup = (env) ->
+  ### Create a preview request handler. ###
+
+  contents = null
+  templates = null
+  locals = null
+  lookup = {} # url to content map
+
+  # tasks that will block the request until completed
+  block =
+    contentChange: false
+    contentsLoad: false
+    templatesLoad: false
+    viewsLoad: false
+    localsLoad: false
+
+  isReady = ->
+    ### Returns true if we have no running tasks ###
+    for k, v of block
+      return false if v is true
+    return true
+
+  logop = (error) ->
+    env.logger.error(error.message, error) if error?
+
+  loadContents = (callback=logop) ->
+    block.contentsLoad = true
+    lookup = {}
+    contents = null
+    ContentTree.fromDirectory env, env.contentsPath, (error, result) ->
+      if not error?
+        contents = result
+        lookup = buildLookupMap result
+      block.contentsLoad = false
+      callback error
+
+  loadTemplates = (callback=logop) ->
+    block.templatesLoad = true
+    templates = null
+    env.getTemplates (error, result) ->
+      if not error?
+        templates = result
+      block.templatesLoad = false
+      callback error
+
+  loadViews = (callback=logop) ->
+    block.viewsLoad = true
+    env.loadViews (error) ->
+      block.viewsLoad = false
+      callback error
+
+  loadLocals = (callback=logop) ->
+    block.localsLoad = true
+    locals = null
+    env.getLocals (error, result) ->
+      if not error?
+        locals = result
+      block.localsLoad = false
+      callback error
+
+  contentWatcher = chokidar.watch env.contentsPath
+  contentWatcher.on 'change', (path) ->
+    return if not contents? or block.contentsLoad
+    # ignore if we dont have the tree loaded or its loading
+
+    block.contentChange = true
+
+    content = null
+    for item in ContentTree.flatten(contents)
+      if item.__filename is path
+        content = item
+        break
+    if not content
+      throw new Error "Got a change event for item not previously in tree: #{ path }"
+
+    filepath =
+      relative: env.relativeContentsPath path
+      full: path
+
+    tree = content.parent
+    key = keyForValue tree, content
+    group = tree._[content.__plugin.group]
+
+    if not key?
+      throw new Error "Content #{ content.filename } not found in it's parent tree!"
+
+    loadContent env, filepath, (error, newContent) ->
+      if error?
+        contents = null
+        lookup = {}
+        block.contentChange = false
+        return
+
+      # replace old contents
+      newContent.parent = tree
+      tree[key] = newContent
+
+      # also in the trees plugin group
+      if not replaceInArray(group, content, newContent)
+        throw new Error "Content #{ content.filename } not found in it's plugin group!"
+
+      # keep the lookup map fresh
+      delete lookup[normalizeUrl(content.url)]
+      lookup[normalizeUrl(newContent.url)] = newContent
+
+      block.contentChange = false
+
+  # reload entire tree if a file is removed or added
+  # patches to modify the already loaded tree instead are welcome :-)
+  contentWatcher.on 'add', -> loadContents() if not block.contentsLoad
+  contentWatcher.on 'unlink', -> loadContents() if not block.contentsLoad
+
+  templateWatcher = chokidar.watch env.templatesPath
+  templateWatcher.on 'all', (event, path) ->
+    loadTemplates() if not block.templatesLoad
+
+  if env.config.views?
+    viewsWatcher = chokidar.watch env.resolvePath env.config.views
+    viewsWatcher.on 'all', (event, path) ->
+      if not block.viewsLoad
+        loadViews()
+        delete require.cache[path]
 
   contentHandler = (request, response, callback) ->
-    uri = url.parse(request.url).pathname
-    logger.verbose "contentHandler: #{ uri }"
+    uri = normalizeUrl url.parse(request.url).pathname
+
+    env.logger.verbose "contentHandler - #{ uri }"
+
     async.waterfall [
       (callback) ->
-        # load contents and templates
-        async.parallel
-          templates: async.apply loadTemplates, options.templates
-          contents: async.apply ContentTree.fromDirectory, options.contents, contentOptions
+        # run generators
+        async.mapSeries env.generators, (generator, callback) ->
+          runGenerator env, contents, generator, callback
         , callback
-      (result, callback) ->
-        # render if uri matches
-        {contents, templates} = result
-        async.detect ContentTree.flatten(contents), (item, callback) ->
-          callback (uri is item.url or (item.url[item.url.length - 1] is '/' and uri is (item.url + 'index.html')))
-        , (result) ->
-          if result
-            result.render options.locals, contents, templates, (error, res) ->
-              if error
-                callback error
-              else if res instanceof fs.ReadStream
-                response.writeHead 200, 'Content-Type': mime.lookup(result.filename)
-                util.pump res, response, (error) ->
-                  callback error, 200
-              else if res instanceof Buffer
-                response.writeHead 200, 'Content-Type': mime.lookup(result.filename)
-                response.write res
+      (generated, callback) ->
+        # merge generated
+        if generated.length > 0
+          try
+            generated = generated.reduce (prev, current) -> ContentTree.merge env, prev, current
+            tree = new ContentTree env, ''
+            ContentTree.merge env, tree, contents
+            ContentTree.merge env, tree, generated
+            map = buildLookupMap(generated)
+          catch error
+            return callback error
+          callback null, tree, map
+        else
+          callback null, contents, {}
+      (tree, generatorLookup, callback) ->
+        # render content
+        content = generatorLookup[uri] or lookup[uri]
+        if content?
+          renderView env, content, locals, tree, templates, (error, result) ->
+            if error then callback error
+            else if result?
+              if result instanceof Stream
+                response.writeHead 200, 'Content-Type': mime.lookup(content.filename)
+                pump result, response, (error) -> callback error, 200
+              else if result instanceof Buffer
+                response.writeHead 200, 'Content-Type': mime.lookup(content.filename)
+                response.write result
                 response.end()
                 callback null, 200
               else
-                callback() # not handled
-          else
-            callback() # not handled
+                callback new Error "View for content '#{ res.filename }' returned invalid response. Expected Buffer or Stream."
+            else
+              callback() # not handled, no data from plugin
+        else
+          callback() # not handled, no matching url
     ], callback
 
   requestHandler = (request, response) ->
-    start = new Date()
+    start = Date.now()
     uri = url.parse(request.url).pathname
+
     async.waterfall [
-      async.apply contentHandler, request, response
+      (callback) ->
+        # load contents if needed and not already loading
+        if not block.contentsLoad and not contents?
+          loadContents callback
+        else
+          callback()
+      (callback) ->
+        # load templates if needed and not already loading
+        if not block.templatesLoad and not templates?
+          loadTemplates callback
+        else
+          callback()
+      (callback) ->
+        # block until we are ready
+        async.until isReady, sleep, callback
+      (callback) ->
+        # finally pass the request to the contentHandler
+        contentHandler request, response, callback
     ], (error, responseCode) ->
-      if error or !responseCode?
+      if error? or not responseCode?
         # request not handled or error
         responseCode = if error? then 500 else 404
         response.writeHead responseCode, 'Content-Type': 'text/plain'
         response.end if error? then error.message else '404 Not Found\n'
-      delta = new Date() - start
-      logger.info "#{ colorCode(responseCode) } #{ uri.bold } " + "#{ delta }ms".grey
+      delta = Date.now() - start
+      env.logger.info "#{ colorCode(responseCode) } #{ uri.bold } " + "#{ delta }ms".grey
       if error
-        logger.error error.message, error
+        env.logger.error error.message, error
+
+  # preload
+  loadContents()
+  loadTemplates()
+  loadViews()
+  loadLocals()
 
   return requestHandler
 
-run = (options) ->
-  http = require 'http'
-  logger.verbose 'setting up server'
-  async.waterfall [
-    async.apply loadPlugins, options.plugins
-  ], (error) ->
-    if error
-      logger.error error.message, error
-    else
-      server = http.createServer setup options
-      server.listen options.port
-      serverUrl = "http://#{ options.domain }:#{ options.port }/".bold
-      logger.info "server running on: #{ serverUrl }"
+run = (env, callback) ->
+  server = null
 
-module.exports = setup
-module.exports.run = run
+  if env.config.__filename?
+    # watch config file and reload when changed
+    env.logger.verbose "watching config file #{ env.config.__filename } for changes"
+    configWatcher = chokidar.watch env.config.__filename
+    configWatcher.on 'change', ->
+      env.config = Config.fromFileSync env.config.__filename
+      restart (error) ->
+        throw error if error
+        env.logger.verbose 'config file change detected, server reloaded'
+
+  restart = (callback) ->
+    env.logger.info 'restarting server'
+    async.waterfall [stop, start], callback
+
+  stop = (callback) ->
+    server.close callback
+    server = null
+
+  start = (callback) ->
+    handler = setup env
+    server = http.createServer handler
+    server.on 'error', (error) ->
+      callback? error
+      callback = null
+    server.on 'listening', ->
+      callback?()
+      callback = null
+    server.listen env.config.port, env.config.hostname
+
+  process.on 'uncaughtException', (error) ->
+    # log exceptions thrown instead of exiting
+    env.logger.error error.message, error
+
+  env.logger.verbose 'starting preview server'
+
+  async.series [
+    env.loadPlugins.bind(env)
+    start
+  ], (error) ->
+    if not error?
+      serverUrl = "http://#{ env.config.hostname or 'localhost' }:#{ env.config.port }/".bold
+      env.logger.info "server running on: #{ serverUrl }"
+    callback error
+
+module.exports = {run, setup}

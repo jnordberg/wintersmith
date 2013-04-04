@@ -41,7 +41,8 @@
     "mime": "1.2.x",
     "moment": "1.7.x",
     "js-yaml": "1.0.x",
-    "mkdirp": "0.3.x"
+    "mkdirp": "0.3.x",
+    "chokidar": "0.6.x"
   },
   "engine": {
     "node": ">=0.6"
