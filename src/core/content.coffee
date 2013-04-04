@@ -11,6 +11,9 @@ minimatch = require 'minimatch'
 minimatchOptions =
   dot: false
 
+if not setImmediate?
+  setImmediate = process.nextTick
+
 class ContentPlugin
   @property = (name, getter) ->
     ### Define read-only property with *name*. ###

@@ -9,6 +9,9 @@ mkdirp = require 'mkdirp'
 {ContentTree} = require './content'
 {pump} = require './utils'
 
+if not setImmediate?
+  setImmediate = process.nextTick
+
 renderView = (env, content, locals, contents, templates, callback) ->
   setImmediate ->
     view = content.view
