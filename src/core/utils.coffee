@@ -57,4 +57,16 @@ readdirRecursive = (directory, callback) ->
     ], callback
   walk '', (error) -> callback error, result
 
-module.exports = {fileExists, fileExistsSync, extend, stripExtension, readJSON, readJSONSync, readdirRecursive}
+pump = (source, destination, callback) ->
+  source.pipe destination
+  source.on 'error', (error) ->
+    callback? error
+    callback = null
+  source.on 'close', ->
+    callback?()
+    callback = null
+
+### Exports ###
+
+module.exports = {fileExists, fileExistsSync, extend, stripExtension,
+                  readJSON, readJSONSync, readdirRecursive, pump}

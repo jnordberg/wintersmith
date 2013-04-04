@@ -204,7 +204,7 @@ class Environment
         moduleAlias = moduleName.split('/')[-1..]
         logger.verbose "loading module #{ moduleName } available in locals as: #{ moduleAlias }"
         if locals[moduleAlias]?
-          logger.warning "module '#{ moduleName }' overwrites previous local with the same key"
+          logger.warn "module '#{ moduleName }' overwrites previous local with the same key"
         try
           locals[moduleAlias] = require moduleName
           callback()
@@ -232,7 +232,7 @@ class Environment
 
   preview: (options, callback) ->
     ### Start the preview server. Calls *callback* when server is up and
-        running or error if something went wrong. ###
+        running or if an error occurs. ###
 
   build: (outputDir, callback) ->
     ### Build the content tree and render it to *outputDir*. ###

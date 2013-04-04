@@ -81,7 +81,7 @@ class GraphHandler
       return rv
 
   set: (receiver, key, value) ->
-    @target[key] = value;
+    @target[key] = value
     return true
 
   getOwnPropertyNames: ->
@@ -146,8 +146,6 @@ buildGraph = (env, contents, templates, locals, callback) ->
 
   proxy = GraphHandler.proxy contents, (dep) ->
     graph.addDependency current, dep
-
-  locals.contents = proxy # TODO: don't modify locals
 
   async.eachSeries items, (item, callback) ->
     current = item

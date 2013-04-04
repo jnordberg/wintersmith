@@ -7,15 +7,7 @@ path = require 'path'
 mkdirp = require 'mkdirp'
 
 {ContentTree} = require './content'
-
-pump = (source, destination, callback) ->
-  source.pipe destination
-  source.on 'error', (error) ->
-    callback? error
-    callback = null
-  source.on 'close', ->
-    callback?()
-    callback = null
+{pump} = require './utils'
 
 renderView = (env, content, locals, contents, templates, callback) ->
   setImmediate ->
