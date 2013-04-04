@@ -31,7 +31,6 @@ class Environment
     @contentPlugins = []
 
     @pluginsLoaded = false
-    @viewsLoaded = false
 
     @contentsPath = @resolvePath @config.contents
     @templatesPath = @resolvePath @config.templates
@@ -152,14 +151,12 @@ class Environment
 
   loadViews: (callback) ->
     ### Loads files found in the *@config.views* directory and registers them as views. ###
-    return callback() if @viewsLoaded or not @config.views?
+    return callback() if not @config.views?
     async.waterfall [
       (callback) => fs.readdir @resolvePath(@config.views), callback
       (filenames, callback) =>
         modules = filenames.map (filename) => "#{ @config.views }/#{ filename }"
-        async.forEach modules, @loadViewModule.bind(this), (error) =>
-          @viewsLoaded = true if not error?
-          callback error
+        async.forEach modules, @loadViewModule.bind(this), callback
     ], callback
 
   getContents: (callback) ->
