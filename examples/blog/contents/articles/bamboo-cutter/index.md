@@ -6,7 +6,7 @@ template: article.jade
 ---
 
 
-![image](Taketori_Monogatari.jpg)
+![image](/articles/bamboo-cutter/Taketori_Monogatari.jpg)
 
 Long, long ago, there lived an old bamboo wood-cutter.
 
