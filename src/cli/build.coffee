@@ -1,12 +1,12 @@
-
 async = require 'async'
-rimraf = require 'rimraf'
+colors = require 'colors'
 fs = require 'fs'
 path = require 'path'
-colors = require 'colors'
-{logger, extend} = require '../common' # lib common
-{getOptions, commonOptions, commonUsage, fileExists} = require './common' # cli common
-wintersmith = require '../'
+rimraf = require 'rimraf'
+
+{extend, fileExistsSync} = require './../core/utils'
+{loadEnv, commonOptions, commonUsage} = require './common'
+{logger} = require './../core/logger'
 
 usage = """
 
@@ -36,7 +36,6 @@ usage = """
 options =
   output:
     alias: 'o'
-    default: './build'
   clean:
     alias: 'X'
     default: false
@@ -47,32 +46,29 @@ build = (argv) ->
   start = new Date()
   logger.info 'building site'
 
+  prepareOutputDir = (env, callback) ->
+    # create clean and create output directory if needed
+    outputDir = env.resolvePath env.config.output
+    exists = fileExistsSync outputDir
+    if exists
+      if argv.clean
+        logger.verbose "cleaning - running rimraf on #{ outputDir }"
+        async.series [
+          (callback) -> rimraf outputDir, callback
+          (callback) -> fs.mkdir outputDir, callback
+        ], callback
+      else
+        callback()
+    else
+      logger.verbose "creating output directory #{ outputDir }"
+      fs.mkdir outputDir, callback
+
   async.waterfall [
-    # load options
-    async.apply getOptions, argv
-    (options, callback) ->
-      async.waterfall [
-        (callback) ->
-          # create output dir if not existing
-          fileExists options.output, (exists) ->
-            if exists
-              callback()
-            else
-              logger.verbose "creating output directory #{ options.output }"
-              fs.mkdir options.output, callback
-        (callback) ->
-          if options.clean
-            logger.verbose "cleaning - running rimraf on #{ options.output }"
-            async.waterfall [
-              async.apply rimraf, options.output
-              async.apply fs.mkdir, options.output
-            ], callback
-          else
-            callback()
-        (callback) ->
-          # start building
-          wintersmith options, callback
-      ], callback
+    (callback) -> loadEnv argv, callback
+    (env, callback) ->
+      prepareOutputDir env, (error) -> callback error, env
+    (env, callback) ->
+      env.build callback
   ], (error) ->
     if error
       logger.error error.message, error

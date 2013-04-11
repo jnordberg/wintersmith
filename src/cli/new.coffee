@@ -1,9 +1,10 @@
 async = require 'async'
-{ncp} = require 'ncp'
 fs = require 'fs'
 path = require 'path'
-{fileExists} = require './common' # cli common
-{logger} = require '../common' # lib common
+{ncp} = require 'ncp'
+
+{fileExists} = require './../core/utils'
+{logger} = require './../core/logger'
 
 templateTypes = ['basic', 'blog']
 

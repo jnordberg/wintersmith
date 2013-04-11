@@ -1,7 +1,8 @@
-
-path = require 'path'
 optimist = require 'optimist'
-{logger, transports, readJSON} = require './../common'
+path = require 'path'
+
+{logger} = require './../core/logger'
+{readJSON} = require './../core/utils'
 
 usage = """
 
@@ -41,7 +42,11 @@ main = ->
     try
       cmd = require "./#{ argv._[0] }"
     catch error
-      console.log "'#{ argv._[0] }' - no such command"
+      if error.code is 'MODULE_NOT_FOUND'
+        console.log "'#{ argv._[0] }' - no such command"
+        process.exit 1
+      else
+        throw error
 
   if argv.version
     readJSON path.join(__dirname, '../../package.json'), (error, result) ->
