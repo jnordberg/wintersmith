@@ -168,7 +168,7 @@ class Environment
         async.mapSeries @generators, (generator, callback) =>
           runGenerator this, contents, generator, callback
         , (error, generated) =>
-          return callback error if error?
+          return callback(error, contents) if error? or generated.length is 0
           try
             tree = generated.reduce (prev, current) =>
               ContentTree.merge this, prev, current
