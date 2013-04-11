@@ -96,7 +96,7 @@ StaticFile.fromFile = (env, filepath, callback) ->
 loadContent = (env, filepath, callback) ->
   ### Helper that loads content plugin found in *filepath*. ###
 
-  #env.logger.verbose "loading #{ filepath.relative }"
+  env.logger.silly "loading #{ filepath.relative }"
 
   # any file not matched to a plugin will be handled by the static file plug
   plugin =
@@ -152,7 +152,7 @@ ContentTree.fromDirectory = (env, directory, callback) ->
   reldir = env.relativeContentsPath directory
   tree = new ContentTree env, reldir
 
-  env.logger.verbose "creating content tree from #{ directory }"
+  env.logger.silly "creating content tree from #{ directory }"
 
   readDirectory = (callback) ->
     fs.readdir directory, callback
