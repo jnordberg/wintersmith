@@ -8,7 +8,7 @@ async = require 'async'
 
 class Config
 
-  defaults =
+  @defaults =
     # path to the directory containing content's to be scanned
     contents: './contents'
     # list of glob patterns to ignore
@@ -33,11 +33,10 @@ class Config
     # options prefixed with _ are undocumented and should generally not be modified
     _fileLimit: 40 # max files to keep open at once
 
-
   constructor: (options) ->
     for option, value of options
       this[option] = value
-    for option, defaultValue of defaults
+    for option, defaultValue of @constructor.defaults
       this[option] ?= defaultValue
 
 Config.fromFile = (path, callback) ->
