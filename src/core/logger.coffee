@@ -29,7 +29,7 @@ class cli extends winston.Transport
     else if !@quiet
       switch level
         when 'verbose'
-          msg = msg.yellow
+          msg = "verbose: #{ msg }"
       if meta
         msg += util.format ' %j', meta
       process.stdout.write "  #{ msg }\n"
