@@ -1,4 +1,11 @@
-### graph.coffee ###
+### graph.coffee
+
+  EXPERIMENTAL
+
+  the dependency graph requires harmony proxies to be enabled (node --harmony-proxies)
+  i will probably move this to a plugin later
+
+###
 
 async = require 'async'
 {EventEmitter} = require 'events'

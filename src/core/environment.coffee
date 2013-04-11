@@ -8,10 +8,9 @@ utils = require './utils'
 
 {Config} = require './config'
 {ContentPlugin, ContentTree} = require './content'
-{render} = require './renderer'
 {loadTemplates} = require './templates'
-{buildGraph} = require './graph'
 {logger} = require './logger'
+{render} = require './renderer'
 {runGenerator} = require './generator'
 
 {readJSON} = utils
@@ -249,6 +248,7 @@ class Environment
 
   getGraph: (callback) ->
     ### Build a dependency graph ###
+    {buildGraph} = require './graph'
     async.waterfall [
       (callback) =>
         @load callback
