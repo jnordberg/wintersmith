@@ -110,31 +110,40 @@ class Environment
     return groups
 
   loadPluginModule: (module, callback) ->
-    ### Load a plugin *module* and add it to the environment. ###
+    ### Load a plugin *module*. ###
+    loaded = false
     done = (error) ->
       if error?
-        if error.code is 'MODULE_NOT_FOUND'
+        if not loaded and error.code is 'MODULE_NOT_FOUND'
           error.message = "Can not find plugin '#{ module }'"
         else
           error.message = "Error loading plugin '#{ module }': #{ error.message }"
       callback error
     @logger.verbose "loading plugin: #{ module }"
-    try
-      # load plugin module
-      fn = require @resolveModulePath module
-    catch error
-      if error.code is 'MODULE_NOT_FOUND' and module[0] isnt '.'
-        # also try in env's node_modules
-        try
-          fn = require @resolveModulePath "./node_modules/#{ module }"
-        catch error
+    if module[0] isnt '.'
+      # global module, first look in node_modules
+      try
+        fn = require @resolveModulePath "./node_modules/#{ module }"
+      catch error
+        if error.code is 'MODULE_NOT_FOUND'
+          # not locally installed, check globally
+          try
+            fn = require @resolveModulePath module
+          catch error
+            done error
+            return
+        else
           done error
           return
-      else
+    else
+      try
+        fn = require @resolveModulePath module
+      catch error
         done error
         return
     try
       # module loaded, run it
+      loaded = true
       fn this, done
     catch error
       done error
