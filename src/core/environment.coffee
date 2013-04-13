@@ -99,6 +99,15 @@ class Environment
     ### Add a view to the environment. ###
     @views[name] = view
 
+  getContentGroups: ->
+    ### Return an array of all registered content groups ###
+    groups = []
+    for plugin in @contentPlugins
+      groups.push plugin.group
+    for generator in @generators
+      groups.push generator.group
+    return groups
+
   loadPluginModule: (module, callback) ->
     ### Load a plugin *module* and add it to the environment. ###
     done = (error) ->

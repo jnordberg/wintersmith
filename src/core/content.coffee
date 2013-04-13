@@ -15,6 +15,8 @@ if not setImmediate?
   setImmediate = process.nextTick
 
 class ContentPlugin
+  ### The mother of all plugins ###
+
   @property = (name, getter) ->
     ### Define read-only property with *name*. ###
     if typeof getter is 'string'
@@ -61,19 +63,17 @@ class ContentPlugin
     ### Return plugin information. Also displayed in the content tree printout. ###
     return "url: #{ @url }"
 
-ContentPlugin.fromFile = (env, filepath, callback) ->
-  ### Calls *callback* with an instance of class. Where *env* is the current environment and
-      *filepath* is an object containing both the absolute and realative paths for the file.
-      E.g. {
-        full: "/home/foo/mysite/contents/somedir/somefile.ext",
-        relative: "somedir/somefile.ext"
-      } ###
+ContentPlugin.fromFile = (filepath, callback) ->
+  ### Calls *callback* with an instance of class. Where *filepath* is an object containing
+      both the absolute and realative paths for the file. e.g.
+      {full: "/home/foo/mysite/contents/somedir/somefile.ext",
+       relative: "somedir/somefile.ext"} ###
   throw new Error 'Not implemented.'
 
 class StaticFile extends ContentPlugin
   ### Static file handler, simply serves content as-is. Last in chain. ###
 
-  constructor: (@env, @filepath) ->
+  constructor: (@filepath) ->
 
   getView: ->
     return (args..., callback) ->
@@ -90,8 +90,10 @@ class StaticFile extends ContentPlugin
   getPluginColor: ->
     'none'
 
-StaticFile.fromFile = (env, filepath, callback) ->
-  callback null, new StaticFile(env, filepath)
+StaticFile.fromFile = (filepath, callback) ->
+  # normally you would want to read the file here, the static plugin however
+  # just pipes it to the file/http response
+  callback null, new StaticFile(filepath)
 
 loadContent = (env, filepath, callback) ->
   ### Helper that loads content plugin found in *filepath*. ###
@@ -110,23 +112,24 @@ loadContent = (env, filepath, callback) ->
       break
 
   # have the plugin's factory method create our instance
-  plugin.class.fromFile env, filepath, (error, instance) ->
+  plugin.class.fromFile filepath, (error, instance) ->
     # keep some references to the plugin and file used to create this instance
+    instance?.__env = env
     instance?.__plugin = plugin
     instance?.__filename = filepath.full
     callback error, instance
 
 # Class ContentTree
 # not using Class since we need a clean prototype
-ContentTree = (env, filename) ->
+ContentTree = (filename, groupNames=[]) ->
   parent = null
   groups = {directories: [], files: []}
 
-  for plugin in env.contentPlugins
-    groups[plugin.group] = []
+  for name in groupNames
+    groups[name] = []
 
-  for generator in env.generators
-    groups[generator.group] = []
+  Object.defineProperty this, '__groupNames',
+    get: -> groupNames
 
   Object.defineProperty this, '_',
     get: -> groups
@@ -150,7 +153,7 @@ ContentTree.fromDirectory = (env, directory, callback) ->
       Calls *callback* with a nested ContentTree or an error if something went wrong. ###
 
   reldir = env.relativeContentsPath directory
-  tree = new ContentTree env, reldir
+  tree = new ContentTree reldir, env.getContentGroups()
 
   env.logger.silly "creating content tree from #{ directory }"
 
@@ -259,7 +262,7 @@ ContentTree.flatten = (tree) ->
       rv.push value
   return rv
 
-ContentTree.merge = (env, root, tree) ->
+ContentTree.merge = (root, tree) ->
   ### Merge *tree* into *root* tree. ###
   for key, item of tree
     if item instanceof ContentPlugin
@@ -270,7 +273,7 @@ ContentTree.merge = (env, root, tree) ->
       root._[item.__plugin.group].push item
     else if item instanceof ContentTree
       if not root[key]?
-        root[key] = new ContentTree env, key
+        root[key] = new ContentTree key, item.__groupNames
         root[key].parent = root
         root[key].parent._.directories.push root[key]
       if root[key] instanceof ContentTree

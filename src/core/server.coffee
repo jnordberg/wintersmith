@@ -190,10 +190,10 @@ setup = (env) ->
         # merge generated
         if generated.length > 0
           try
-            generated = generated.reduce (prev, current) -> ContentTree.merge env, prev, current
-            tree = new ContentTree env, ''
-            ContentTree.merge env, tree, contents
-            ContentTree.merge env, tree, generated
+            generated = generated.reduce (prev, current) -> ContentTree.merge prev, current
+            tree = new ContentTree '', env.getContentGroups()
+            ContentTree.merge tree, contents
+            ContentTree.merge tree, generated
             map = buildLookupMap(generated)
           catch error
             return callback error

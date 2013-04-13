@@ -13,7 +13,7 @@ class TemplatePlugin
     ### Render template using *locals* and *callback* with a ReadStream or Buffer containing the result. ###
     throw new Error 'Not implemented.'
 
-TemplatePlugin.fromFile = (env, filepath, callback) ->
+TemplatePlugin.fromFile = (filepath, callback) ->
   ### *callback* with a instance of <TemplatePlugin> created from *filepath*. Where *filepath* is
       an object containing the full and relative (to templates directory) path to the file. ###
   throw new Error 'Not implemented.'
@@ -39,7 +39,7 @@ loadTemplates = (env, callback) ->
         plugin = env.templatePlugins[i]
         break
     if plugin?
-      plugin.class.fromFile env, filepath, (error, template) ->
+      plugin.class.fromFile filepath, (error, template) ->
         templates[filepath.relative] = template
         callback error
     else
