@@ -32,15 +32,16 @@ class Environment
 
     @pluginsLoaded = false
 
+    @workDir = path.resolve @workDir
     @contentsPath = @resolvePath @config.contents
     @templatesPath = @resolvePath @config.templates
 
-    # TODO: better default plugin handling
-    {templateView} = require '../plugins/page'
-    @registerView 'template', templateView
-    @registerTemplatePlugin '**/*.jade', require('../plugins/jade-template')
-    @registerContentPlugin 'pages', '**/*.*(markdown|mkd|md)', require('../plugins/markdown-page')
-    @registerContentPlugin 'pages', '**/*.json', require('../plugins/json-page')
+    # load default plugins
+    async.forEachSeries @constructor.defaultPlugins, (plugin, callback) =>
+      @logger.verbose "loading default plugin '#{ plugin }'"
+      fn = require "./../plugins/#{ plugin }"
+      fn.call null, this, callback
+    , (error) -> throw error if error?
 
   resolvePath: (pathname) ->
     ### Resolve *pathname* in working directory, returns an absolute path. ###
@@ -188,9 +189,8 @@ class Environment
         , (error, generated) =>
           return callback(error, contents) if error? or generated.length is 0
           try
-            tree = generated.reduce (prev, current) =>
-              ContentTree.merge this, prev, current
-            ContentTree.merge this, contents, tree
+            tree = generated.reduce (prev, current) -> ContentTree.merge prev, current
+            ContentTree.merge contents, tree
           catch error
             return callback error
           callback null, contents
@@ -293,6 +293,8 @@ Environment.create = (config, workDir) ->
       config = new Config config
 
   return new Environment config, workDir, logger
+
+Environment.defaultPlugins = ['page', 'jade', 'markdown']
 
 ### Exports ###
 
