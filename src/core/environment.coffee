@@ -8,7 +8,7 @@ utils = require './utils'
 
 {Config} = require './config'
 {ContentPlugin, ContentTree} = require './content'
-{loadTemplates} = require './templates'
+{TemplatePlugin, loadTemplates} = require './templates'
 {logger} = require './logger'
 {render} = require './renderer'
 {runGenerator} = require './generator'
@@ -21,6 +21,7 @@ class Environment
   utils: utils
   ContentTree: ContentTree
   ContentPlugin: ContentPlugin
+  TemplatePlugin: TemplatePlugin
 
   constructor: (@config, @workDir, @logger) ->
     @views = {}
