@@ -226,10 +226,13 @@ class Environment
   load: (callback) ->
     ### Convenience method to load plugins, views, contents, templates and locals. ###
     async.waterfall [
-      (callback) => @loadPlugins callback
       (callback) =>
+        async.parallel [
+          (callback) => @loadPlugins callback
+          (callback) => @loadViews callback
+        ], callback
+      (_, callback) =>
         async.parallel
-          _views: (callback) => @loadViews callback
           contents: (callback) => @getContents callback
           templates: (callback) => @getTemplates callback
           locals: (callback) => @getLocals callback
