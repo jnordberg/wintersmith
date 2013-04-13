@@ -42,9 +42,10 @@ class ContentPlugin
     throw new Error 'Not implemented.'
 
   @property 'url', 'getUrl'
-  getUrl: (base='/') ->
+  getUrl: (base) ->
     ### Return url for this content relative to *base*. ###
     filename = @getFilename()
+    base ?= @__env.config.baseUrl
     if not base.match /\/$/
       base += '/'
     if process.platform is 'win32'

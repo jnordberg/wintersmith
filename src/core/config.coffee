@@ -26,6 +26,9 @@ class Config
     # built product goes here
     output: './build'
 
+    # base url that site lives on, e.g. '/blog' or 'http://myplace.net/'
+    baseUrl: '/'
+
     # preview server settings
     hostname: null # INADDR_ANY
     port: 8080
