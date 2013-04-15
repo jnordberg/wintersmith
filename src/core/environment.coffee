@@ -137,6 +137,7 @@ class Environment
           done error
           return
     else
+      require 'coffee-script' if module[-6..] is 'coffee'
       try
         fn = require @resolveModulePath module
       catch error
