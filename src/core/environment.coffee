@@ -7,7 +7,7 @@ fs = require 'fs'
 utils = require './utils'
 
 {Config} = require './config'
-{ContentPlugin, ContentTree} = require './content'
+{ContentPlugin, ContentTree, StaticFile} = require './content'
 {TemplatePlugin, loadTemplates} = require './templates'
 {logger} = require './logger'
 {render} = require './renderer'
@@ -26,7 +26,7 @@ class Environment
   constructor: (@config, @workDir, @logger) ->
     @views = {}
     @generators = []
-    @plugins = {}
+    @plugins = {StaticFile}
     @templatePlugins = []
     @contentPlugins = []
 

@@ -287,4 +287,4 @@ ContentTree.merge = (root, tree) ->
 
 ### Exports ###
 
-module.exports = {ContentTree, ContentPlugin, loadContent}
+module.exports = {ContentTree, ContentPlugin, StaticFile, loadContent}
