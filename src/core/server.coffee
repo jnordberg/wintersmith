@@ -283,8 +283,11 @@ run = (env, callback) ->
     async.waterfall [stop, start], callback
 
   stop = (callback) ->
-    server.close callback
-    server = null
+    if server?
+      server.close callback
+      server = null
+    else
+      callback()
 
   start = (callback) ->
     handler = setup env
