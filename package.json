@@ -25,7 +25,7 @@
     "url": "https://github.com/jnordberg/wintersmith.git"
   },
   "dependencies": {
-    "marked": "git://github.com/jnordberg/marked.git",
+    "marked": "https://github.com/jnordberg/marked.git",
     "coffee-script": ">=1.3.0",
     "async": "0.1.x",
     "highlight.js": "1.2.x",
