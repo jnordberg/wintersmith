@@ -1,6 +1,6 @@
 {
   "name": "wintersmith",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "author": "Johan Nordberg <its@johan-nordberg.com>",
   "description": "A flexible static site generator.",
   "license": "MIT",
@@ -27,7 +27,7 @@
   "dependencies": {
     "marked": "https://github.com/jnordberg/marked.git",
     "coffee-script": ">=1.3.0",
-    "async": "0.1.x",
+    "async": "0.2.x",
     "highlight.js": "1.2.x",
     "jade": ">=0.25.0",
     "ncp": "0.2.x",
