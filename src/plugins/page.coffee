@@ -37,7 +37,7 @@ module.exports = (env, callback) ->
     getFilename: ->
       if @metadata.filename?
         dirname = path.dirname @filepath.relative
-        return path.resolve(dirname, @metadata.filename)
+        return path.join(dirname, @metadata.filename)
       else
         return env.utils.stripExtension(@filepath.relative) + '.html'
 
