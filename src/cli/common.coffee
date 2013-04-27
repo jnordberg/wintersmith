@@ -67,6 +67,16 @@ exports.loadEnv = (argv, callback) ->
         if key in ['ignore', 'require', 'plugins']
           # split comma separated values to arrays
           value = value.split ','
+          if key is 'require'
+            # handle special alias:module mapping
+            reqs = {}
+            for v in value
+              [alias, module] = v.split ':'
+              if not module?
+                module = alias
+                alias = module.replace(/\/$/, '').split('/')[-1..]
+              reqs[alias] = module
+            value = reqs
         config[key] = value
       callback null, config
 
