@@ -5,6 +5,7 @@
   "dependencies": {
     "wintersmith-browserify": "*",
     "wintersmith-less": "*",
-    "wintersmith-nunjucks": "*"
+    "wintersmith-nunjucks": "*",
+    "browsernizr": "*"
   }
 }

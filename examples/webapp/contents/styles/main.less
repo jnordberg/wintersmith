@@ -28,6 +28,26 @@ h1 {
   margin-top: -0.5em;
 }
 
+.csstransforms3d {
+  h1 {
+    perspective: 600;
+    -ms-perspective: 600;
+    -moz-perspective: 600;
+    -webkit-perspective: 600;
+    span {
+      display: inline-block;
+      background: #dbdbdb;
+      transform-origin: 0% 0%;
+      -ms-transform-origin: 0% 0%;
+      -moz-transform-origin: 0% 0%;
+      -webkit-transform-origin: 0% 0%;
+    }
+  }
+  &.rgba h1 span {
+    background: rgba(0, 0, 0, 0.05);
+  }
+}
+
 @media (max-width: 800px) {
   body {
     font-size: 16px;
