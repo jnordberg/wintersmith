@@ -51,13 +51,6 @@ class Environment
     ### Resolve *pathname* in contents directory, returns an absolute path. ###
     path.resolve @contentsPath, pathname or ''
 
-  resolveModulePath: (moduleName) ->
-    ### Resolve path to *moduleName* if needed. ###
-    if moduleName[0] is '.'
-      @resolvePath moduleName
-    else
-      moduleName
-
   relativePath: (pathname) ->
     ### Resolve path relative to working directory. ###
     path.relative @workDir, pathname
@@ -110,57 +103,60 @@ class Environment
       groups.push generator.group
     return groups
 
-  loadPluginModule: (module, callback) ->
-    ### Load a plugin *module*. ###
-    loaded = false
-    done = (error) ->
-      if error?
-        if not loaded and error.code is 'MODULE_NOT_FOUND'
-          error.message = "Can not find plugin '#{ module }'"
-        else
-          error.message = "Error loading plugin '#{ module }': #{ error.message }"
-      callback error
-    @logger.verbose "loading plugin: #{ module }"
+  loadModule: (module, callback) ->
+    ### Load a *module*, also looks in node_modules. ###
     if module[0] isnt '.'
-      # global module, first look in node_modules
+      # first look in node_modules
       try
-        fn = require @resolveModulePath "./node_modules/#{ module }"
+        callback null, require @resolvePath "./node_modules/#{ module }"
       catch error
         if error.code is 'MODULE_NOT_FOUND'
           # not locally installed, check globally
           try
-            fn = require @resolveModulePath module
+            callback null, require module
           catch error
-            done error
-            return
+            callback error
         else
-          done error
-          return
+          callback error
     else
-      require 'coffee-script' if module[-6..] is 'coffee'
+      # file module
+      require 'coffee-script' if module[-7..] is '.coffee'
       try
-        fn = require @resolveModulePath module
+        callback null, require @resolvePath module
       catch error
-        done error
-        return
-    try
-      # module loaded, run it
-      loaded = true
-      fn this, done
-    catch error
-      done error
+        callback error
+
+  loadPluginModule: (module, callback) ->
+    ### Load a plugin *module*. ###
+    @logger.verbose "loading plugin: #{ module }"
+    async.waterfall [
+      (callback) => @loadModule module, callback
+      (fn, callback) =>
+        try
+          if not fn.__loaded
+            fn this, (error) ->
+              fn.__loaded = !error?
+              callback error
+          else
+            @logger.verbose "not loading '#{ module }' - already loaded."
+            callback()
+        catch error
+          callback error
+    ], (error) ->
+      error.message = "Error loading plugin '#{ module }': #{ error.message }" if error?
+      callback error
 
   loadViewModule: (module, callback) ->
     ### Load a view *module* and add it to the environment. ###
     @logger.verbose "loading view: #{ module }"
-    try
-      fn = require @resolveModulePath module
-    catch error
-      error.message = "Error loading view '#{ module }': #{ error.message }"
+    async.waterfall [
+      (callback) => @loadModule module, callback
+      (fn, callback) =>
+        @registerView path.basename(module), fn
+        callback()
+    ], (error) ->
+      error.message = "Error loading view '#{ module }': #{ error.message }" if error?
       callback error
-      return
-    @registerView path.basename(module), fn
-    callback()
 
   loadPlugins: (callback) ->
     ### Loads any plugin found in *@config.plugins*. ###
@@ -215,16 +211,16 @@ class Environment
 
     addModules = (locals, callback) =>
       ### Loads and adds modules specefied with the require option to the locals context. ###
-      # TODO: use module map instead, {name: id, ..}
-      async.forEach @config.require, (moduleName, callback) ->
-        moduleAlias = moduleName.split('/')[-1..]
-        logger.verbose "loading module #{ moduleName } available in locals as: #{ moduleAlias }"
-        if locals[moduleAlias]?
-          logger.warn "module '#{ moduleName }' overwrites previous local with the same key"
-        try
-          locals[moduleAlias] = require moduleName
-          callback()
-        catch error
+      async.forEach Object.keys(@config.require), (alias, callback) =>
+        module = @config.require[alias]
+        logger.verbose "loading module '#{ module }' available in locals as '#{ alias }'"
+        @loadModule module, (error, result) ->
+          if not error?
+            if locals[alias]?
+              logger.warn "module '#{ module }' overwrites previous local with the same key ('#{ alias }')"
+            locals[alias] = result
+          else
+            error.message = "Error loading module '#{ module }': #{ error.message }"
           callback error
       , (error) -> callback error, locals
 

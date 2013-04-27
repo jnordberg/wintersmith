@@ -17,8 +17,8 @@ class Config
     locals: {}
     # list of modules/files to load as plugins
     plugins: []
-    # list of modules/files loaded and added to locals
-    require: []
+    # modules/files loaded and added to locals, name: module
+    require: {}
     # path to the directory containing the templates
     templates: './templates'
     # directory to load custom views from
