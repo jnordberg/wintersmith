@@ -11,6 +11,7 @@ runGenerator = (env, contents, generator, callback) ->
     for key, item of items
       if item instanceof ContentPlugin
         item.parent = root
+        item.__env = env
         item.__filename = 'generator'
         item.__plugin = generator
         root[key] = item
