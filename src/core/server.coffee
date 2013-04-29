@@ -112,7 +112,8 @@ setup = (env) ->
       block.localsLoad = false
       callback error
 
-  contentWatcher = chokidar.watch env.contentsPath
+  contentWatcher = chokidar.watch env.contentsPath,
+    ignoreInitial: true
   contentWatcher.on 'change', (path) ->
     return if not contents? or block.contentsLoad
     # ignore if we dont have the tree loaded or it's loading
@@ -164,12 +165,14 @@ setup = (env) ->
   contentWatcher.on 'add', -> loadContents() if not block.contentsLoad
   contentWatcher.on 'unlink', -> loadContents() if not block.contentsLoad
 
-  templateWatcher = chokidar.watch env.templatesPath
+  templateWatcher = chokidar.watch env.templatesPath,
+    ignoreInitial: true
   templateWatcher.on 'all', (event, path) ->
     loadTemplates() if not block.templatesLoad
 
   if env.config.views?
-    viewsWatcher = chokidar.watch env.resolvePath env.config.views
+    viewsWatcher = chokidar.watch env.resolvePath(env.config.views),
+      ignoreInitial: true
     viewsWatcher.on 'all', (event, path) ->
       if not block.viewsLoad
         delete require.cache[path]
@@ -262,6 +265,11 @@ setup = (env) ->
   loadTemplates()
   loadViews()
   loadLocals()
+
+  requestHandler.destroy = ->
+    contentWatcher.close()
+    templateWatcher.close()
+    viewsWatcher?.close()
 
   return requestHandler
 
