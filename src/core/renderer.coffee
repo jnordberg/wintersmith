@@ -21,7 +21,9 @@ renderView = (env, content, locals, contents, templates, callback) ->
       if not view?
         callback new Error "content '#{ content.filename }' specifies unknown view '#{ name }'"
         return
-    view.call content, env, locals, contents, templates, callback
+    view.call content, env, locals, contents, templates, (error, result) ->
+      error.message = "#{ content.filename }: #{ error.message }" if error?
+      callback error, result
 
 render = (env, outputDir, contents, templates, locals, callback) ->
   ### Render *contents* and *templates* using environment *env* to *outputDir*.

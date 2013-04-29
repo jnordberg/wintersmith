@@ -114,6 +114,7 @@ loadContent = (env, filepath, callback) ->
 
   # have the plugin's factory method create our instance
   plugin.class.fromFile filepath, (error, instance) ->
+    error.message = "#{ filepath.relative }: #{ error.message }" if error?
     # keep some references to the plugin and file used to create this instance
     instance?.__env = env
     instance?.__plugin = plugin

@@ -68,6 +68,17 @@ module.exports = (env, callback) ->
       try
         callback null, yaml.load(source) or {}
       catch error
+        if error.problem? and error.problemMark?
+          lines = error.problemMark.buffer.split '\n'
+          markerPad = (' ' for [0...error.problemMark.column]).join('')
+          error.message = """YAML: #{ error.problem }
+
+              #{ lines[error.problemMark.line] }
+              #{ markerPad }^
+
+          """
+        else
+          error.message = "YAML Parsing error #{ error.message }"
         callback error
 
     # split metadata and markdown content
