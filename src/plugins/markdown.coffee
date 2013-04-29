@@ -8,11 +8,12 @@ yaml = require 'js-yaml'
 typogr = require 'typogr'
 
 # monkeypatch to add url resolving to marked
-marked.InlineLexer.prototype._outputLink = marked.InlineLexer.prototype.outputLink
-marked.InlineLexer.prototype._resolveLink = (href) -> href
-marked.InlineLexer.prototype.outputLink = (cap, link) ->
-  link.href = @_resolveLink link.href
-  return @_outputLink cap, link
+if not marked.InlineLexer.prototype._outputLink?
+  marked.InlineLexer.prototype._outputLink = marked.InlineLexer.prototype.outputLink
+  marked.InlineLexer.prototype._resolveLink = (href) -> href
+  marked.InlineLexer.prototype.outputLink = (cap, link) ->
+    link.href = @_resolveLink link.href
+    return @_outputLink cap, link
 
 parseMarkdownSync = (content, baseUrl, options) ->
   ### Parse markdown *content* and resolve links using *baseUrl*, returns html. ###
