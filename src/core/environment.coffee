@@ -114,9 +114,9 @@ class Environment
     ### Return an array of all registered content groups ###
     groups = []
     for plugin in @contentPlugins
-      groups.push plugin.group
+      groups.push plugin.group unless plugin.group in groups
     for generator in @generators
-      groups.push generator.group
+      groups.push generator.group unless generator.group in groups
     return groups
 
   loadModule: (module, callback) ->
