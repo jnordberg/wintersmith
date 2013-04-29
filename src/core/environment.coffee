@@ -30,8 +30,6 @@ class Environment
     @templatePlugins = []
     @contentPlugins = []
 
-    @pluginsLoaded = false
-
     @workDir = path.resolve @workDir
     @contentsPath = @resolvePath @config.contents
     @templatesPath = @resolvePath @config.templates
@@ -160,10 +158,7 @@ class Environment
 
   loadPlugins: (callback) ->
     ### Loads any plugin found in *@config.plugins*. ###
-    return callback() if @pluginsLoaded
-    async.forEachSeries @config.plugins, @loadPluginModule.bind(this), (error) =>
-      @pluginsLoaded = true if not error?
-      callback error
+    async.forEachSeries @config.plugins, @loadPluginModule.bind(this), callback
 
   loadViews: (callback) ->
     ### Loads files found in the *@config.views* directory and registers them as views. ###
