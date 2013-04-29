@@ -62,7 +62,10 @@ main = ->
     process.exit 0
 
   if argv.verbose
-    logger.transports.cli.level = 'verbose'
+    if '-vv' in process.argv
+      logger.transports.cli.level = 'silly'
+    else
+      logger.transports.cli.level = 'verbose'
 
   if argv.quiet
     logger.transports.cli.quiet = true
