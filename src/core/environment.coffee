@@ -23,14 +23,25 @@ class Environment
   ContentPlugin: ContentPlugin
   TemplatePlugin: TemplatePlugin
 
-  constructor: (@config, @workDir, @logger) ->
+  constructor: (config, @workDir, @logger) ->
+    @loadedModules = []
+    @workDir = path.resolve @workDir
+    @setConfig config
+    @reset()
+
+  reset: ->
+    ### Reset environment and clears any loaded modules from require.cache ###
     @views = {}
     @generators = []
     @plugins = {StaticFile}
     @templatePlugins = []
     @contentPlugins = []
 
-    @workDir = path.resolve @workDir
+    while id = @loadedModules.pop()
+      @logger.verbose "unloading: #{ id }"
+      delete require.cache[id]
+
+  setConfig: (@config) ->
     @contentsPath = @resolvePath @config.contents
     @templatesPath = @resolvePath @config.templates
 
@@ -41,6 +52,20 @@ class Environment
   resolveContentsPath: (pathname) ->
     ### Resolve *pathname* in contents directory, returns an absolute path. ###
     path.resolve @contentsPath, pathname or ''
+
+  resolveModule: (module) ->
+    ### Resolve *module* to an absolute path, mimicing the node.js module loading system. ###
+    switch module[0]
+      when '.'
+        require.resolve @resolvePath module
+      when '/'
+        require.resolve module
+      else
+        nodeDir = @resolvePath 'node_modules'
+        try
+          require.resolve path.join(nodeDir, module)
+        catch error
+          require.resolve module
 
   relativePath: (pathname) ->
     ### Resolve path relative to working directory. ###
@@ -95,27 +120,16 @@ class Environment
     return groups
 
   loadModule: (module, callback) ->
-    ### Load a *module*, also looks in node_modules. ###
-    if module[0] isnt '.'
-      # first look in node_modules
-      try
-        callback null, require @resolvePath "./node_modules/#{ module }"
-      catch error
-        if error.code is 'MODULE_NOT_FOUND'
-          # not locally installed, check globally
-          try
-            callback null, require module
-          catch error
-            callback error
-        else
-          callback error
-    else
-      # file module
-      require 'coffee-script' if module[-7..] is '.coffee'
-      try
-        callback null, require @resolvePath module
-      catch error
-        callback error
+    ### Load a *module*, from the current working directory. ###
+    require 'coffee-script' if module[-7..] is '.coffee'
+    @logger.silly "loading module: #{ module }"
+    try
+      id = @resolveModule module
+      @logger.silly "resolved: #{ id }"
+      callback null, require id
+      @loadedModules.push id
+    catch error
+      callback error
 
   loadPluginModule: (module, callback) ->
     ### Load a plugin *module*. ###
@@ -127,13 +141,7 @@ class Environment
           callback null, module
       (fn, callback) =>
         try
-          if not fn.__loaded
-            fn this, (error) ->
-              fn.__loaded = !error?
-              callback error
-          else
-            @logger.verbose "not loading '#{ module }' - already loaded."
-            callback()
+          fn this, callback
         catch error
           callback error
     ], (error) ->
@@ -159,7 +167,9 @@ class Environment
       (callback) =>
         async.forEachSeries @constructor.defaultPlugins, (plugin, callback) =>
           @logger.verbose "loading default plugin: #{ plugin }"
-          module = require "./../plugins/#{ plugin }"
+          id = require.resolve "./../plugins/#{ plugin }"
+          module = require id
+          @loadedModules.push id
           @loadPluginModule module, callback
         , callback
       # load user plugins

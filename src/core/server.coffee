@@ -115,7 +115,7 @@ setup = (env) ->
   contentWatcher = chokidar.watch env.contentsPath
   contentWatcher.on 'change', (path) ->
     return if not contents? or block.contentsLoad
-    # ignore if we dont have the tree loaded or its loading
+    # ignore if we dont have the tree loaded or it's loading
 
     block.contentChange = true
 
@@ -172,8 +172,8 @@ setup = (env) ->
     viewsWatcher = chokidar.watch env.resolvePath env.config.views
     viewsWatcher.on 'all', (event, path) ->
       if not block.viewsLoad
-        loadViews()
         delete require.cache[path]
+        loadViews()
 
   contentHandler = (request, response, callback) ->
     uri = normalizeUrl url.parse(request.url).pathname
@@ -273,10 +273,15 @@ run = (env, callback) ->
     env.logger.verbose "watching config file #{ env.config.__filename } for changes"
     configWatcher = chokidar.watch env.config.__filename
     configWatcher.on 'change', ->
-      env.config = Config.fromFileSync env.config.__filename
-      restart (error) ->
-        throw error if error
-        env.logger.verbose 'config file change detected, server reloaded'
+      try
+        config = Config.fromFileSync env.config.__filename
+      catch error
+        env.logger.error "Error reloading config: #{ error.message }", error
+      if config?
+        env.setConfig config
+        restart (error) ->
+          throw error if error
+          env.logger.verbose 'config file change detected, server reloaded'
 
   restart = (callback) ->
     env.logger.info 'restarting server'
@@ -284,32 +289,33 @@ run = (env, callback) ->
 
   stop = (callback) ->
     if server?
-      server.close callback
+      server.close()
       server = null
-    else
-      callback()
+    env.reset()
+    callback()
 
   start = (callback) ->
-    handler = setup env
-    server = http.createServer handler
-    server.on 'error', (error) ->
-      callback? error
-      callback = null
-    server.on 'listening', ->
-      callback?()
-      callback = null
-    server.listen env.config.port, env.config.hostname
+    async.series [
+      (callback) -> env.loadPlugins callback
+      (callback) ->
+        handler = setup env
+        server = http.createServer handler
+        server.on 'error', (error) ->
+          callback? error
+          callback = null
+        server.on 'listening', ->
+          callback?()
+          callback = null
+        server.listen env.config.port, env.config.hostname
+    ], callback
 
   process.on 'uncaughtException', (error) ->
-    # log exceptions thrown instead of exiting
     env.logger.error error.message, error
+    process.exit 1
 
   env.logger.verbose 'starting preview server'
 
-  async.series [
-    env.loadPlugins.bind(env)
-    start
-  ], (error) ->
+  start (error) ->
     if not error?
       serverUrl = "http://#{ env.config.hostname or 'localhost' }:#{ env.config.port }/".bold
       env.logger.info "server running on: #{ serverUrl }"
