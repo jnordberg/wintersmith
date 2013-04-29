@@ -6,6 +6,7 @@ colors = require 'colors'
 http = require 'http'
 mime = require 'mime'
 url = require 'url'
+enableDestroy = require 'server-destroy'
 {Stream} = require 'stream'
 
 {Config} = require './config'
@@ -193,11 +194,11 @@ setup = (env) ->
         # merge generated
         if generated.length > 0
           try
-            generated = generated.reduce (prev, current) -> ContentTree.merge prev, current
             tree = new ContentTree '', env.getContentGroups()
-            ContentTree.merge tree, contents
-            ContentTree.merge tree, generated
+            for gentree in generated
+              ContentTree.merge tree, gentree
             map = buildLookupMap(generated)
+            ContentTree.merge tree, contents
           catch error
             return callback error
           callback null, tree, map
@@ -275,6 +276,7 @@ setup = (env) ->
 
 run = (env, callback) ->
   server = null
+  handler = null
 
   if env.config.__filename?
     # watch config file and reload when changed
@@ -297,10 +299,12 @@ run = (env, callback) ->
 
   stop = (callback) ->
     if server?
-      server.close()
-      server = null
-    env.reset()
-    callback()
+      server.destroy (error) ->
+        handler.destroy()
+        env.reset()
+        callback error
+    else
+      callback()
 
   start = (callback) ->
     async.series [
@@ -308,6 +312,7 @@ run = (env, callback) ->
       (callback) ->
         handler = setup env
         server = http.createServer handler
+        enableDestroy server
         server.on 'error', (error) ->
           callback? error
           callback = null
