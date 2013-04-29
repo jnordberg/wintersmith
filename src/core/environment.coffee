@@ -34,13 +34,6 @@ class Environment
     @contentsPath = @resolvePath @config.contents
     @templatesPath = @resolvePath @config.templates
 
-    # load default plugins
-    async.forEachSeries @constructor.defaultPlugins, (plugin, callback) =>
-      @logger.verbose "loading default plugin '#{ plugin }'"
-      fn = require "./../plugins/#{ plugin }"
-      fn.call null, this, callback
-    , (error) -> throw error if error?
-
   resolvePath: (pathname) ->
     ### Resolve *pathname* in working directory, returns an absolute path. ###
     path.resolve @workDir, pathname or ''
@@ -126,9 +119,12 @@ class Environment
 
   loadPluginModule: (module, callback) ->
     ### Load a plugin *module*. ###
-    @logger.verbose "loading plugin: #{ module }"
     async.waterfall [
-      (callback) => @loadModule module, callback
+      (callback) =>
+        if typeof module is 'string'
+          @loadModule module, callback
+        else
+          callback null, module
       (fn, callback) =>
         try
           if not fn.__loaded
@@ -158,7 +154,21 @@ class Environment
 
   loadPlugins: (callback) ->
     ### Loads any plugin found in *@config.plugins*. ###
-    async.forEachSeries @config.plugins, @loadPluginModule.bind(this), callback
+    async.series [
+      # load default plugins
+      (callback) =>
+        async.forEachSeries @constructor.defaultPlugins, (plugin, callback) =>
+          @logger.verbose "loading default plugin: #{ plugin }"
+          module = require "./../plugins/#{ plugin }"
+          @loadPluginModule module, callback
+        , callback
+      # load user plugins
+      (callback) =>
+        async.forEachSeries @config.plugins, (plugin, callback) =>
+          @logger.verbose "loading plugin: #{ plugin }"
+          @loadPluginModule plugin, callback
+        , callback
+    ], callback
 
   loadViews: (callback) ->
     ### Loads files found in the *@config.views* directory and registers them as views. ###
