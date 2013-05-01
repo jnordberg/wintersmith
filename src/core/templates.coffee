@@ -40,6 +40,7 @@ loadTemplates = (env, callback) ->
         break
     if plugin?
       plugin.class.fromFile filepath, (error, template) ->
+        error.message = "template #{ filepath.relative }: #{ error.message }" if error?
         templates[filepath.relative] = template
         callback error
     else
