@@ -21,21 +21,18 @@ parseMarkdownSync = (content, baseUrl, options) ->
   marked.InlineLexer.prototype._resolveLink = (uri) ->
     url.resolve baseUrl, uri
 
-  tokens = marked.lexer content, options
+  options.highlight = (code, lang) ->
+    if lang?
+      try
+        lang = 'cpp' if lang is 'c'
+        return hljs.highlight(lang, code).value
+      catch error
+        return code
+    else
+      return code
 
-  for token in tokens
-    switch token.type
-      when 'code'
-        try
-          if token.lang?
-            token.text = hljs.highlight(token.lang, token.text).value
-          else
-            token.text = hljs.highlightAuto(token.text).value
-          token.escaped = true
-        catch error
-          # hljs.highlight throws if lang is unknown
-
-  return marked.parser tokens
+  marked.setOptions options
+  return marked content
 
 module.exports = (env, callback) ->
 
