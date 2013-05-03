@@ -52,15 +52,20 @@ module.exports = (env, callback) ->
 
     @property 'html', 'getHtml'
     getHtml: (base=env.config.baseUrl) ->
-      ### return html with all urls resolved to *base * ###
+      ### return html with all urls resolved using *base* ###
       throw new Error 'Not implemented.'
 
     @property 'intro', 'getIntro'
     getIntro: (base) ->
       html = @getHtml(base)
-      idx = ~html.indexOf('<span class="more') or ~html.indexOf('<h2') or ~html.indexOf('<hr')
-      if idx
-        return html.substr 0, ~idx
+      cutoffs = ['<span class="more', '<h2', '<hr']
+      idx = Infinity
+      for cutoff in cutoffs
+        i = html.indexOf cutoff
+        if i isnt -1 and i < idx
+          idx = i
+      if idx isnt Infinity
+        return html.substr 0, idx
       else
         return html
 
