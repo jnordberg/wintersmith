@@ -1,0 +1,4 @@
+{
+  "view": "articles.coffee",
+  "template": "archive.jade"
+}

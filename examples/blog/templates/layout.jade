@@ -1,26 +1,36 @@
 !!! 5
+block vars
+  - var bodyclass = null;
 html(lang='en')
   head
     block head
       meta(charset='utf-8')
+      meta(http-equiv='X-UA-Compatible', content='IE=edge,chrome=1')
+      meta(name='viewport', content='width=device-width')
       title
         block title
           = locals.name
       link(rel='alternate', href=locals.url+'/feed.xml', type='application/rss+xml', title=locals.description)
-      link(rel='stylesheet', href='http://fonts.googleapis.com/css?family=Fredericka+the+Great')
-      link(rel='stylesheet', href='/css/github.css')
+      link(rel='stylesheet', href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic|Anonymous+Pro:400,700,400italic,700italic|Merriweather:400,700,300')
       link(rel='stylesheet', href='/css/main.css')
-  body
-    header
-      div.inner
+  body(class=bodyclass)
+    header.header
+      div.content-wrap
         block header
-          h1
-            a(href=locals.url)= locals.name
-          p= locals.description
+          div.logo
+            h1
+              a(href=locals.url)= locals.name
+            p.description= locals.description
     div#content
-      block content
-        h2 Welcome to zombocom!
+      div.content-wrap
+        block content
+          h2 Welcome to zombocom!
     footer
-      div.inner
+      div.content-wrap
         block footer
-          p &copy; #{ new Date().getFullYear() } #{ locals.owner }
+          section.about
+            !=contents['about.md'].html
+          section.copy
+            p &copy; #{ new Date().getFullYear() } #{ locals.owner } &mdash; powered by&nbsp;
+              a(href='https://github.com/jnordberg/wintersmith') Wintersmith
+              //- please leave the "powered by" if you use the design

@@ -2,8 +2,24 @@
   "locals": {
     "url": "http://localhost:8080",
     "name": "The Wintersmith's blog",
-    "owner": "The Wintersmith",
-    "description": "-32°C ain't no problems!",
+    "owner": "Someone",
+    "description": "Ramblings of an immor(t)al demigod",
     "index_articles": 3
+  },
+  "views": "./views",
+  "plugins": [
+    "./plugins/paginator.coffee"
+  ],
+  "require": {
+    "moment": "moment"
+  },
+  "jade": {
+    "pretty": true
+  },
+  "markdown": {
+    "typogr": true
+  },
+  "paginator": {
+    "perPage": 3
   }
 }

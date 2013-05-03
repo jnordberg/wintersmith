@@ -1,17 +1,25 @@
 
 extends layout
 
+block append vars
+  - bodyclass = 'article-detail'
+
 block prepend title
-  | #{ page.title } -
+  | #{ page.title + " - "}
 
 block header
   include author
-  a.back(href=contents.index.url) << back to index
   h1= page.title
-  p
-    | written by:
+  p.author
+    | #{ "Written by " }
     mixin author(page.metadata.author)
 
 block content
-  article.post
+  article.article
     section.content!= page.html
+
+block prepend footer
+  div.nav
+    a(href=contents.index.url) « Full blog
+
+

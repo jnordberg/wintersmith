@@ -1,27 +1,42 @@
 ---
 title: Code and stuff!
-author: The Wintersmith
-date: 2011-10-01 15:00
+author: the-wintersmith
+date: 2012-10-01 15:00
 template: article.jade
 ---
 
-Syntax highlighting with highlight.js
+Syntax highlighting with [highlight.js](http://softwaremaniacs.org/soft/highlight/en/).
+The theme used is tomorrow, you can find more themes [here](http://jmblog.github.io/color-themes-for-highlightjs/).
+
+<span class="more"></span>
 
 ### JavaScript
 
 ```javascript
-function factorial(n) {
-  if (n === 0) {
-    return 1;
-  }
-  return n * factorial(n - 1);
+function getRandomNumber() {
+    return 4; // chosen by fair dice roll.
+              // guaranteed to be random.
 }
 ```
 
-## More samples
+### CoffeeScript
 
+```coffeescript
+class Animal
+  ### Intellegent design ###
+  getDNA: ->
+    print 'sequencing...'
+    while true
+      sleep 1
 
-Taken from [wikipedia](https://en.wikipedia.org/wiki/Hello_world_program_examples).
+class Monkey extends Animal
+  speak: ->
+    print 'ah ah ah'
+
+class Human extends Monkey
+  speak: ->
+    print ['yolo' unless i % 3] + ['swag' unless i % 5] or i for i in [1..100]
+```
 
 ### C
 
@@ -49,7 +64,7 @@ int main()
 
 ### C-sharp
 
-```csharp
+```cs
 class ExampleClass
 {
     static void Main()
@@ -57,16 +72,6 @@ class ExampleClass
         System.Console.WriteLine("Hello, world!");
     }
 }
-```
-
-### COBOL
-
-```cobol
-       IDENTIFICATION DIVISION.
-       PROGRAM-ID. HELLO-WORLD.
-       PROCEDURE DIVISION.
-           DISPLAY 'Hello, world'.
-           STOP RUN.
 ```
 
 ### Erlang
@@ -99,7 +104,7 @@ public class HelloWorld {
 
 ### ObjectiveC
 
-```objc
+```objectivec
 #import <stdio.h>
 
 int main(void)
