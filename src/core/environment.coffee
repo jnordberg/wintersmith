@@ -30,8 +30,8 @@ class Environment
     @reset()
 
   reset: ->
-    ### Reset environment and clears any loaded modules from require.cache ###
-    @views = {}
+    ### Reset environment and clear any loaded modules from require.cache ###
+    @views = {none: (args..., callback) -> callback()}
     @generators = []
     @plugins = {StaticFile}
     @templatePlugins = []
