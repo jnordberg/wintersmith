@@ -36,6 +36,7 @@ class Environment
     @plugins = {StaticFile}
     @templatePlugins = []
     @contentPlugins = []
+    @helpers = {}
 
     while id = @loadedModules.pop()
       @logger.verbose "unloading: #{ id }"
