@@ -46,13 +46,12 @@ module.exports = (env, callback) ->
 
     getHtml: (base=env.config.baseUrl) ->
       ### parse @markdown and return html. also resolves any relative urls to absolute ones ###
-      if not @_html? # cache html
-        options = env.config.markdown or {}
-        options.typogr ?= true
-        @_html = parseMarkdownSync @markdown, @getLocation(base), options
-        if options.typogr
-          @_html = typogr.typogrify @_html
-      return @_html
+      options = env.config.markdown or {}
+      options.typogr ?= true
+      html = parseMarkdownSync @markdown, @getLocation(base), options
+      if options.typogr
+          html = typogr.typogrify html
+      return html
 
   MarkdownPage.fromFile = (filepath, callback) ->
     async.waterfall [
