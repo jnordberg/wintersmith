@@ -118,7 +118,6 @@ setup = (env) ->
     ignored: (path) ->
       for pattern in env.config.ignore
         if minimatch env.relativeContentsPath(path), pattern
-          console.log 'ignore', path
           return true
       return false
     ignoreInitial: true

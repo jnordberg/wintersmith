@@ -49,7 +49,7 @@ module.exports = (env, callback) ->
       options = env.config.markdown or {}
       options.typogr ?= true
       html = parseMarkdownSync @markdown, @getLocation(base), options
-      if options.typogr
+      if html.length > 0 and options.typogr
           html = typogr.typogrify html
       return html
 
