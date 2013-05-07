@@ -6,6 +6,7 @@ colors = require 'colors'
 http = require 'http'
 mime = require 'mime'
 url = require 'url'
+minimatch = require 'minimatch'
 enableDestroy = require 'server-destroy'
 {Stream} = require 'stream'
 
@@ -114,6 +115,12 @@ setup = (env) ->
       callback error
 
   contentWatcher = chokidar.watch env.contentsPath,
+    ignored: (path) ->
+      for pattern in env.config.ignore
+        if minimatch env.relativeContentsPath(path), pattern
+          console.log 'ignore', path
+          return true
+      return false
     ignoreInitial: true
   contentWatcher.on 'change', (path) ->
     return if not contents? or block.contentsLoad
