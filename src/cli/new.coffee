@@ -6,7 +6,9 @@ path = require 'path'
 {fileExists} = require './../core/utils'
 {logger} = require './../core/logger'
 
-templateTypes = ['basic', 'blog']
+templatesDir = path.join __dirname, '../../examples/'
+templateTypes = fs.readdirSync(templatesDir).filter (filename) ->
+  fs.statSync(path.join(templatesDir, filename)).isDirectory()
 
 usage = """
 
@@ -47,7 +49,7 @@ createSite = (argv) ->
     logger.error "unknown template type #{ argv.template }"
     return
 
-  from = path.join __dirname, '../../examples/' + argv.template
+  from = path.join templatesDir, argv.template
   to = path.resolve location
 
   logger.info "initializing new wintersmith site in #{ to } using template #{ argv.template }"
