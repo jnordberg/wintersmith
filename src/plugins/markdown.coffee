@@ -5,7 +5,6 @@ marked = require 'marked'
 path = require 'path'
 url = require 'url'
 yaml = require 'js-yaml'
-typogr = require 'typogr'
 
 # monkeypatch to add url resolving to marked
 if not marked.InlineLexer.prototype._outputLink?
@@ -47,11 +46,7 @@ module.exports = (env, callback) ->
     getHtml: (base=env.config.baseUrl) ->
       ### parse @markdown and return html. also resolves any relative urls to absolute ones ###
       options = env.config.markdown or {}
-      options.typogr ?= true
-      html = parseMarkdownSync @markdown, @getLocation(base), options
-      if html.length > 0 and options.typogr
-          html = typogr.typogrify html
-      return html
+      return parseMarkdownSync @markdown, @getLocation(base), options
 
   MarkdownPage.fromFile = (filepath, callback) ->
     async.waterfall [

@@ -1,7 +1,5 @@
 path = require 'path'
 async = require 'async'
-underscore = require 'underscore'
-moment = require 'moment'
 
 module.exports = (env, callback) ->
 
@@ -22,8 +20,6 @@ module.exports = (env, callback) ->
       env: env
       page: this
       contents: contents
-      _: underscore
-      moment: moment
 
     env.utils.extend ctx, locals
 
@@ -80,7 +76,7 @@ module.exports = (env, callback) ->
       new Date(@metadata.date or 0)
 
     @property 'rfc822date', ->
-      moment(@date).format('ddd, DD MMM YYYY HH:mm:ss ZZ')
+      env.utils.rfc822(@date)
 
     @property 'hasMore', ->
       @_html ?= @getHtml()

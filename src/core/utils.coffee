@@ -66,7 +66,30 @@ pump = (source, destination, callback) ->
     callback?()
     callback = null
 
+rfc822 = (date) ->
+  ### return a rfc822 representation of a javascript Date object
+      http://www.w3.org/Protocols/rfc822/#z28 ###
+  pad = (i) -> if i < 10 then '0' + i else i
+  tzoffset = (offset) ->
+    hours = Math.floor offset / 60
+    minutes = Math.abs offset % 60
+    direction = if hours > 0 then '-' else '+'
+    return direction + pad(Math.abs(hours)) +  pad(minutes)
+
+  months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',' Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+  time = [pad(date.getHours()), pad(date.getMinutes()), pad(date.getSeconds())].join ':'
+
+  return [
+    days[date.getDay()] + ','
+    pad(date.getDate())
+    months[date.getMonth()]
+    date.getFullYear()
+    time
+    tzoffset(date.getTimezoneOffset())
+  ].join ' '
+
 ### Exports ###
 
 module.exports = {fileExists, fileExistsSync, extend, stripExtension,
-                  readJSON, readJSONSync, readdirRecursive, pump}
+                  readJSON, readJSONSync, readdirRecursive, pump, rfc822}
