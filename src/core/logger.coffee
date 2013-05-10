@@ -27,9 +27,9 @@ class cli extends winston.Transport
       else
         process.stderr.write "\n"
     else if !@quiet
-      switch level
-        when 'verbose'
-          msg = "verbose: #{ msg }"
+      if level isnt 'info'
+        c = if level is 'warn' then 'yellow' else 'grey'
+        msg = "#{ level[c] } #{ msg }"
       if meta
         msg += util.format ' %j', meta
       process.stdout.write "  #{ msg }\n"
@@ -37,10 +37,12 @@ class cli extends winston.Transport
     @emit 'logged'
     callback null, true
 
-transports = exports.transports = [
+transports = [
   new cli {level: 'info'}
 ]
 
-exports.logger = new winston.Logger
+logger = new winston.Logger
   exitOnError: true
   transports: transports
+
+module.exports = {logger, transports}
