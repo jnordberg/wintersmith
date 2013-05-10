@@ -3,21 +3,23 @@
     "url": "http://localhost:8080",
     "name": "The Wintersmith's blog",
     "owner": "Someone",
-    "description": "Ramblings of an immor(t)al demigod",
-    "index_articles": 3
+    "description": "Ramblings of an immor(t)al demigod"
   },
   "views": "./views",
   "plugins": [
     "./plugins/paginator.coffee"
   ],
   "require": {
-    "moment": "moment"
+    "moment": "moment",
+    "_": "underscore",
+    "typogr": "typogr"
   },
   "jade": {
     "pretty": true
   },
   "markdown": {
-    "typogr": true
+    "smartLists": true,
+    "smartypants": true
   },
   "paginator": {
     "perPage": 3

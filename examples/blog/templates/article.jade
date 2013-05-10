@@ -16,7 +16,7 @@ block header
 
 block content
   article.article
-    section.content!= page.html
+    section.content!= typogr(page.html).typogrify()
 
 block prepend footer
   div.nav
