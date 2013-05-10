@@ -332,6 +332,7 @@ run = (env, callback) ->
     env.logger.error error.message, error
     process.exit 1
 
+  env.mode = 'preview'
   env.logger.verbose 'starting preview server'
 
   start (error) ->
