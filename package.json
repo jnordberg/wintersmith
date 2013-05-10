@@ -41,7 +41,8 @@
     "js-yaml": "1.0.x",
     "mkdirp": "0.3.x",
     "chokidar": "0.6.x",
-    "server-destroy": "1.0.x"
+    "server-destroy": "1.0.x",
+    "npm": "1.2.x"
   },
   "engine": {
     "node": ">=0.6"
