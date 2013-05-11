@@ -4,13 +4,20 @@ path = require 'path'
 npm = require 'npm'
 {ncp} = require 'ncp'
 
-{NpmAdapter} = require './common'
-{fileExists} = require './../core/utils'
+{NpmAdapter, getStorageDir} = require './common'
+{fileExists, fileExistsSync} = require './../core/utils'
 {logger} = require './../core/logger'
 
-templatesDir = path.join __dirname, '../../examples/'
-templateTypes = fs.readdirSync(templatesDir).filter (filename) ->
-  fs.statSync(path.join(templatesDir, filename)).isDirectory()
+templates = {}
+loadTemplates = (directory) ->
+  return unless fileExistsSync directory
+  fs.readdirSync(directory)
+    .map((filename) -> path.join(directory, filename))
+    .filter((filename) -> fs.statSync(filename).isDirectory())
+    .forEach((filename) -> templates[path.basename(filename)] = filename)
+
+loadTemplates path.join __dirname, '../../examples/'
+loadTemplates path.join getStorageDir(), 'templates/'
 
 usage = """
 
@@ -23,7 +30,7 @@ usage = """
     -f, --force             overwrite existing files
     -T, --template <name>   template to create new site from (defaults to 'blog')
 
-    available templates are: #{ templateTypes.join(', ') }
+    available templates are: #{ Object.keys(templates).join(', ') }
 
   example:
 
@@ -47,11 +54,11 @@ createSite = (argv) ->
     logger.error 'you must specify a location'
     return
 
-  if argv.template not in templateTypes
-    logger.error "unknown template type #{ argv.template }"
+  if not templates[argv.template]?
+    logger.error "unknown template '#{ argv.template }'"
     return
 
-  from = path.join templatesDir, argv.template
+  from = templates[argv.template]
   to = path.resolve location
 
   logger.info "initializing new wintersmith site in #{ to } using template #{ argv.template }"
