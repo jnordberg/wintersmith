@@ -1,5 +1,6 @@
 path = require 'path'
 async = require 'async'
+stream = require 'stream'
 
 {Config} = require './../core/config'
 {Environment} = require './../core/environment'
@@ -100,3 +101,35 @@ exports.loadEnv = (argv, callback) ->
         callback error, env
 
   ], callback
+
+exports.NpmAdapter = class NpmAdapter extends stream.Writable
+  ### Redirects output of npm to a logger ###
+
+  constructor: (@logger) ->
+    @buffer = ''
+    super {decodeStrings: false}
+
+  _write: (chunk, encoding, callback) ->
+    @buffer += chunk
+    @flush() if chunk.indexOf('\n') isnt -1
+    callback()
+
+  flush: ->
+    lines = @buffer.split('\n')
+    @buffer = ''
+    for line in lines
+      continue unless line.length > 0
+      line = line.replace /^npm /, ''
+      if line[0...4] is 'WARN'
+        @logger.warn "npm: #{ line[5..] }"
+      else
+        @logger.verbose "npm: #{ line }"
+
+exports.getStorageDir = ->
+  ### Return users wintersmith directory, used for cache and user templates. ###
+  return process.env.WINTERSMITH_PATH if process.env.WINTERSMITH_PATH?
+  home = process.env.HOME or process.env.USERPROFILE
+  dir = 'wintersmith'
+  if process.platform isnt 'win32'
+    dir = '.' + dir
+  return path.resolve(home, dir)

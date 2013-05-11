@@ -3,31 +3,10 @@ fs = require 'fs'
 path = require 'path'
 npm = require 'npm'
 {ncp} = require 'ncp'
-{Stream} = require 'stream'
 
+{NpmAdapter} = require './common'
 {fileExists} = require './../core/utils'
 {logger} = require './../core/logger'
-
-class NpmAdapter extends Stream
-  ### Redirects output of npm to wintersmith logger ###
-
-  constructor: ->
-    @buffer = ''
-
-  write: (data) ->
-    @buffer += data
-    @flush() if data.indexOf('\n') isnt -1
-
-  flush: ->
-    lines = @buffer.split('\n')
-    @buffer = ''
-    for line in lines
-      continue unless line.length > 0
-      line = line.replace /^npm /, ''
-      if line[0...4] is 'WARN'
-        logger.warn "npm: #{ line[5..] }"
-      else
-        logger.verbose "npm: #{ line }"
 
 templatesDir = path.join __dirname, '../../examples/'
 templateTypes = fs.readdirSync(templatesDir).filter (filename) ->
@@ -95,7 +74,7 @@ createSite = (argv) ->
       if exists
         logger.verbose "installing template dependencies"
         process.chdir to
-        conf = {logstream: new NpmAdapter}
+        conf = {logstream: new NpmAdapter(logger)}
         npm.load conf, (error) ->
           return callback error if error?
           npm.install callback
