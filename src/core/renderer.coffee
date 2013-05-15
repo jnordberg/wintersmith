@@ -5,6 +5,7 @@ util = require 'util'
 async = require 'async'
 path = require 'path'
 mkdirp = require 'mkdirp'
+{Stream} = require 'stream'
 
 {ContentTree} = require './content'
 {pump} = require './utils'
@@ -38,12 +39,12 @@ render = (env, outputDir, contents, templates, locals, callback) ->
     renderView env, content, locals, contents, templates, (error, result) ->
       if error
         callback error
-      else if result instanceof fs.ReadStream or result instanceof Buffer
+      else if result instanceof Stream or result instanceof Buffer
         destination = path.join outputDir, content.filename
         env.logger.verbose "writing content #{ content.url } to #{ destination }"
         mkdirp.sync path.dirname destination
         writeStream = fs.createWriteStream destination
-        if result instanceof fs.ReadStream
+        if result instanceof Stream
           pump result, writeStream, callback
         else
           writeStream.write result

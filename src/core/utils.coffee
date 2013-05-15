@@ -62,7 +62,7 @@ pump = (source, destination, callback) ->
   source.on 'error', (error) ->
     callback? error
     callback = null
-  source.on 'close', ->
+  source.on 'end', ->
     callback?()
     callback = null
 
