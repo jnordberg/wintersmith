@@ -1,17 +1,21 @@
-#![Wintersmith](http://jnordberg.github.com/wintersmith/img/wintersmith.svg)
+#![Wintersmith](http://jnordberg.github.io/wintersmith/img/wintersmith.svg)
 
-A flexible static site generator – http://jnordberg.github.com/wintersmith/
+Wintersmith is a simple yet flexible static site generator. It takes contents (markdown, less, scripts, etc), transforms them using plugins and outputs a static website (html, css, images, etc) that you can host anywhere.
 
-## Features
+It ships with plugins for [markdown](http://daringfireball.net/projects/markdown/) and [jade templates](https://github.com/visionmedia/jade), if you need something else check the [plugin listing][plugin-listing] or [write your own][plugin-guide]!
 
- * Easy to use
- * Generated sites can be hosted anywhere (output is plain html)
- * Write articles/pages using markdown
- * Robust templating using [Jade](https://github.com/visionmedia/jade)
- * Preview server (no need to rebuild every time you make a change)
- * Highly configurable
- * Extendable using [plugins](https://github.com/jnordberg/wintersmith/wiki/Plugins)
- * FAST!
+## Resources
+
+ * [Project site][website]
+ * [Documentation][docs]
+ * [Wiki][wiki]
+ * **#wintersmith** on freenode
+
+[website]: http://jnordberg.github.io/wintersmith "Wintersmith project website"
+[docs]: http://jnordberg.github.io/wintersmith/docs "Wintersmith documentation"
+[wiki]: https://github.com/jnordberg/wintersmith/wiki "Wintersmith wiki"
+[plugin-listing]: https://github.com/jnordberg/wintersmith/wiki/Plugins "Wintersmith plugin listing"
+[plugin-guide]: #TODO "Wintersmith plugin guide"
 
 ## Quick-start
 
@@ -50,7 +54,7 @@ And remember to give the old `--help` a look :-)
 
 ## Overview
 
-A wintersmith site is built up of two main components, contents and templates.
+A wintersmith site is built up of three main components: contents, views and templates.
 
 Contents is a directory where all the sites raw material goes (markdown files, images, javascript etc). This directory is then scanned to produce what's internally called a ContentTree.
 
@@ -66,7 +70,7 @@ The ContentTree is a nested object built up of ContentPlugins and looks somethin
 }
 ```
 
-This content tree is provided in full to all plugins in turn when rendering. This gives you a lot of flexibility when writing plugins, you could for example write a plugin that generates a mosaic using images located in a specific directory.
+This content tree is provided in full to the views when rendering. This gives you a lot of flexibility when writing plugins, you could for example write a plugin that generates a mosaic using images located in a specific directory.
 
 Wintersmith comes with a default Page plugin that renders markdown content using templates. This plugin takes markdown (combined with some metadata, more on this later) compiles it and provides it to a template along with the content tree and some utility functions.
 
