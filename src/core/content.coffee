@@ -189,7 +189,7 @@ ContentTree.fromDirectory = (env, directory, callback) ->
     ### Create plugin or subtree instance for *filepath*. ###
     setImmediate ->
       async.waterfall [
-        async.apply fs.lstat, filepath.full
+        async.apply fs.stat, filepath.full
         (stats, callback) ->
           basename = path.basename filepath.relative
 
