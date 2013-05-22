@@ -7,6 +7,7 @@ async = require 'async'
 {readJSON, readJSONSync, fileExists, fileExistsSync} = require './utils'
 
 class Config
+  ### The configuration object ###
 
   @defaults =
     # path to the directory containing content's to be scanned
@@ -33,7 +34,7 @@ class Config
     # options prefixed with _ are undocumented and should generally not be modified
     _fileLimit: 40 # max files to keep open at once
 
-  constructor: (options) ->
+  constructor: (options={}) ->
     for option, value of options
       this[option] = value
     for option, defaultValue of @constructor.defaults
