@@ -4,7 +4,7 @@
   "author": "Johan Nordberg <its@johan-nordberg.com>",
   "description": "A flexible static site generator.",
   "license": "MIT",
-  "main": "./lib/",
+  "main": "./src/",
   "keywords": [
     "static",
     "generator",
@@ -18,7 +18,7 @@
     "prepublish": "./bin/dev/compile_coffee"
   },
   "directories": {
-    "lib": "./lib/"
+    "lib": "./src/"
   },
   "repository": {
     "type": "git",
