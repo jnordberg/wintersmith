@@ -21,8 +21,15 @@ loadContents = (location, callback) ->
   logger.verbose "loading contents in #{ location }"
   ContentTree.fromDirectory location, callback
 
-loadPlugins = (plugins, callback) ->
+loadPlugins = (options, callback) ->
   # load coffeescript so that we can load .coffee files as plugins directly
+  plugins = options.plugins
+  config =
+    locals: options.locals,
+    contents: options.contents,
+    templates: options.templates,
+    output: options.output
+
   if plugins?.length then require 'coffee-script'
   async.forEach plugins, (pluginPath, callback) ->
     logger.verbose "loading plugin: #{ pluginPath }"
@@ -31,7 +38,7 @@ loadPlugins = (plugins, callback) ->
     catch error
       callback error
       return
-    plugin module.exports, callback
+    plugin extend({ config: config }, module.exports), callback
   , callback
 
 defaultOptions =
@@ -58,10 +65,10 @@ module.exports = (options, callback) ->
   # options passed to ContentTree.fromDirectory
   contentOptions =
     ignore: options.ignore
-
+  
   # load templates & contents then render
   async.waterfall [
-    async.apply loadPlugins, options.plugins
+    async.apply loadPlugins, options
     (callback) ->
       async.parallel
         contents: async.apply ContentTree.fromDirectory, options.contents, contentOptions
