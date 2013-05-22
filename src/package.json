@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "wintersmith-less": "~0.1.0",
+    "wintersmith-nunjucks": "~0.1.3",
+    "underscore": "~1.4.4",
+    "coffeedoc": "~0.2.8",
+    "shelljs": "~0.1.4",
+    "marked": "~0.2.8"
+  }
+}

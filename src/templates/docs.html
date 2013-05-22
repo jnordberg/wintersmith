@@ -1,0 +1,59 @@
+{% extends 'layout.html' %}
+
+{% block styles %}
+  <link rel="stylesheet" href="{{ contents.styles['docs.less'].url }}">
+{% endblock %}
+
+{% macro docstring(obj) %}
+  {% if obj.docstring %}
+    <div class="docstring">
+      {{ marked(obj.docstring) }}
+    </div>
+  {% endif %}
+{% endmacro %}
+
+{% macro anchorlink(obj, prefix='') %}
+  <a name="{{ prefix }}{{ obj.name }}" class="anchor" href="#{{ prefix }}{{ obj.name }}">
+    <span>✼</span>
+  </a>
+  {{ obj.name }}{% if obj.params %}({{ obj.params.join(', ') }}){% endif %}
+  {% if obj.srcUrl %}
+    <a title="View Source" class="source" href="{{ obj.srcUrl }}">
+      <span>➤</span>
+    </a>
+  {% endif %}
+{% endmacro %}
+
+{% macro methods(name, class, methods) %}
+  {% if methods.length %}
+    <section class="methods">
+      {% set prefix = class.name + '-' %}
+      <h3>{{ name }}</h3>
+      {% for method in methods %}
+        <h4>{{ anchorlink(method, prefix) }}</h4>
+        {{ docstring(method) }}
+      {% endfor %}
+    </section>
+  {% endif %}
+{% endmacro %}
+
+{% macro displayDoc(doc) %}
+  {% if doc.classes.length > 0 %}
+    <section class="doc" id="{{ doc.basename }}">
+      <p class="filename"><a href="{{ doc.srcUrl }}">{{ doc.basename }}</a></p>
+      {% for class in doc.classes %}
+        <h2>{{ anchorlink(class) }}</h2>
+        {{ docstring(class) }}
+        {{ methods('Instance Methods', class, class.instancemethods) }}
+        {{ methods('Class Methods', class, class.staticmethods) }}
+      {% endfor %}
+    </section>
+  {% endif %}
+{% endmacro %}
+
+{% block body %}
+  <h1>Wintersmith API Documentation</h1>
+  {% for doc in page.docs %}
+    {{ displayDoc(doc) }}
+  {% endfor %}
+{% endblock %}

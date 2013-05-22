@@ -1,6 +1,8 @@
+---
 title: Flexible
 image: img/markdown.svg
 order: 1
+---
 
 Wintersmith tries not to put any limitations on how you work with your content.
 Transform it using [plugins][2] and structure it as you please.

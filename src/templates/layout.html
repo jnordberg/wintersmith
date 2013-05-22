@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>{{ name }}</title>
+  <meta name="description" content="{{ description }}">
+  <meta name="keywords" content="{{ keywords }}">
+  <meta name="viewport" content="width=device-width">
+  <meta property="og:title" content="{{ name }}">
+  <meta property="og:url" content="{{ url }}">
+  <meta property="og:description" content="{{ description }}">
+  <meta property="og:type" content="website">
+  {% block styles %}
+    <link rel="stylesheet" href="{{ env.config.baseUrl }}styles/main.css">
+  {% endblock %}
+  <script src="{{ env.config.baseUrl }}styles/main.css"></script>
+</head>
+<body>
+  {% block body %}{% endblock %}
+</body>
+</html>

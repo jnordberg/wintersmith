@@ -1,7 +1,22 @@
 {
   "output": "./../",
+  "baseUrl": "/wintersmith/",
   "locals": {
     "url": "http://jnordberg.github.com/wintersmith",
     "description": "Flexible Node.js static site generator"
+  },
+  "require": {
+    "_": "underscore",
+    "util": "util",
+    "marked": "marked"
+  },
+  "plugins": [
+    "wintersmith-less",
+    "wintersmith-nunjucks",
+    "./plugins/docs.coffee"
+  ],
+  "docs": {
+    "source": "/Users/jnordberg/Development/wintersmith/src/core",
+    "url": "https://github.com/jnordberg/wintersmith/blob/master/src/core/"
   }
 }
