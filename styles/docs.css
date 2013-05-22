@@ -1,0 +1,100 @@
+@import url(http://fonts.googleapis.com/css?family=Anonymous+Pro:400,400italic,700,700italic|Open+Sans:300italic,400italic,600italic,700italic,300,400,600,700);
+body {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 300;
+  font-size: 20px;
+  padding: 0;
+  margin: 2em;
+  line-height: 1.2;
+}
+body,
+a {
+  color: #272727;
+}
+code {
+  font-family: 'Anonymous Pro', monospace;
+  font-size: 0.9em;
+  white-space: nowrap;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+p {
+  margin: 0;
+  font-size: 1em;
+}
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-weight: 400;
+}
+h1:hover a,
+h2:hover a,
+h3:hover a,
+h4:hover a,
+h5:hover a {
+  visibility: visible;
+}
+h1 {
+  margin-bottom: 1em;
+  font-size: 2.5em;
+}
+h2 {
+  font-size: 2em;
+  margin-top: 2em;
+  border-bottom: 0.1em solid #00ffaa;
+  line-height: 0.9em;
+}
+h3 {
+  font-size: 1.5em;
+  margin-top: 1.7em;
+  margin-bottom: 0.5em;
+}
+h4 {
+  margin-top: 1.1em;
+}
+p {
+  margin-top: 0.25em;
+}
+.docstring code {
+  color: #000000;
+}
+.docstring em {
+  font-style: normal;
+  font-weight: 400;
+}
+.doc .filename {
+  line-height: 2.2em;
+  float: right;
+}
+.doc .filename a {
+  text-decoration: none;
+}
+a.source,
+a.anchor {
+  text-decoration: none;
+  visibility: hidden;
+  display: inline-block;
+  width: 1em;
+  color: #00ffaa;
+  font-size: 0.8em;
+}
+a.source {
+  margin-left: 0.1em;
+}
+a.anchor {
+  float: left;
+  line-height: 1.3;
+  text-align: right;
+  margin-left: -1.1em;
+  padding-right: 0.1em;
+}
+h4 .anchor {
+  line-height: 1.6;
+  margin-left: -1.3em;
+  padding-right: 0.3em;
+}

@@ -1,0 +1,1614 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title></title>
+  <meta name="description" content="Flexible Node.js static site generator">
+  <meta name="keywords" content="">
+  <meta name="viewport" content="width=device-width">
+  <meta property="og:title" content="">
+  <meta property="og:url" content="http://jnordberg.github.com/wintersmith">
+  <meta property="og:description" content="Flexible Node.js static site generator">
+  <meta property="og:type" content="website">
+  
+  <link rel="stylesheet" href="/wintersmith/styles/docs.css">
+
+  <script src="/wintersmith/styles/main.css"></script>
+</head>
+<body>
+  
+  <h1>Wintersmith API Documentation</h1>
+  
+    
+  
+    <section class="doc" id="config.coffee">
+      <p class="filename"><a href="https://github.com/jnordberg/wintersmith/blob/master/src/core/config.coffee">config.coffee</a></p>
+      
+        <h2>
+  <a name="Config" class="anchor" href="#Config">
+    <span>✼</span>
+  </a>
+  Config
+  
+</h2>
+        
+  
+    <div class="docstring">
+      <p>The configuration object </p>
+
+    </div>
+  
+
+        
+  
+    <section class="methods">
+      
+      <h3>Instance Methods</h3>
+      
+        <h4>
+  <a name="Config-constructor" class="anchor" href="#Config-constructor">
+    <span>✼</span>
+  </a>
+  constructor(options)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/config.coffee#L37">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+
+      
+    </section>
+  
+
+        
+  
+    <section class="methods">
+      
+      <h3>Class Methods</h3>
+      
+        <h4>
+  <a name="Config-fromFile" class="anchor" href="#Config-fromFile">
+    <span>✼</span>
+  </a>
+  fromFile(path, callback)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/config.coffee#L43">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Read config from <em>path</em> as JSON and <em>callback</em> with a Config instance. </p>
+
+    </div>
+  
+
+      
+        <h4>
+  <a name="Config-fromFileSync" class="anchor" href="#Config-fromFileSync">
+    <span>✼</span>
+  </a>
+  fromFileSync(path)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/config.coffee#L58">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Read config from <em>path</em> as JSON return a Config instance. </p>
+
+    </div>
+  
+
+      
+    </section>
+  
+
+      
+    </section>
+  
+
+  
+    
+  
+    <section class="doc" id="content.coffee">
+      <p class="filename"><a href="https://github.com/jnordberg/wintersmith/blob/master/src/core/content.coffee">content.coffee</a></p>
+      
+        <h2>
+  <a name="ContentPlugin" class="anchor" href="#ContentPlugin">
+    <span>✼</span>
+  </a>
+  ContentPlugin
+  
+</h2>
+        
+  
+    <div class="docstring">
+      <p>The mother of all plugins </p>
+
+    </div>
+  
+
+        
+  
+    <section class="methods">
+      
+      <h3>Instance Methods</h3>
+      
+        <h4>
+  <a name="ContentPlugin-getView" class="anchor" href="#ContentPlugin-getView">
+    <span>✼</span>
+  </a>
+  getView()
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/content.coffee#L31">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Return a view that renders the plugin. Either a string naming a exisitng view or a function:
+   <code>(env, locals, contents, templates, callback) -&gt;</code>
+   Where <em>environment</em> is the current wintersmith environment, <em>contents</em> is the content-tree
+   and <em>templates</em> is a map of all templates as: {filename: templateInstance}. <em>callback</em> should be
+   called with a stream/buffer or null if this plugin instance should not be rendered. </p>
+
+    </div>
+  
+
+      
+        <h4>
+  <a name="ContentPlugin-getFilename" class="anchor" href="#ContentPlugin-getFilename">
+    <span>✼</span>
+  </a>
+  getFilename()
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/content.coffee#L40">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Return filename for this content. This is where the result of the plugin&#39;s view will be written to. </p>
+
+    </div>
+  
+
+      
+        <h4>
+  <a name="ContentPlugin-getUrl" class="anchor" href="#ContentPlugin-getUrl">
+    <span>✼</span>
+  </a>
+  getUrl(base)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/content.coffee#L45">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Return url for this content relative to <em>base</em>. </p>
+
+    </div>
+  
+
+      
+        <h4>
+  <a name="ContentPlugin-getPluginColor" class="anchor" href="#ContentPlugin-getPluginColor">
+    <span>✼</span>
+  </a>
+  getPluginColor()
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/content.coffee#L56">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Return vanity color used to identify the plugin when printing the content tree
+   choices are: bold, italic, underline, inverse, yellow, cyan, white, magenta,
+   green, red, grey, blue, rainbow, zebra or none. </p>
+
+    </div>
+  
+
+      
+        <h4>
+  <a name="ContentPlugin-getPluginInfo" class="anchor" href="#ContentPlugin-getPluginInfo">
+    <span>✼</span>
+  </a>
+  getPluginInfo()
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/content.coffee#L63">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Return plugin information. Also displayed in the content tree printout. </p>
+
+    </div>
+  
+
+      
+    </section>
+  
+
+        
+  
+    <section class="methods">
+      
+      <h3>Class Methods</h3>
+      
+        <h4>
+  <a name="ContentPlugin-property" class="anchor" href="#ContentPlugin-property">
+    <span>✼</span>
+  </a>
+  property(name, getter)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/content.coffee#L20">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Define read-only property with <em>name</em>. </p>
+
+    </div>
+  
+
+      
+        <h4>
+  <a name="ContentPlugin-fromFile" class="anchor" href="#ContentPlugin-fromFile">
+    <span>✼</span>
+  </a>
+  fromFile(filepath, callback)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/content.coffee#L67">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Calls <em>callback</em> with an instance of class. Where <em>filepath</em> is an object containing
+   both the absolute and realative paths for the file. e.g.
+   {full: &quot;/home/foo/mysite/contents/somedir/somefile.ext&quot;,
+    relative: &quot;somedir/somefile.ext&quot;} </p>
+
+    </div>
+  
+
+      
+    </section>
+  
+
+      
+        <h2>
+  <a name="StaticFile" class="anchor" href="#StaticFile">
+    <span>✼</span>
+  </a>
+  StaticFile
+  
+</h2>
+        
+  
+
+        
+  
+    <section class="methods">
+      
+      <h3>Instance Methods</h3>
+      
+        <h4>
+  <a name="StaticFile-constructor" class="anchor" href="#StaticFile-constructor">
+    <span>✼</span>
+  </a>
+  constructor(@filepath)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/content.coffee#L77">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+
+      
+        <h4>
+  <a name="StaticFile-getView" class="anchor" href="#StaticFile-getView">
+    <span>✼</span>
+  </a>
+  getView()
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/content.coffee#L79">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+
+      
+        <h4>
+  <a name="StaticFile-getFilename" class="anchor" href="#StaticFile-getFilename">
+    <span>✼</span>
+  </a>
+  getFilename()
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/content.coffee#L88">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+
+      
+        <h4>
+  <a name="StaticFile-getPluginColor" class="anchor" href="#StaticFile-getPluginColor">
+    <span>✼</span>
+  </a>
+  getPluginColor()
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/content.coffee#L91">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+
+      
+    </section>
+  
+
+        
+  
+    <section class="methods">
+      
+      <h3>Class Methods</h3>
+      
+        <h4>
+  <a name="StaticFile-fromFile" class="anchor" href="#StaticFile-fromFile">
+    <span>✼</span>
+  </a>
+  fromFile(filepath, callback)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/content.coffee#L94">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+
+      
+    </section>
+  
+
+      
+    </section>
+  
+
+  
+    
+  
+    <section class="doc" id="environment.coffee">
+      <p class="filename"><a href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee">environment.coffee</a></p>
+      
+        <h2>
+  <a name="Environment" class="anchor" href="#Environment">
+    <span>✼</span>
+  </a>
+  Environment
+  
+</h2>
+        
+  
+
+        
+  
+    <section class="methods">
+      
+      <h3>Instance Methods</h3>
+      
+        <h4>
+  <a name="Environment-constructor" class="anchor" href="#Environment-constructor">
+    <span>✼</span>
+  </a>
+  constructor(config, @workDir, @logger)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L26">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+
+      
+        <h4>
+  <a name="Environment-reset" class="anchor" href="#Environment-reset">
+    <span>✼</span>
+  </a>
+  reset()
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L32">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Reset environment and clear any loaded modules from require.cache </p>
+
+    </div>
+  
+
+      
+        <h4>
+  <a name="Environment-setConfig" class="anchor" href="#Environment-setConfig">
+    <span>✼</span>
+  </a>
+  setConfig(@config)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L45">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+
+      
+        <h4>
+  <a name="Environment-resolvePath" class="anchor" href="#Environment-resolvePath">
+    <span>✼</span>
+  </a>
+  resolvePath(pathname)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L49">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Resolve <em>pathname</em> in working directory, returns an absolute path. </p>
+
+    </div>
+  
+
+      
+        <h4>
+  <a name="Environment-resolveContentsPath" class="anchor" href="#Environment-resolveContentsPath">
+    <span>✼</span>
+  </a>
+  resolveContentsPath(pathname)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L53">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Resolve <em>pathname</em> in contents directory, returns an absolute path. </p>
+
+    </div>
+  
+
+      
+        <h4>
+  <a name="Environment-resolveModule" class="anchor" href="#Environment-resolveModule">
+    <span>✼</span>
+  </a>
+  resolveModule(module)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L57">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Resolve <em>module</em> to an absolute path, mimicing the node.js module loading system. </p>
+
+    </div>
+  
+
+      
+        <h4>
+  <a name="Environment-relativePath" class="anchor" href="#Environment-relativePath">
+    <span>✼</span>
+  </a>
+  relativePath(pathname)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L71">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Resolve path relative to working directory. </p>
+
+    </div>
+  
+
+      
+        <h4>
+  <a name="Environment-relativeContentsPath" class="anchor" href="#Environment-relativeContentsPath">
+    <span>✼</span>
+  </a>
+  relativeContentsPath(pathname)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L75">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Resolve path relative to contents directory. </p>
+
+    </div>
+  
+
+      
+        <h4>
+  <a name="Environment-registerContentPlugin" class="anchor" href="#Environment-registerContentPlugin">
+    <span>✼</span>
+  </a>
+  registerContentPlugin(group, pattern, plugin)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L79">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Add a content <em>plugin</em> to the environment. Files in the contents directory
+   matching the glob <em>pattern</em> will be instanciated using the plugin&#39;s <code>fromFile</code>
+   factory method. The <em>group</em> argument is used to group the loaded instances under
+   each directory. I.e. plugin instances with the group &#39;textFiles&#39; can be found
+   in <code>contents.somedir._.textFiles</code>. </p>
+
+    </div>
+  
+
+      
+        <h4>
+  <a name="Environment-registerTemplatePlugin" class="anchor" href="#Environment-registerTemplatePlugin">
+    <span>✼</span>
+  </a>
+  registerTemplatePlugin(pattern, plugin)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L92">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Add a template <em>plugin</em> to the environment. All files in the template directory
+   matching the glob <em>pattern</em> will be passed to the plugin&#39;s <code>fromFile</code> classmethod. </p>
+
+    </div>
+  
+
+      
+        <h4>
+  <a name="Environment-registerGenerator" class="anchor" href="#Environment-registerGenerator">
+    <span>✼</span>
+  </a>
+  registerGenerator(group, generator)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L101">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Add a generator to the environment. The generator function is called with the env and the
+   current content tree. It should return a object with nested ContentPlugin instances.
+   These will be merged into the final content tree. Generators can also return filenames
+   and a buffer/stream like: {filename: &#39;asd&#39;, stream: &#39;asd&#39;}. See generator.coffee for more info </p>
+
+    </div>
+  
+
+      
+        <h4>
+  <a name="Environment-registerView" class="anchor" href="#Environment-registerView">
+    <span>✼</span>
+  </a>
+  registerView(name, view)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L110">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Add a view to the environment. </p>
+
+    </div>
+  
+
+      
+        <h4>
+  <a name="Environment-getContentGroups" class="anchor" href="#Environment-getContentGroups">
+    <span>✼</span>
+  </a>
+  getContentGroups()
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L114">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Return an array of all registered content groups </p>
+
+    </div>
+  
+
+      
+        <h4>
+  <a name="Environment-loadModule" class="anchor" href="#Environment-loadModule">
+    <span>✼</span>
+  </a>
+  loadModule(module, callback)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L123">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Load a <em>module</em>, from the current working directory. </p>
+
+    </div>
+  
+
+      
+        <h4>
+  <a name="Environment-loadPluginModule" class="anchor" href="#Environment-loadPluginModule">
+    <span>✼</span>
+  </a>
+  loadPluginModule(module, callback)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L135">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Load a plugin <em>module</em>. </p>
+
+    </div>
+  
+
+      
+        <h4>
+  <a name="Environment-loadViewModule" class="anchor" href="#Environment-loadViewModule">
+    <span>✼</span>
+  </a>
+  loadViewModule(module, callback)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L152">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Load a view <em>module</em> and add it to the environment. </p>
+
+    </div>
+  
+
+      
+        <h4>
+  <a name="Environment-loadPlugins" class="anchor" href="#Environment-loadPlugins">
+    <span>✼</span>
+  </a>
+  loadPlugins(callback)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L164">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Loads any plugin found in <em>@config.plugins</em>. </p>
+
+    </div>
+  
+
+      
+        <h4>
+  <a name="Environment-loadViews" class="anchor" href="#Environment-loadViews">
+    <span>✼</span>
+  </a>
+  loadViews(callback)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L184">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Loads files found in the <em>@config.views</em> directory and registers them as views. </p>
+
+    </div>
+  
+
+      
+        <h4>
+  <a name="Environment-getContents" class="anchor" href="#Environment-getContents">
+    <span>✼</span>
+  </a>
+  getContents(callback)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L194">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Build the ContentTree from <em>@contentsPath</em>, also runs any registered generators. </p>
+
+    </div>
+  
+
+      
+        <h4>
+  <a name="Environment-getTemplates" class="anchor" href="#Environment-getTemplates">
+    <span>✼</span>
+  </a>
+  getTemplates(callback)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L212">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Load templates. </p>
+
+    </div>
+  
+
+      
+        <h4>
+  <a name="Environment-getLocals" class="anchor" href="#Environment-getLocals">
+    <span>✼</span>
+  </a>
+  getLocals(callback)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L216">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Resolve locals. </p>
+
+    </div>
+  
+
+      
+        <h4>
+  <a name="Environment-load" class="anchor" href="#Environment-load">
+    <span>✼</span>
+  </a>
+  load(callback)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L248">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Convenience method to load plugins, views, contents, templates and locals. </p>
+
+    </div>
+  
+
+      
+        <h4>
+  <a name="Environment-preview" class="anchor" href="#Environment-preview">
+    <span>✼</span>
+  </a>
+  preview(callback)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L264">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Start the preview server. Calls <em>callback</em> when server is up and
+   running or if an error occurs. </p>
+
+    </div>
+  
+
+      
+        <h4>
+  <a name="Environment-build" class="anchor" href="#Environment-build">
+    <span>✼</span>
+  </a>
+  build(outputDir, callback)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L270">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Build the content tree and render it to <em>outputDir</em>. </p>
+
+    </div>
+  
+
+      
+        <h4>
+  <a name="Environment-getGraph" class="anchor" href="#Environment-getGraph">
+    <span>✼</span>
+  </a>
+  getGraph(callback)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L284">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Build a dependency graph </p>
+
+    </div>
+  
+
+      
+    </section>
+  
+
+        
+  
+    <section class="methods">
+      
+      <h3>Class Methods</h3>
+      
+        <h4>
+  <a name="Environment-create" class="anchor" href="#Environment-create">
+    <span>✼</span>
+  </a>
+  create(config, workDir)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L295">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Set up a new environment using the default logger, <em>config</em> can be
+   either a config object, a Config instance or a path to a config file. </p>
+
+    </div>
+  
+
+      
+    </section>
+  
+
+      
+    </section>
+  
+
+  
+    
+  
+
+  
+    
+  
+    <section class="doc" id="graph.coffee">
+      <p class="filename"><a href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee">graph.coffee</a></p>
+      
+        <h2>
+  <a name="Node" class="anchor" href="#Node">
+    <span>✼</span>
+  </a>
+  Node
+  
+</h2>
+        
+  
+
+        
+  
+    <section class="methods">
+      
+      <h3>Instance Methods</h3>
+      
+        <h4>
+  <a name="Node-constructor" class="anchor" href="#Node-constructor">
+    <span>✼</span>
+  </a>
+  constructor(@id, @item)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L17">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+
+      
+        <h4>
+  <a name="Node-addEdge" class="anchor" href="#Node-addEdge">
+    <span>✼</span>
+  </a>
+  addEdge(node)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L20">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+
+      
+    </section>
+  
+
+        
+  
+
+      
+        <h2>
+  <a name="Graph" class="anchor" href="#Graph">
+    <span>✼</span>
+  </a>
+  Graph
+  
+</h2>
+        
+  
+
+        
+  
+    <section class="methods">
+      
+      <h3>Instance Methods</h3>
+      
+        <h4>
+  <a name="Graph-constructor" class="anchor" href="#Graph-constructor">
+    <span>✼</span>
+  </a>
+  constructor(@identify)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L26">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p><em>identify</em> is a function that identifies an item. should return
+   a unique string value representing that item. </p>
+
+    </div>
+  
+
+      
+        <h4>
+  <a name="Graph-addItem" class="anchor" href="#Graph-addItem">
+    <span>✼</span>
+  </a>
+  addItem(item)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L31">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+
+      
+        <h4>
+  <a name="Graph-addDependency" class="anchor" href="#Graph-addDependency">
+    <span>✼</span>
+  </a>
+  addDependency(item, dependency)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L37">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>add a <em>dependency</em> for <em>item</em> </p>
+
+    </div>
+  
+
+      
+        <h4>
+  <a name="Graph-dependenciesFor" class="anchor" href="#Graph-dependenciesFor">
+    <span>✼</span>
+  </a>
+  dependenciesFor(item)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L42">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>return a list of items that <em>item</em> depends on </p>
+
+    </div>
+  
+
+      
+        <h4>
+  <a name="Graph-dependsOn" class="anchor" href="#Graph-dependsOn">
+    <span>✼</span>
+  </a>
+  dependsOn(item)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L49">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>return a list of items depending on <em>item</em> </p>
+
+    </div>
+  
+
+      
+        <h4>
+  <a name="Graph-nodeFor" class="anchor" href="#Graph-nodeFor">
+    <span>✼</span>
+  </a>
+  nodeFor(item)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L56">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+
+      
+        <h4>
+  <a name="Graph-resolveNode" class="anchor" href="#Graph-resolveNode">
+    <span>✼</span>
+  </a>
+  resolveNode(node, resolved, seen)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L59">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+
+      
+        <h4>
+  <a name="Graph-reverseLookup" class="anchor" href="#Graph-reverseLookup">
+    <span>✼</span>
+  </a>
+  reverseLookup(target)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L67">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+
+      
+    </section>
+  
+
+        
+  
+    <section class="methods">
+      
+      <h3>Class Methods</h3>
+      
+        <h4>
+  <a name="Graph-andler.proxy" class="anchor" href="#Graph-andler.proxy">
+    <span>✼</span>
+  </a>
+  andler.proxy(tree, fn)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L137">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+
+      
+    </section>
+  
+
+      
+        <h2>
+  <a name="GraphHandler" class="anchor" href="#GraphHandler">
+    <span>✼</span>
+  </a>
+  GraphHandler
+  
+</h2>
+        
+  
+
+        
+  
+    <section class="methods">
+      
+      <h3>Instance Methods</h3>
+      
+        <h4>
+  <a name="GraphHandler-constructor" class="anchor" href="#GraphHandler-constructor">
+    <span>✼</span>
+  </a>
+  constructor(@target, @fn)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L77">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+
+      
+        <h4>
+  <a name="GraphHandler-get" class="anchor" href="#GraphHandler-get">
+    <span>✼</span>
+  </a>
+  get(receiver, key)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L79">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+
+      
+        <h4>
+  <a name="GraphHandler-set" class="anchor" href="#GraphHandler-set">
+    <span>✼</span>
+  </a>
+  set(receiver, key, value)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L90">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+
+      
+        <h4>
+  <a name="GraphHandler-getOwnPropertyNames" class="anchor" href="#GraphHandler-getOwnPropertyNames">
+    <span>✼</span>
+  </a>
+  getOwnPropertyNames()
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L94">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+
+      
+        <h4>
+  <a name="GraphHandler-keys" class="anchor" href="#GraphHandler-keys">
+    <span>✼</span>
+  </a>
+  keys()
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L97">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+
+      
+        <h4>
+  <a name="GraphHandler-enumerate" class="anchor" href="#GraphHandler-enumerate">
+    <span>✼</span>
+  </a>
+  enumerate()
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L100">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+
+      
+        <h4>
+  <a name="GraphHandler-getPropertyDescriptor" class="anchor" href="#GraphHandler-getPropertyDescriptor">
+    <span>✼</span>
+  </a>
+  getPropertyDescriptor(key)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L103">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+
+      
+        <h4>
+  <a name="GraphHandler-getOwnPropertyDescriptor" class="anchor" href="#GraphHandler-getOwnPropertyDescriptor">
+    <span>✼</span>
+  </a>
+  getOwnPropertyDescriptor(key)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L113">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+
+      
+        <h4>
+  <a name="GraphHandler-defineProperty" class="anchor" href="#GraphHandler-defineProperty">
+    <span>✼</span>
+  </a>
+  defineProperty(key, desc)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L118">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+
+      
+        <h4>
+  <a name="GraphHandler-has" class="anchor" href="#GraphHandler-has">
+    <span>✼</span>
+  </a>
+  has(key)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L121">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+
+      
+        <h4>
+  <a name="GraphHandler-hasOwn" class="anchor" href="#GraphHandler-hasOwn">
+    <span>✼</span>
+  </a>
+  hasOwn(key)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L124">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+
+      
+        <h4>
+  <a name="GraphHandler-delete" class="anchor" href="#GraphHandler-delete">
+    <span>✼</span>
+  </a>
+  delete(key)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L127">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+
+      
+        <h4>
+  <a name="GraphHandler-apply" class="anchor" href="#GraphHandler-apply">
+    <span>✼</span>
+  </a>
+  apply(receiver, args)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L131">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+
+      
+        <h4>
+  <a name="GraphHandler-construct" class="anchor" href="#GraphHandler-construct">
+    <span>✼</span>
+  </a>
+  construct(args)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L134">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+
+      
+    </section>
+  
+
+        
+  
+
+      
+    </section>
+  
+
+  
+    
+  
+    <section class="doc" id="logger.coffee">
+      <p class="filename"><a href="https://github.com/jnordberg/wintersmith/blob/master/src/core/logger.coffee">logger.coffee</a></p>
+      
+        <h2>
+  <a name="cli" class="anchor" href="#cli">
+    <span>✼</span>
+  </a>
+  cli
+  
+</h2>
+        
+  
+
+        
+  
+    <section class="methods">
+      
+      <h3>Instance Methods</h3>
+      
+        <h4>
+  <a name="cli-constructor" class="anchor" href="#cli-constructor">
+    <span>✼</span>
+  </a>
+  constructor(options)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/logger.coffee#L11">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+
+      
+        <h4>
+  <a name="cli-log" class="anchor" href="#cli-log">
+    <span>✼</span>
+  </a>
+  log(level, msg, meta, callback)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/logger.coffee#L15">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+
+      
+    </section>
+  
+
+        
+  
+
+      
+    </section>
+  
+
+  
+    
+  
+
+  
+    
+  
+
+  
+    
+  
+    <section class="doc" id="templates.coffee">
+      <p class="filename"><a href="https://github.com/jnordberg/wintersmith/blob/master/src/core/templates.coffee">templates.coffee</a></p>
+      
+        <h2>
+  <a name="TemplatePlugin" class="anchor" href="#TemplatePlugin">
+    <span>✼</span>
+  </a>
+  TemplatePlugin
+  
+</h2>
+        
+  
+
+        
+  
+    <section class="methods">
+      
+      <h3>Instance Methods</h3>
+      
+        <h4>
+  <a name="TemplatePlugin-render" class="anchor" href="#TemplatePlugin-render">
+    <span>✼</span>
+  </a>
+  render(locals, callback)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/templates.coffee#L12">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p>Render template using <em>locals</em> and <em>callback</em> with a ReadStream or Buffer containing the result. </p>
+
+    </div>
+  
+
+      
+    </section>
+  
+
+        
+  
+    <section class="methods">
+      
+      <h3>Class Methods</h3>
+      
+        <h4>
+  <a name="TemplatePlugin-fromFile" class="anchor" href="#TemplatePlugin-fromFile">
+    <span>✼</span>
+  </a>
+  fromFile(filepath, callback)
+  
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/templates.coffee#L16">
+      <span>➤</span>
+    </a>
+  
+</h4>
+        
+  
+    <div class="docstring">
+      <p><em>callback</em> with a instance of <TemplatePlugin> created from <em>filepath</em>. Where <em>filepath</em> is
+   an object containing the full and relative (to templates directory) path to the file. </p>
+
+    </div>
+  
+
+      
+    </section>
+  
+
+      
+    </section>
+  
+
+  
+    
+  
+
+  
+
+</body>
+</html>
