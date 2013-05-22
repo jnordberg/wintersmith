@@ -64,7 +64,7 @@ ensureCacheDir = (callback) ->
 fetchListing = (callback) ->
   async.waterfall [
     (callback) -> npm.load {logstream: new NpmAdapter(logger)}, callback
-    (_, callback) -> npm.search 'wintersmith', callback
+    (_, callback) -> npm.commands.search 'wintersmith', true, 60, callback
     (result, callback) ->
       plugins = (value for key, value of result).filter(isPlugin)
       updated = Date.now()
@@ -82,6 +82,7 @@ loadListing = (callback) ->
     if exists
       readJSON listFile, callback
     else
+      logger.info 'fetching listing for the first time... hang on'
       fetchListing (error, list) ->
         list?._needsSave = true
         callback error, list
