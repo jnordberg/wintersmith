@@ -67,7 +67,7 @@ module.exports = (env, callback) ->
 
     ### Template property used by the 'template' view ###
     @property 'template', ->
-      @metadata.template or 'none'
+      @metadata.template or env.config.defaultTemplate or 'none'
 
     @property 'title', ->
       @metadata.title or 'Untitled'
