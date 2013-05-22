@@ -86,50 +86,21 @@ Configuration can be done with command-line options, a config file or both. The 
 
 ### Options
 
-<table>
-  <tr>
-    <th>Name</th>
-    <th>Default</th>
-    <th>Description</th>
-  </tr>
-  <tr>
-    <td>output</td>
-    <td>./build</td>
-    <td>output directory, this is where the generated site is output</td>
-  </tr>
-  <tr>
-    <td>contents</td>
-    <td>./contents</td>
-    <td>contents directory, where to look for site contents (markdown, images, etc)</td>
-  </tr>
-  <tr>
-    <td>templates</td>
-    <td>./templates</td>
-    <td>template directory, where to look for templates</td>
-  </tr>
-  <tr>
-    <td>locals</td>
-    <td>{}</td>
-    <td>javascript object to pass to all templates when rendering, useful for storing metadata for your site. can also be a path to a json file</td>
-  </tr>
-  <tr>
-    <td>require</td>
-    <td>[]</td>
-    <td>list of modules to load and provide to the template context</td>
-  </tr>
-  <tr>
-    <td>plugins</td>
-    <td>[]</td>
-    <td>list of plugin modules to load</td>
-  </tr>
-  <tr>
-    <td>ignore</td>
-    <td>[]</td>
-    <td>list of files/globpatterns in contents to ignore</td>
-  </tr>
-</table>
+Name         | Default         | Description
+-------------|-----------------|-----------------------------------------------
+contents     | `./contents`    | contents directory location
+templates    | `./templates`   | templates directory location
+views        | `null`          | views directory location, optional
+locals       | `{}`            | global site variables, can also be a path to a json file
+require      | `{}`            | modules to load and add to locals. e.g. if you want underscore as `_` you would say `{"_": "underscore"}`
+plugins      | `[]`            | list of plugins to load
+ignore       | `[]`            | list of files or pattern to ignore
+output       | `./build`       | output directory, this is where the generated site is output when building
+baseUrl      | `/`             | base url that site lives on, e.g. `/blog/`.
+hostname     | `null`          | hostname to bind preview server to, null = INADDR_ANY
+port         | `8080`          | port preview server listens on
 
-All paths can either be relative or absolute. Relative paths will be resolved from the current directory or `--chdir` if set.
+All paths can either be relative or absolute. Relative paths will be resolved from the working directory or `--chdir` if set.
 
 ## The Page plugin
 

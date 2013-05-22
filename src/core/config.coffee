@@ -25,14 +25,11 @@ class Config
     views: null
     # built product goes here
     output: './build'
-
-    # base url that site lives on, e.g. '/blog' or 'http://myplace.net/'
+    # base url that site lives on, e.g. '/blog/'
     baseUrl: '/'
-
     # preview server settings
     hostname: null # INADDR_ANY
     port: 8080
-
     # options prefixed with _ are undocumented and should generally not be modified
     _fileLimit: 40 # max files to keep open at once
 
