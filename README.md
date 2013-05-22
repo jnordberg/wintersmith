@@ -7,7 +7,7 @@ It ships with plugins for [markdown](http://daringfireball.net/projects/markdown
 ## Resources
 
  * [Project site][website]
- * [Documentation][docs]
+ * [API Documentation][docs]
  * [Wiki][wiki]
  * **#wintersmith** on freenode
 
@@ -15,7 +15,7 @@ It ships with plugins for [markdown](http://daringfireball.net/projects/markdown
 [docs]: http://jnordberg.github.io/wintersmith/docs "Wintersmith API Documentation"
 [wiki]: https://github.com/jnordberg/wintersmith/wiki "Wintersmith wiki"
 [plugin-listing]: https://github.com/jnordberg/wintersmith/wiki/Plugins "Wintersmith plugin listing"
-[plugin-guide]: #TODO "Wintersmith plugin guide"
+[plugin-guide]: https://github.com/jnordberg/wintersmith/wiki/Writing-plugins "Wintersmith plugin guide"
 
 ## Quick-start
 
