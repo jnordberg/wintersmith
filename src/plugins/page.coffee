@@ -33,13 +33,17 @@ class Page extends ContentPlugin
     return @_intro
 
   render: (locals, contents, templates, callback) ->
+    template = @template
     if @template == 'none'
-      # dont render
-      return callback null, null
+      if locals.default_template?
+        template = locals.default_template
+      else
+        # dont render
+        return callback null, null
 
     async.waterfall [
       (callback) =>
-        template = templates[@template]
+        template = templates[template]
         if not template?
           callback new Error "page '#{ @filename }' specifies unknown template '#{ @template }'"
         else
