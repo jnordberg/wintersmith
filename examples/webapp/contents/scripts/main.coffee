@@ -1,4 +1,3 @@
-require './vendor/es5-shim'
 ready = require './vendor/ready'
 require 'browsernizr/test/css/rgba'
 require 'browsernizr/test/css/transforms3d'
@@ -19,7 +18,7 @@ class Cylon
     @letters = []
     for letter in text
       el = document.createElement 'span'
-      el.innerHTML = letter
+      el.innerHTML = letter.replace ' ', '&nbsp;'
       @element.appendChild el
       @letters.push el
     @tprop = getTransformProperty @element
