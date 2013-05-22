@@ -161,7 +161,7 @@ ContentTree.fromDirectory = (directory, args..., callback) ->
                 tree._.directories.push result
                 callback error
 
-            else if stats.isFile()
+            else if stats.isFile() or stats.isSymbolicLink()
               # map any files found to content plugins
               basename = path.basename filename
               relname = path.relative base, filename
