@@ -12,7 +12,7 @@ It ships with plugins for [markdown](http://daringfireball.net/projects/markdown
  * **#wintersmith** on freenode
 
 [website]: http://jnordberg.github.io/wintersmith "Wintersmith project website"
-[docs]: http://jnordberg.github.io/wintersmith/docs "Wintersmith documentation"
+[docs]: http://jnordberg.github.io/wintersmith/docs "Wintersmith API Documentation"
 [wiki]: https://github.com/jnordberg/wintersmith/wiki "Wintersmith wiki"
 [plugin-listing]: https://github.com/jnordberg/wintersmith/wiki/Plugins "Wintersmith plugin listing"
 [plugin-guide]: #TODO "Wintersmith plugin guide"
@@ -80,7 +80,7 @@ By default only `.jade` templates are loaded, but you can easily add template pl
 
 Check the `examples/` directory for some inspiration on how you can use wintersmith or the [showcase](https://github.com/jnordberg/wintersmith/wiki/Showcase) to see what others are doing.
 
-## Config
+## Configuration
 
 Configuration can be done with command-line options, a config file or both. The config file will be looked for as `config.json` in the root of your site (you can set a custom path using `--config`).
 
@@ -104,7 +104,7 @@ All paths can either be relative or absolute. Relative paths will be resolved fr
 
 ## The Page plugin
 
-A page is either a markdown file with metadata on top or a json file located in the contents directory.
+A Page is either a markdown file with metadata on top or a json file located in the contents directory.
 
 ```markdown
 ---
@@ -125,9 +125,9 @@ or use json to simply pass metadata to a template:
 ```json
 {
   "template": "template.jade",
-  "meta": {
-  	"greta": 123,
-  	"peta": [1, 2, 3]
+  "stuff": {
+  	"things": 123,
+  	"moar": [1, 2, 3]
   }
 }
 ```
@@ -150,9 +150,7 @@ The second one is `filename` which can be used to override the output filename o
 
 ### Templates
 
-When a page is rendered to a template the page instance is available as `page` in the template context. The content tree is also available as `contents` and the config.locals object as `locals`.
-
-[underscore.js](http://documentcloud.github.com/underscore/) is also available as `_` to provide some utility to aid you sorting and filtering the content tree.
+When a page is rendered to a template the page instance is available as `page` in the template context. The content tree is also available as `contents` and `config.locals` is the root object.
 
 ### The Page model
 
@@ -160,127 +158,51 @@ The Page model (inherits from ContentPlugin)
 
 Properties:
 
-<table>
-  <tr>
-    <td>metadata</td>
-    <td>the metadata object</td>
-  </tr>
-  <tr>
-    <td>title</td>
-    <td>`metadata.title` or `Untitled`</td>
-  </tr>
-  <tr>
-    <td>date</td>
-    <td>Date object from `metadata.date` if set or unix epoch time</td>
-  </tr>
-  <tr>
-    <td>rfc822date</td>
-    <td>a rfc-822 formatted string made from `date`</td>
-  </tr>
-  <tr>
-    <td>body</td>
-    <td>unparsed markdown content</td>
-  </tr>
-  <tr>
-    <td>html</td>
-    <td>parsed markdown content</td>
-  </tr>
-</table>
+Name         | Description
+-------------|------------
+metadata     | object containing the pages metadata
+title        | `metadata.title` or `Untitled`
+date         | Date object created from `metadata.date` if set, unix epoch time if not
+rfc822date   | a rfc-822 formatted string made from `date`
+body         | markdown source
+html         | parsed markdown as html
 
-## Writing plugins
+## Plugins
 
-Wintersmith has two types of plugins, content plugins that transform contents and template plugins that are provided to the content plugins to help render contents.
+A plugin is a function that's called with the wintersmith environment and a callback.
 
-A list of 3rd party plugins can be found on [the wiki](https://github.com/jnordberg/wintersmith/wiki/Plugins).
+Plugins are loaded by adding a "require id" to `config.plugins`. This can be a path, local- or global module.
+It works just like you would expect a `require()` call to.
 
-
-### Content Plugins
-
-A content plugin is a subclass of `ContentPlugin` and should provide a `fromFile` class method, a `render` instance method and a `getFilename` instance method.
-
-`render` is called with the content tree, template list, locals and a callback. Have a look in `src/contents.coffee` it's pretty well documented.
-
-Content plugins are registered using the `registerContentPlugin` function.
-
-<table>
-  <tr>
-    <th colspan=2>registerContentPlugin(group, pattern, plugin)</th>
-  </tr>
-  <tr>
-    <td>group</td>
-    <td>
-      <p><em>string</em> - plugin group name
-
-      <p>Groups are used to easily access a specific type of content in the tree. The content tree has a special property <code>_</code> that returns a object with all plugin groups as <code>{groupname: [pluginInstance, ..], ..}</code>
-
-      <p>For example you can use <code>contents.somedir._.pages</code> to get an array of all pages in a directory.
-    </td>
-  </tr>
-  <tr>
-    <td>pattern</td>
-    <td>
-      <p><em>string</em> - glob pattern (e.g. <code>**/*.txt</code>)
-
-      <p>Glob pattern used to match files that should be handled by the plugin. Uses the [minimatch](https://github.com/isaacs/minimatch) module.
-    </td>
-  </tr>
-  <tr>
-    <td>plugin</td>
-    <td>
-      <p><em>class</em> - the ContentPlugin subclass
-    </td>
-  </tr>
-</table>
-
-
-### Template Plugins
-
-A template plugins is a subclass of `TemplatePlugin` and should also provide a `fromFile` class method and a `render` instance method.
-
-Template plugins are registered using:
-
-`function registerTemplatePlugin(pattern, plugin) { .. }`
-
-where *pattern* is the glob pattern to match in the template directory and plugin is the plugin subclass.
-
-### Plugin Modules
-
-The easiest way to load a wintersmith plugin is to use the `plugins` config option.
-
-Example:
-
-`myplugin.coffee`
+Plugin example:
 
 ```coffeescript
+fs = require 'fs'
 
-module.exports = (wintersmith, callback) ->
+module.exports = (env, callback) ->
 
-  class TextPlugin extends wintersmith.ContentPlugin
+  class SimonSays extends env.ContentPlugin
 
-    constructor: (@_filename, @_text) ->
+    constructor: (@filepath, text) ->
+      @text = "Simon says: #{ text }"
 
-    getFilename: ->
-      @_filename
+    getFilename: -> @filepath.relative # relative to content directory
 
-    render: (locals, contents, templates, callback) ->
-      # do something with the text!
-      callback null, new Buffer @_text
+    getView: -> (env, locals, contents, templates, callback) ->
+      callback null, new Buffer @text
 
-  TextPlugin.fromFile = (filename, base, callback) ->
-    fs.readFile path.join(base, filename), (error, buffer) ->
+  SimonSays.fromFile = (filepath, callback) ->
+    fs.readFile filepath.full, (error, buffer) ->
       if error
         callback error
       else
-        callback null, new TextPlugin filename, buffer.toString()
+        callback null, new SimonSays filepath, buffer.toString()
 
-  wintersmith.registerContentPlugin 'text', '**/*.txt', TextPlugin
+  env.registerContentPlugin 'text', '**/*.txt', SimonSays
   callback() # tell the plugin manager we are done
-
 ```
 
-To use this plugin simply pass the path to the file to the cli tool (`--plugins ./myplugin.coffee`)
-
-You can also use globally or locally installed modules as plugins.
+See the [plugin guide][plugin-guide] for more info.
 
 ## Using wintersmith programmatically
 
@@ -290,47 +212,25 @@ example:
 
 var wintersmith = require('wintersmith');
 
-var options = {
-  'output': '/var/www/pub',
-  'contents': '/foo/contents',
-  'contents': '/foo/templates',
-  'plugins': ['some-plugin'],
-  'locals': {foo: 'bar'}
-};
+wintersmith('/path/to/my/config.json', callback(error, env) {
+  if (error) throw error;
 
-wintersmith(options, callback(error) {
-  if (error) {
-    throw error;
-  } else {
-	console.log('great success!');
-  }
-});
+  // build site
+  env.build(function(error) { // .. });
 
-// you can also use the api to get the content tree
-wintersmith.loadContents('path/to/contents', callback(error, contents) {
+  // preview
+  env.preview(function(error, server) { // preview server now running });
+
   // do something with the content tree
+  env.load(function(error, result) { // .. });
 });
 
 ```
 
-There are more API methods defined, have a look at the source it's pretty well-commented.
+Check the source or [api docs][docs] for a full list of methods.
 
 ## About
 
 Wintersmith is written by [Johan Nordberg](http://johan-nordberg.com) using [CoffeeScript](http://coffeescript.org/) and licensed under the [MIT-license](http://en.wikipedia.org/wiki/MIT_License).
 
-The name is a nod to [blacksmith](https://github.com/flatiron/blacksmith) which inspired this project (and [Terry Pratchett](http://www.terrypratchett.co.uk/) of course).
-
-Some of the great node.js modules that wintersmith uses:
-
- * [async](https://github.com/caolan/async)
- * [marked](https://github.com/chjj/marked)
- * [jade](https://github.com/visionmedia/jade)
- * [coffee-script](https://github.com/jashkenas/coffee-script)
-
-Check the `package.json` for a complete list.
-
-
-----
-
-*© 2012 FFFF00 Agents AB*
+The name is a nod to [blacksmith](https://github.com/flatiron/blacksmith) which inspired this project.
