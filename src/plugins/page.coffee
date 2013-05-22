@@ -1,85 +1,94 @@
-
 path = require 'path'
 async = require 'async'
-underscore = require 'underscore'
-moment = require 'moment'
-marked = require 'marked'
 
-{ContentPlugin} = require './../content'
-{stripExtension, extend} = require './../common'
+module.exports = (env, callback) ->
 
-class Page extends ContentPlugin
-  ### page content plugin, a page is a file that has
-      metadata, html and a template that renders it ###
+  templateView = (env, locals, contents, templates, callback) ->
+    ### Content view that expects content to have a @template instance var that
+        matches a template in *templates*. Calls *callback* with output of template
+        or null if @template is set to 'none'. ###
 
-  constructor: (@_filename, @_content, @_metadata) ->
-
-  getFilename: ->
-    @_metadata.filename or stripExtension(@_filename) + '.html'
-
-  getHtml: (base='/') ->
-    @_content
-
-  getUrl: (base) ->
-    super(base).replace /index\.html$/, ''
-    
-  getIntro: (base) ->
-    @_html ?= @getHtml(base)
-    idx = ~@_html.indexOf('<span class="more') or ~@_html.indexOf('<h2') or ~@_html.indexOf('<hr')
-    if idx
-      @_intro = @_html.substr 0, ~idx
-    else
-      @_intro = @_html
-    return @_intro
-
-  render: (locals, contents, templates, callback) ->
     if @template == 'none'
-      # dont render
       return callback null, null
 
-    async.waterfall [
-      (callback) =>
-        template = templates[@template]
-        if not template?
-          callback new Error "page '#{ @filename }' specifies unknown template '#{ @template }'"
-        else
-          callback null, template
-      (template, callback) =>
-        ctx =
-          page: @
-          contents: contents
-          _: underscore
-          moment: moment
-          marked: marked
-        extend ctx, locals
-        template.render ctx, callback
-    ], callback
+    template = templates[@template]
+    if not template?
+      callback new Error "page '#{ @filename }' specifies unknown template '#{ @template }'"
+      return
 
-  @property 'metadata', ->
-    @_metadata
+    ctx =
+      env: env
+      page: this
+      contents: contents
 
-  @property 'template', ->
-    @_metadata.template or 'none'
+    env.utils.extend ctx, locals
 
-  @property 'html', ->
-    @getHtml()
+    template.render ctx, callback
 
-  @property 'title', ->
-    @_metadata.title or 'Untitled'
+  class Page extends env.ContentPlugin
+    ### Page base class, a page is content that has metadata, html and a template that renders it ###
 
-  @property 'date', ->
-    new Date(@_metadata.date or 0)
+    constructor: (@filepath, @metadata) ->
 
-  @property 'rfc822date', ->
-    moment(@date).format('ddd, DD MMM YYYY HH:mm:ss ZZ')
+    getFilename: ->
+      if @metadata.filename?
+        dirname = path.dirname @filepath.relative
+        return path.join(dirname, @metadata.filename)
+      else
+        return env.utils.stripExtension(@filepath.relative) + '.html'
 
-  @property 'intro', ->
-    @getIntro()
+    getUrl: (base) ->
+      # remove index.html for prettier links
+      super(base).replace /index\.html$/, ''
 
-  @property 'hasMore', ->
-    @_html ?= @getHtml()
-    @_intro ?= @getIntro()
-    @_hasMore ?= (@_html.length > @_intro.length)
-    return @_hasMore
+    getView: ->
+      @metadata.view or 'template'
 
-module.exports = Page
+    ### Page specific properties ###
+
+    @property 'html', 'getHtml'
+    getHtml: (base=env.config.baseUrl) ->
+      ### return html with all urls resolved using *base* ###
+      throw new Error 'Not implemented.'
+
+    @property 'intro', 'getIntro'
+    getIntro: (base) ->
+      html = @getHtml(base)
+      cutoffs = ['<span class="more', '<h2', '<hr']
+      idx = Infinity
+      for cutoff in cutoffs
+        i = html.indexOf cutoff
+        if i isnt -1 and i < idx
+          idx = i
+      if idx isnt Infinity
+        return html.substr 0, idx
+      else
+        return html
+
+    ### Template property used by the 'template' view ###
+    @property 'template', ->
+      @metadata.template or 'none'
+
+    @property 'title', ->
+      @metadata.title or 'Untitled'
+
+    @property 'date', ->
+      new Date(@metadata.date or 0)
+
+    @property 'rfc822date', ->
+      env.utils.rfc822(@date)
+
+    @property 'hasMore', ->
+      @_html ?= @getHtml()
+      @_intro ?= @getIntro()
+      @_hasMore ?= (@_html.length > @_intro.length)
+      return @_hasMore
+
+  # add the page plugin to the env since other plugins might want to subclass it
+  # and we are not registering it as a plugin itself
+  env.plugins.Page = Page
+
+  # register the template view used by the page plugin
+  env.registerView 'template', templateView
+
+  callback()

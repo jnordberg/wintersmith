@@ -1,11 +1,23 @@
 async = require 'async'
-{ncp} = require 'ncp'
 fs = require 'fs'
 path = require 'path'
-{fileExists} = require './common' # cli common
-{logger} = require '../common' # lib common
+npm = require 'npm'
+{ncp} = require 'ncp'
 
-templateTypes = ['basic', 'blog']
+{NpmAdapter, getStorageDir} = require './common'
+{fileExists, fileExistsSync} = require './../core/utils'
+{logger} = require './../core/logger'
+
+templates = {}
+loadTemplates = (directory) ->
+  return unless fileExistsSync directory
+  fs.readdirSync(directory)
+    .map((filename) -> path.join(directory, filename))
+    .filter((filename) -> fs.statSync(filename).isDirectory())
+    .forEach((filename) -> templates[path.basename(filename)] = filename)
+
+loadTemplates path.join __dirname, '../../examples/'
+loadTemplates path.join getStorageDir(), 'templates/'
 
 usage = """
 
@@ -18,7 +30,7 @@ usage = """
     -f, --force             overwrite existing files
     -T, --template <name>   template to create new site from (defaults to 'blog')
 
-    available templates are: #{ templateTypes.join(', ') }
+    available templates are: #{ Object.keys(templates).join(', ') }
 
   example:
 
@@ -42,27 +54,41 @@ createSite = (argv) ->
     logger.error 'you must specify a location'
     return
 
-  if argv.template not in templateTypes
-    logger.error "unknown template type #{ argv.template }"
+  if not templates[argv.template]?
+    logger.error "unknown template '#{ argv.template }'"
     return
 
-  from = path.join __dirname, '../../examples/' + argv.template
+  from = templates[argv.template]
   to = path.resolve location
 
   logger.info "initializing new wintersmith site in #{ to } using template #{ argv.template }"
 
-  async.waterfall [
-    (callback) ->
-      logger.verbose "checking validity of #{ to }"
-      fileExists to, (exists) ->
-        if exists and !argv.force
-          callback new Error "#{ to } already exists. Add --force to overwrite"
-        else
-          callback()
-    (callback) ->
-      logger.verbose "recursive copy #{ from } -> #{ to }"
-      ncp from, to, {}, callback
-  ], (error) ->
+  validateDestination = (callback) ->
+    logger.verbose "checking validity of #{ to }"
+    fileExists to, (exists) ->
+      if exists and !argv.force
+        callback new Error "#{ to } already exists. Add --force to overwrite"
+      else
+        callback()
+
+  copyTemplate = (callback) ->
+    logger.verbose "recursive copy #{ from } -> #{ to }"
+    ncp from, to, {}, callback
+
+  installDeps = (callback) ->
+    packagePath = path.join to, 'package.json'
+    fileExists packagePath, (exists) ->
+      if exists
+        logger.verbose "installing template dependencies"
+        process.chdir to
+        conf = {logstream: new NpmAdapter(logger)}
+        npm.load conf, (error) ->
+          return callback error if error?
+          npm.install callback
+      else
+        callback()
+
+  async.series [validateDestination, copyTemplate, installDeps], (error) ->
     if error
       logger.error error.message, error
     else

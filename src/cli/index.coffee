@@ -1,7 +1,8 @@
-
-path = require 'path'
 optimist = require 'optimist'
-{logger, transports, readJSON} = require './../common'
+path = require 'path'
+
+{logger} = require './../core/logger'
+{readJSON} = require './../core/utils'
 
 usage = """
 
@@ -12,6 +13,7 @@ usage = """
     #{ 'build'.bold } [options] - build a site
     #{ 'preview'.bold } [options] - run local webserver
     #{ 'new'.bold } <location> - create a new site
+    #{ 'plugin'.bold } - manage plugins
 
     also see [command] --help
 
@@ -41,7 +43,11 @@ main = ->
     try
       cmd = require "./#{ argv._[0] }"
     catch error
-      console.log "'#{ argv._[0] }' - no such command"
+      if error.code is 'MODULE_NOT_FOUND'
+        console.log "'#{ argv._[0] }' - no such command"
+        process.exit 1
+      else
+        throw error
 
   if argv.version
     readJSON path.join(__dirname, '../../package.json'), (error, result) ->
@@ -57,7 +63,10 @@ main = ->
     process.exit 0
 
   if argv.verbose
-    logger.transports.cli.level = 'verbose'
+    if '-vv' in process.argv
+      logger.transports.cli.level = 'silly'
+    else
+      logger.transports.cli.level = 'verbose'
 
   if argv.quiet
     logger.transports.cli.quiet = true

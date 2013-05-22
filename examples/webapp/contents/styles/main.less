@@ -1,0 +1,67 @@
+
+@import 'vendor/reset';
+@import 'vendor/elements';
+
+@background: #d4d4d4;
+@text: #131313;
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: 'Helvetica Neue', Helvetica, sans-serif;
+  font-size: 21px;
+  color: @text;
+  margin: 0;
+  .gradient(@background, @background, lighten(@background, 20%));
+}
+
+h1 {
+  font-size: 5em;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1em;
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  margin-top: -0.5em;
+}
+
+.csstransforms3d {
+  h1 {
+    perspective: 600;
+    -ms-perspective: 600;
+    -moz-perspective: 600;
+    -webkit-perspective: 600;
+    span {
+      display: inline-block;
+      background: #dbdbdb;
+      transform-origin: 0% 0%;
+      -ms-transform-origin: 0% 0%;
+      -moz-transform-origin: 0% 0%;
+      -webkit-transform-origin: 0% 0%;
+    }
+  }
+  &.rgba h1 span {
+    background: rgba(0, 0, 0, 0.05);
+  }
+}
+
+@media (max-width: 800px) {
+  body {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  body {
+    font-size: 12px;
+  }
+}
+
+@media (min-width: 1200px) {
+  body {
+    font-size: 32px;
+  }
+}

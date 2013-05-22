@@ -1,21 +1,8 @@
+### logger.coffee ###
 
-winston = require 'winston'
 colors = require 'colors'
+winston = require 'winston'
 util = require 'util'
-fs = require 'fs'
-path = require 'path'
-async = require 'async'
-
-extend = (obj, mixin) ->
-  for name, method of mixin
-    obj[name] = method
-
-exports.extend = extend
-
-stripExtension = (filename) ->
-  filename.replace /(.+)\.[^.]+$/, '$1'
-
-exports.stripExtension = stripExtension
 
 class cli extends winston.Transport
 
@@ -40,9 +27,9 @@ class cli extends winston.Transport
       else
         process.stderr.write "\n"
     else if !@quiet
-      switch level
-        when 'verbose'
-          msg = msg.yellow
+      if level isnt 'info'
+        c = if level is 'warn' then 'yellow' else 'grey'
+        msg = "#{ level[c] } #{ msg }"
       if meta
         msg += util.format ' %j', meta
       process.stdout.write "  #{ msg }\n"
@@ -50,25 +37,12 @@ class cli extends winston.Transport
     @emit 'logged'
     callback null, true
 
-transports = exports.transports = [
+transports = [
   new cli {level: 'info'}
 ]
 
-exports.logger = new winston.Logger
+logger = new winston.Logger
   exitOnError: true
   transports: transports
 
-exports.readJSON = (filename, callback) ->
-  ### read and try to parse *filename* as json ###
-  async.waterfall [
-    (callback) ->
-      fs.readFile filename, callback
-    (buffer, callback) ->
-      try
-        rv = JSON.parse buffer.toString()
-        callback null, rv
-      catch error
-        error.filename = filename
-        error.message = "parsing #{ path.basename(filename) }: #{ error.message }"
-        callback error
-  ], callback
+module.exports = {logger, transports}

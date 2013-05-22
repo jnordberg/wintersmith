@@ -1,27 +1,33 @@
 
 extends layout
 
+//- this logic should be moved to a view at some point
+
 block content
-  != page.html
-  - var archive = _.chain(contents.articles._.directories).map(function(item) {
-  -   return item.index
-  - }).compact().sortBy(function(item) {
-  -   return -item.date
-  - }).groupBy(function(item) {
+  - var lineHeight = 2.2;
+  - var archive = _.chain(articles).groupBy(function(item) {
   -   return item.date.getFullYear()
   - }).value()
   - var map = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-
   section.archive
+    h2 Archive
     ul
-      each year in _.chain(archive).keys().reverse().value()
-        li.year= year
-        - var months = _.groupBy(archive[year], function(item) { return map[item.date.getMonth()] })
-        ul
-          each articles, month in months
-            li
-              strong= month
-              each article in articles
-                br
-                a(href=article.url)= article.title
+      - var years = _.chain(archive).keys().reverse().value()
+      each year, i in years
+        - var h = archive[year].length * lineHeight;
+        - var last = (years.length - 1 == i);
+        li.year(style='height: '+h+'em')
+          span.year-label(style='line-height: '+h+'em', class=(last?'last':''))= year
+          - var yearArticles = _.groupBy(archive[year], function(item) { return map[item.date.getMonth()] })
+          - var months = Object.keys(yearArticles);
+          ul
+            each month, i in months
+              - var articles = yearArticles[month]
+              - h = articles.length * lineHeight;
+              - var lastM = last && (months.length - 1 == i);
+              li.month(style='height: '+h+'em')
+                span.month-label(style='line-height: '+h+'em', class=(lastM?'last':''))= month
+                each article, i in articles
+                  - var lastA = lastM && (articles.length - 1 == i);
+                  a(href=article.url, style='line-height: '+lineHeight+'em', class=(lastA?'last':''))= article.title
 

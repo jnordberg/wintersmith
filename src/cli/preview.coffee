@@ -1,8 +1,11 @@
-
 async = require 'async'
 util = require 'util'
-{logger, extend} = require '../common' # lib common
-{getOptions, commonUsage, commonOptions} = require './common' # cli common
+
+{extend} = require './../core/utils'
+{Config} = require './../core/config'
+{logger} = require './../core/logger'
+
+{loadEnv, commonUsage, commonOptions} = require './common'
 
 usage = """
 
@@ -26,22 +29,21 @@ usage = """
 options =
   port:
     alias: 'p'
-    default: 8080
   domain:
     alias: 'd'
-    default: 'localhost'
 
 extend options, commonOptions
 
 preview = (argv) ->
-  server = require '../server'
   logger.info 'starting preview server'
 
   async.waterfall [
-    # load options
-    async.apply getOptions, argv
-    (options, callback) ->
-      server.run options, callback
+    (callback) ->
+      # create environment
+      loadEnv argv, callback
+    (env, callback) ->
+      # start preview server
+      env.preview callback
   ], (error) ->
     if error
       logger.error error.message, error

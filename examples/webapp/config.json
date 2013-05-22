@@ -1,0 +1,13 @@
+{
+  "locals": {
+    "name": "The next big thing",
+    "url": "http://awesomeapp.com/",
+    "description": "Forget about drag'n'drop, this is where it's at!",
+    "keywords": "awesome, fast, snappy, instant, horse, pony, unicorn"
+  },
+  "plugins": [
+    "wintersmith-browserify",
+    "wintersmith-less",
+    "wintersmith-nunjucks"
+  ]
+}

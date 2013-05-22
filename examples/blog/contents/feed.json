@@ -1,4 +1,5 @@
 {
   "template": "feed.jade",
+  "view": "articles.coffee",
   "filename": "feed.xml"
 }
