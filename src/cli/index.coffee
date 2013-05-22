@@ -34,7 +34,7 @@ globalOptions =
   help:
     alias: 'h'
 
-main = ->
+main = (callback) ->
 
   argv = optimist.options(globalOptions).argv
   if argv._[0]?
@@ -63,6 +63,7 @@ main = ->
     logger.transports.cli.quiet = true
 
   if cmd
-    cmd optimist.options(globalOptions).options(cmd.options).argv
+    cmd optimist.options(globalOptions).options(cmd.options).argv, (options) ->
+      callback options if callback
 
 module.exports.main = main

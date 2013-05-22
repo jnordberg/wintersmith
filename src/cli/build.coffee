@@ -43,7 +43,7 @@ options =
 
 extend options, commonOptions
 
-build = (argv) ->
+build = (argv, callback) ->
   start = new Date()
   logger.info 'building site'
 
@@ -72,14 +72,19 @@ build = (argv) ->
         (callback) ->
           # start building
           wintersmith options, callback
-      ], callback
-  ], (error) ->
+      ], (error) ->
+        if error
+          logger.error error.message, error
+        else
+          callback null, options
+  ], (error, options) ->
     if error
       logger.error error.message, error
     else
       stop = new Date()
       delta = stop - start
       logger.info "done in #{ delta.toString().bold } ms\n"
+      callback options if callback
 
 module.exports = build
 module.exports.usage = usage
