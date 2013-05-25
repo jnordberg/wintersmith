@@ -55,8 +55,7 @@ clip = (string, maxlen) ->
   return string[0...maxlen-2].trim() + ".."
 
 isPlugin = (module) ->
-  return true
-  'wintersmith' in module.keywords and 'plugin' in module.keywords
+  'wintersmith-plugin' in module.keywords
 
 ensureCacheDir = (callback) ->
   mkdirp cacheDir, (error) -> callback error
