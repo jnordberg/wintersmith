@@ -13,7 +13,7 @@ utils = require './utils'
 {render} = require './renderer'
 {runGenerator} = require './generator'
 
-{readJSON} = utils
+{readJSON, readJSONSync} = utils
 
 class Environment
   ### The Wintersmith environment. ###
@@ -42,9 +42,32 @@ class Environment
       @logger.verbose "unloading: #{ id }"
       delete require.cache[id]
 
+    @setupLocals()
+
   setConfig: (@config) ->
     @contentsPath = @resolvePath @config.contents
     @templatesPath = @resolvePath @config.templates
+
+  setupLocals: ->
+    ### Resolve locals and loads any required modules. ###
+    @locals = {}
+
+    # Load locals json if neccessary
+    if typeof @config.locals == 'string'
+      filename = @resolvePath @config.locals
+      @logger.verbose "loading locals from: #{ filename }"
+      @locals = readJSONSync filename
+    else
+      @locals = @config.locals
+
+    # Load and add modules specefied with the require option to the locals context.
+    for alias, id of @config.require
+      logger.verbose "loading module '#{ id }' available in locals as '#{ alias }'"
+      if @locals[alias]?
+        logger.warn "module '#{ id }' overwrites previous local with the same key ('#{ alias }')"
+      @locals[alias] = @loadModule id
+
+    return
 
   resolvePath: (pathname) ->
     ### Resolve *pathname* in working directory, returns an absolute path. ###
@@ -120,46 +143,40 @@ class Environment
       groups.push generator.group unless generator.group in groups
     return groups
 
-  loadModule: (module, callback) ->
-    ### Load a *module*, from the current working directory. ###
+  loadModule: (module) ->
+    ### Requires and returns *module*, resolved from the current working directory. ###
     require 'coffee-script' if module[-7..] is '.coffee'
     @logger.silly "loading module: #{ module }"
-    try
-      id = @resolveModule module
-      @logger.silly "resolved: #{ id }"
-      callback null, require id
-      @loadedModules.push id
-    catch error
-      callback error
+    id = @resolveModule module
+    @logger.silly "resolved: #{ id }"
+    rv = require id
+    @loadedModules.push id
+    return rv
 
   loadPluginModule: (module, callback) ->
-    ### Load a plugin *module*. ###
-    async.waterfall [
-      (callback) =>
-        if typeof module is 'string'
-          @loadModule module, callback
-        else
-          callback null, module
-      (fn, callback) =>
-        try
-          fn this, callback
-        catch error
-          callback error
-    ], (error) ->
+    ### Load a plugin *module*. Calls *callback* when plugin is done loading, or an error ocurred. ###
+    if typeof module is 'string'
+      try
+        module = @loadModule module
+      catch error
+        callback error
+        return
+
+    module.call null, this, (error) ->
       error.message = "Error loading plugin '#{ module }': #{ error.message }" if error?
       callback error
 
-  loadViewModule: (module, callback) ->
+  loadViewModule: (id, callback) ->
     ### Load a view *module* and add it to the environment. ###
-    @logger.verbose "loading view: #{ module }"
-    async.waterfall [
-      (callback) => @loadModule module, callback
-      (fn, callback) =>
-        @registerView path.basename(module), fn
-        callback()
-    ], (error) ->
-      error.message = "Error loading view '#{ module }': #{ error.message }" if error?
+    @logger.verbose "loading view: #{ id }"
+    try
+      module = @loadModule id
+    catch error
+      error.message = "Error loading view '#{ id }': #{ error.message }"
       callback error
+      return
+    @registerView path.basename(id), module
+    callback()
 
   loadPlugins: (callback) ->
     ### Loads any plugin found in *@config.plugins*. ###
@@ -214,36 +231,9 @@ class Environment
     loadTemplates this, callback
 
   getLocals: (callback) ->
-    ### Resolve locals. ###
-
-    resolveLocals = (callback) =>
-      ### Load locals json if neccessary. ###
-      if typeof @config.locals == 'string'
-        filename = @resolvePath @config.locals
-        @logger.verbose "loading locals from: #{ filename }"
-        readJSON filename, callback
-      else
-        callback null, @config.locals
-
-    addModules = (locals, callback) =>
-      ### Loads and adds modules specefied with the require option to the locals context. ###
-      async.forEach Object.keys(@config.require), (alias, callback) =>
-        module = @config.require[alias]
-        logger.verbose "loading module '#{ module }' available in locals as '#{ alias }'"
-        @loadModule module, (error, result) ->
-          if not error?
-            if locals[alias]?
-              logger.warn "module '#{ module }' overwrites previous local with the same key ('#{ alias }')"
-            locals[alias] = result
-          else
-            error.message = "Error loading module '#{ module }': #{ error.message }"
-          callback error
-      , (error) -> callback error, locals
-
-    async.waterfall [
-      resolveLocals
-      addModules
-    ], callback
+    ### Returns locals. ###
+    # TODO: locals are no longer loaded async, this method should eventually be removed
+    callback null, @locals
 
   load: (callback) ->
     ### Convenience method to load plugins, views, contents, templates and locals. ###
