@@ -1,0 +1,64 @@
+@import url(http://fonts.googleapis.com/css?family=Anonymous+Pro:400,400italic,700,700italic|Open+Sans:300italic,400italic,600italic,700italic,300,400,600,700);
+.fixed {
+  font-family: 'Anonymous Pro', monospace;
+}
+body {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 300;
+  font-size: 16px;
+  padding: 0;
+  margin: 0;
+  line-height: 1.2;
+}
+body,
+a {
+  color: #272727;
+}
+code {
+  font-family: 'Anonymous Pro', monospace;
+  font-size: 0.9em;
+  white-space: nowrap;
+}
+article,
+aside,
+figure,
+footer,
+header,
+hgroup,
+nav,
+section {
+  display: block;
+}
+pre {
+  white-space: pre;
+  /* CSS2 */
+
+  white-space: pre-wrap;
+  /* CSS 2.1 */
+
+  white-space: pre-line;
+  /* CSS 3 (and 2.1 as well, actually) */
+
+  word-wrap: break-word;
+  /* IE */
+
+}
+/* Custom text-selection colors (remove any text shadows: twitter.com/miketaylr/status/12228805301) */
+::-moz-selection {
+  background: #00ffaa;
+  color: #fff;
+  text-shadow: none;
+}
+::selection {
+  background: #00ffaa;
+  color: #fff;
+  text-shadow: none;
+}
+/*  j.mp/webkit-tap-highlight-color */
+a:link {
+  -webkit-tap-highlight-color: #00ffaa;
+}
+.clear {
+  height: 1px;
+  clear: both;
+}

@@ -1,0 +1,273 @@
+@import url(http://fonts.googleapis.com/css?family=Anonymous+Pro:400,400italic,700,700italic|Open+Sans:300italic,400italic,600italic,700italic,300,400,600,700);
+.fixed {
+  font-family: 'Anonymous Pro', monospace;
+}
+body {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 300;
+  font-size: 16px;
+  padding: 0;
+  margin: 0;
+  line-height: 1.2;
+}
+body,
+a {
+  color: #272727;
+}
+code {
+  font-family: 'Anonymous Pro', monospace;
+  font-size: 0.9em;
+  white-space: nowrap;
+}
+article,
+aside,
+figure,
+footer,
+header,
+hgroup,
+nav,
+section {
+  display: block;
+}
+pre {
+  white-space: pre;
+  /* CSS2 */
+
+  white-space: pre-wrap;
+  /* CSS 2.1 */
+
+  white-space: pre-line;
+  /* CSS 3 (and 2.1 as well, actually) */
+
+  word-wrap: break-word;
+  /* IE */
+
+}
+/* Custom text-selection colors (remove any text shadows: twitter.com/miketaylr/status/12228805301) */
+::-moz-selection {
+  background: #00ffaa;
+  color: #fff;
+  text-shadow: none;
+}
+::selection {
+  background: #00ffaa;
+  color: #fff;
+  text-shadow: none;
+}
+/*  j.mp/webkit-tap-highlight-color */
+a:link {
+  -webkit-tap-highlight-color: #00ffaa;
+}
+.clear {
+  height: 1px;
+  clear: both;
+}
+body {
+  font-size: 16px;
+  line-height: 1.4;
+}
+header,
+footer,
+.content {
+  width: 40em;
+  margin: 0 auto;
+}
+header {
+  margin-top: 4em;
+  margin-bottom: 5em;
+}
+header h1 {
+  margin: 0.5em 0;
+}
+header h1 img {
+  width: 100%;
+  margin-left: -0.2em;
+}
+header h2 {
+  margin: 0.5em 0;
+  font-weight: 400;
+  font-size: 2.2em;
+  margin-left: 3.9em;
+}
+header hr {
+  display: none;
+}
+header .download {
+  margin: 1.2em 0;
+  margin-left: 7.1em;
+  line-height: 1.6;
+}
+header .download a {
+  margin-left: 1em;
+  font-size: 1.4em;
+  font-weight: 400;
+  display: inline-block;
+  text-decoration: none;
+  padding: 0 0.5em;
+  border-radius: 0.2em;
+  border: 0.1em solid #00ffaa;
+  background-color: #00ffaa;
+}
+header .download a:hover {
+  background-color: #66ffcc;
+  border-color: #00f5a3;
+}
+header .download a img {
+  width: 1.1em;
+  display: baseline;
+  vertical-align: sub;
+  margin-left: 0.5em;
+}
+.intro {
+  font-size: 2.2em;
+  font-style: italic;
+  margin: 1.4em 0 2em;
+}
+footer {
+  text-indent: 6.5em;
+  margin-top: 8em;
+  margin-bottom: 2em;
+  font-style: italic;
+  font-size: 0.9em;
+}
+footer,
+footer a {
+  color: #8d8d8d;
+  text-decoration: none;
+}
+article {
+  clear: both;
+  margin-bottom: 2em;
+}
+article .image,
+article .body {
+  float: left;
+}
+article .image {
+  float: left;
+  width: 5.8em;
+  margin-right: 2em;
+  margin-top: 0.5em;
+}
+article .image img {
+  display: block;
+  width: 90%;
+  margin: 0 auto;
+}
+article#templating img {
+  width: 70%;
+}
+article .body {
+  width: 32em;
+}
+article .body h3 {
+  margin: 0;
+  font-size: 1.7em;
+  font-weight: 400;
+  font-style: italic;
+  margin-bottom: 0.9em;
+}
+article .body p {
+  font-size: 1.1em;
+}
+@media (min-width: 1250px) {
+  body {
+    font-size: 20px;
+  }
+}
+@media (max-width: 780px) {
+  body {
+    font-size: 13px;
+  }
+}
+@media (max-width: 560px) {
+  body {
+    font-size: 14px;
+  }
+  header,
+  footer,
+  .content {
+    width: auto !important;
+    margin: 1em !important;
+  }
+  header {
+    margin: 0;
+  }
+  header h1 {
+    line-height: 1;
+  }
+  header h1 img {
+    width: 100%;
+    margin: 0;
+  }
+  header .download {
+    text-align: center;
+    margin: 0;
+  }
+  header .download a {
+    margin: 0.5em 0.2em;
+    display: block;
+  }
+  header hr {
+    display: block;
+    border: 0;
+    height: 0.25em;
+    margin: 1em -0.1em;
+    background: #272727;
+    border-radius: 0.25em;
+  }
+  .intro {
+    margin: 0;
+    text-align: center;
+    font-size: 1.4em;
+  }
+  .intro p {
+    margin: 1em 0;
+  }
+  article {
+    clear: both;
+  }
+  article .image,
+  article .body {
+    float: none;
+    width: auto;
+  }
+  article .image {
+    margin-bottom: 0;
+  }
+  article .image img {
+    width: 35%;
+    margin: 0;
+    margin-left: 1em;
+    margin-top: 0.5em;
+    margin-bottom: 1em;
+    float: right;
+  }
+  article#templating img,
+  article#more img {
+    width: 35%;
+    float: left;
+    margin-left: 0;
+    margin-right: 1em;
+  }
+  article#flexible p,
+  article#flexible h3 {
+    text-shadow: 1px 1px 2px #fff;
+  }
+  article#flexible .image {
+    position: relative;
+    z-index: -1;
+    margin: 0 auto;
+  }
+  article#flexible .image img {
+    float: none;
+    margin: 0;
+    margin-bottom: -45%;
+    width: 100%;
+  }
+  footer {
+    padding-top: 5em;
+    text-indent: 0;
+    text-align: center;
+  }
+}
