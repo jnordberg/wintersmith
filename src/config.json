@@ -1,8 +1,7 @@
 {
   "output": "./../",
-  "baseUrl": "/wintersmith/",
   "locals": {
-    "url": "http://jnordberg.github.com/wintersmith",
+    "url": "http://wintersmith.io",
     "description": "Flexible Node.js static site generator"
   },
   "require": {
