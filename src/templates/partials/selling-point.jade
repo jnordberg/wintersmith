@@ -1,5 +1,9 @@
 - var p = sellingPoint;
-article(id=p.title.toLowerCase().replace(' ', '-'))
-  img(src=p.metadata.image, alt=p.title)
-  h3= p.title
-  p!= p.html
+- var id = p.filename.slice(p.filename.lastIndexOf('/') + 1).slice(0, -5)
+article(id=id)
+  div.image
+    img(src=p.metadata.image, alt=p.title)
+  div.body
+    h3= p.title
+    p!= p.html
+  div.clear

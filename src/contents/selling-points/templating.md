@@ -1,11 +1,12 @@
 ---
 title: Templating
-image: img/template.svg
+image: images/template.svg
 order: 2
 ---
 
-Use your favourite template engine, currently there is support for [Jade][1] (bundled) and [Swig][2] ([plugin][3])
+Use your favorite templating engine, it comes bundled with a [Jade][1] plugin and there is [community made plugins][2] for most other node.js templating engines.
 
-[1]: http://jade-lang.com/  "Jade - Template Engine"
-[2]: http://paularmstrong.github.com/swig/ "Swig JavaScript Template Engine"
-[3]: https://github.com/jnordberg/wintersmith/wiki/Plugins  "Wintersmith plugins"
+Wintersmith also ships with some handy site templates for building blogs & webapps.
+
+[1]: http://jade-lang.com/ "Jade - Template Engine"
+[2]: https://github.com/jnordberg/wintersmith/wiki/Plugins "Wintersmith plugins"

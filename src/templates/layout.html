@@ -12,9 +12,8 @@
   <meta property="og:description" content="{{ description }}">
   <meta property="og:type" content="website">
   {% block styles %}
-    <link rel="stylesheet" href="{{ env.config.baseUrl }}styles/main.css">
+    <link rel="stylesheet" href="{{ contents.styles['site.less'].url }}">
   {% endblock %}
-  <script src="{{ env.config.baseUrl }}styles/main.css"></script>
 </head>
 <body>
   {% block body %}{% endblock %}

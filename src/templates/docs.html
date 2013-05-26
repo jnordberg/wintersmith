@@ -1,8 +1,4 @@
-{% extends 'layout.html' %}
-
-{% block styles %}
-  <link rel="stylesheet" href="{{ contents.styles['docs.less'].url }}">
-{% endblock %}
+{% set title = 'Wintersmith API Documentation' %}
 
 {% macro docstring(obj) %}
   {% if obj.docstring %}
@@ -51,9 +47,24 @@
   {% endif %}
 {% endmacro %}
 
-{% block body %}
-  <h1>Wintersmith API Documentation</h1>
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>{{ title }}</title>
+  <meta name="description" content="{{ description }}">
+  <meta name="viewport" content="width=device-width">
+  <meta property="og:title" content="{{ name }}">
+  <meta property="og:url" content="{{ url }}">
+  <meta property="og:description" content="{{ description }}">
+  <meta property="og:type" content="website">
+  <link rel="stylesheet" href="{{ contents.styles['docs.less'].url }}">
+</head>
+<body>
+  <h1>{{ title }}</h1>
   {% for doc in page.docs %}
     {{ displayDoc(doc) }}
   {% endfor %}
-{% endblock %}
+</body>
+</html>

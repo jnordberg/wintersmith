@@ -3,11 +3,15 @@ extends layout
 block body
   header
     h1
-      img(src='img/wintersmith.svg', alt='Wintersmith')
+      img(src='images/wintersmith.svg', alt='Wintersmith')
     hr
-    h2 The flexible site generator
     div.download
-      a(href='https://github.com/jnordberg/wintersmith') Download & docs
+      a(href='https://github.com/jnordberg/wintersmith') GitHub project
+        img(src='images/github.svg')
+      a(href=contents.docs.url) API Documentation
+        img(src='images/docs.svg')
+      
+    div.intro!= contents['intro.md'].html
   section.content
     - var sellingPoints = _.chain(contents['selling-points']._.pages).sortBy(function(item) {
     -   return item.metadata['order'];
@@ -15,6 +19,5 @@ block body
     each sellingPoint in sellingPoints
       include partials/selling-point
   footer
-    p Made in -32°C (
-      a(href='http://marge.campus.ltu.se/temp/old_png/temp_201202.png') for real
-      )
+    p Made in -34°C 
+      a(href=contents.images['temp.png'].url) (for real)

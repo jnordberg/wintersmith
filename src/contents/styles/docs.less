@@ -1,27 +1,26 @@
-@import url(http://fonts.googleapis.com/css?family=Anonymous+Pro:400,400italic,700,700italic|Open+Sans:300italic,400italic,600italic,700italic,300,400,600,700);
 
-@textColor: #272727;
-@altColor: #00FFAA;
+@import 'common';
 
 body {
-  font-family: 'Open Sans', sans-serif;
-  font-weight: 300;
   font-size: 20px;
-  padding: 0;
   margin: 2em;
-  line-height: 1.2;
 }
 
-body, a {
-  color: @textColor;
+@media (max-width: 560px) {
+  body {
+    font-size: 15px;
+    margin: 1em;
+  }
+  .doc {
+    overflow-x: hidden;
+  }
+  .filename {
+    display: none;
+  }
+  a.source, a.anchor {
+    visibility: visible !important;
+  }
 }
-
-code {
-  font-family: 'Anonymous Pro', monospace;
-  font-size: 0.9em;
-  white-space: nowrap;
-}
-
 
 h1, h2, h3, h4, h5, p {
   margin: 0;
