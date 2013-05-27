@@ -1,6 +1,12 @@
 #!/usr/bin/env node
 
-require('shelljs/global');
+try {
+  require('shelljs/global');
+}
+catch (e) {
+  console.log('Error: shelljs not found. Try reinstalling with npm install --dev');
+}
+
 var cs = require('coffee-script');
 
 console.log('Compiling CoffeeScript');
