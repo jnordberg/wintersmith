@@ -8,6 +8,7 @@ mime = require 'mime'
 url = require 'url'
 minimatch = require 'minimatch'
 enableDestroy = require 'server-destroy'
+open = require 'open'
 {Stream} = require 'stream'
 
 {Config} = require './config'
@@ -326,6 +327,7 @@ run = (env, callback) ->
           callback?()
           callback = null
         server.listen env.config.port, env.config.hostname
+        open "http://#{env.config.hostname}:#{env.config.port}/"
     ], callback
 
   process.on 'uncaughtException', (error) ->
