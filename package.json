@@ -15,7 +15,7 @@
     "wintersmith": "./bin/wintersmith"
   },
   "scripts": {
-    "prepublish": "./bin/dev/compile_coffee"
+    "prepublish": "node ./bin/dev/compile_coffee"
   },
   "directories": {
     "lib": "./lib/"
