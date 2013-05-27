@@ -12,8 +12,12 @@
   "plugins": [
     "wintersmith-less",
     "wintersmith-nunjucks",
-    "./plugins/docs.coffee"
+    "./plugins/docs.coffee",
+    "wintersmith-redirect"
   ],
+  "redirects": {
+    "/wintersmith/index.html": "http://wintersmith.io"
+  },
   "docs": {
     "source": "/Users/jnordberg/Development/wintersmith/src/core",
     "url": "https://github.com/jnordberg/wintersmith/blob/master/src/core/"
