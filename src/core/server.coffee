@@ -339,8 +339,8 @@ run = (env, callback) ->
   start (error) ->
     if not error?
       host = env.config.hostname or 'localhost'
-      serverUrl = "http://#{ host }:#{ env.config.port }#{ env.config.baseUrl }".bold
-      env.logger.info "server running on: #{ serverUrl }"
+      serverUrl = "http://#{ host }:#{ env.config.port }#{ env.config.baseUrl }"
+      env.logger.info "server running on: #{ serverUrl.bold }"
       open serverUrl
     callback error
 
