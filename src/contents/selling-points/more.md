@@ -4,7 +4,7 @@ image: images/textstorm.svg
 order: 4
 ---
 
-Write rich web applications using the latest technologies without having to host your own node.js servers, or use it to increase speeds on large-scale sites.
+Write web applications using the latest technologies without having to host your own node.js servers, or use it to increase speeds on large-scale sites.
 
 Bundle JavaScript with [Browserify][1], write reusable styles with [LESS][1], [SASS][2] or [Stylus][3], include reusable web [component][4]'s. Or write your own &lt;insert-cool-web-tech-here&gt; plugin using the [API][6].
 
