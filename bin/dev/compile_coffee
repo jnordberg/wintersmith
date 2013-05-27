@@ -1,10 +1,15 @@
-#!/usr/bin/env bash
+#!/usr/bin/env node
 
-if [ -f ./node_modules/.bin/coffee ]; then
-  echo "Compiling CoffeScript"
-  ./node_modules/.bin/coffee -o ./lib -b -c ./src
-  exit $?
-else
-  echo "CoffeScript package missing. Run npm install --dev"
-  exit 1
-fi
+require('shelljs/global');
+var cs = require('coffee-script');
+
+console.log('Compiling CoffeeScript');
+var files = ls('-R','./src');
+for(var i = 0, ii = files.length; i < ii; i++) {
+  path = files[i];
+  if(path.match('.coffee')) {
+    cs.compile(cat('./src/'+path)).to('./lib/'+path.replace('.coffee','.js'));
+  } else {
+    mkdir('-p','./lib/'+path);
+  }
+}
