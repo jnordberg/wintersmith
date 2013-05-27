@@ -15,4 +15,4 @@ No matter what plugins you use, the output will always be a static website you c
 [3]: http://sass-lang.com/  "Syntactically Awesome Stylesheets"
 [4]: http://learnboost.github.io/stylus/  "Expressive, dynamic, robust CSS"
 [5]: https://github.com/component/component  "Component package manager for building a better web"
-[6]: http://jnordberg.github.io/wintersmith/docs/  "Wintersmith API Documentation"
+[6]: http://wintersmith.io/docs/  "Wintersmith API Documentation"
