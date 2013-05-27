@@ -219,11 +219,13 @@ class Environment
         , (error, generated) =>
           return callback(error, contents) if error? or generated.length is 0
           try
-            tree = generated.reduce (prev, current) -> ContentTree.merge prev, current
-            ContentTree.merge contents, tree
+            tree = new ContentTree '', @getContentGroups()
+            for gentree in generated
+              ContentTree.merge tree, gentree
+            ContentTree.merge tree, contents
           catch error
             return callback error
-          callback null, contents
+          callback null, tree
     ], callback
 
   getTemplates: (callback) ->
