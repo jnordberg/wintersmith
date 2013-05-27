@@ -15,7 +15,7 @@
     "wintersmith": "./bin/wintersmith"
   },
   "scripts": {
-    "prepublish": "./bin/dev/compile_coffee"
+    "prepublish": "node ./bin/dev/compile_coffee"
   },
   "directories": {
     "lib": "./lib/"
@@ -43,6 +43,9 @@
     "chokidar": "0.6.x",
     "server-destroy": "1.0.x",
     "npm": "1.2.x"
+  },
+  "devDependencies": {
+    "shelljs": "0.1.x"
   },
   "engine": {
     "node": ">=0.6"
