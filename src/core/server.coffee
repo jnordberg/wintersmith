@@ -327,7 +327,6 @@ run = (env, callback) ->
           callback?()
           callback = null
         server.listen env.config.port, env.config.hostname
-        open "http://#{env.config.hostname}:#{env.config.port}/"
     ], callback
 
   process.on 'uncaughtException', (error) ->
@@ -342,6 +341,7 @@ run = (env, callback) ->
       host = env.config.hostname or 'localhost'
       serverUrl = "http://#{ host }:#{ env.config.port }#{ env.config.baseUrl }".bold
       env.logger.info "server running on: #{ serverUrl }"
+      open serverUrl
     callback error
 
 module.exports = {run, setup}
