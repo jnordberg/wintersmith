@@ -284,7 +284,7 @@ class Environment
         buildGraph this, contents, templates, locals, callback
     ], callback
 
-Environment.create = (config, workDir) ->
+Environment.create = (config, workDir, log=logger) ->
   ### Set up a new environment using the default logger, *config* can be
       either a config object, a Config instance or a path to a config file. ###
 
@@ -297,7 +297,7 @@ Environment.create = (config, workDir) ->
     if not config instanceof Config
       config = new Config config
 
-  return new Environment config, workDir, logger
+  return new Environment config, workDir, log
 
 Environment.defaultPlugins = ['page', 'jade', 'markdown']
 
