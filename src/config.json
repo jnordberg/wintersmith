@@ -2,7 +2,12 @@
   "output": "./../",
   "locals": {
     "url": "http://wintersmith.io",
-    "description": "a flexible static site generator"
+    "description": "a flexible static site generator",
+    "keywords": [
+      "coffe-script", "content management system", "extendable",
+      "generator", "node.js", "site builider", "site generator",
+      "static site builder", "static site generator", "web development"
+    ]
   },
   "require": {
     "_": "underscore",
