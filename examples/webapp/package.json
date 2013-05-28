@@ -1,11 +1,9 @@
 {
-  "name": "my-webapp",
-  "version": "0.0.1",
-  "private": true,
   "dependencies": {
     "wintersmith-browserify": "*",
     "wintersmith-less": "*",
     "wintersmith-nunjucks": "*",
     "browsernizr": "*"
-  }
+  },
+  "repository": "none"
 }
