@@ -1,4 +1,4 @@
-#![Wintersmith](http://jnordberg.github.io/wintersmith/images/wintersmith.svg)
+#![Wintersmith](http://wintersmith.io/images/wintersmith.svg)
 
 Wintersmith is a simple yet flexible static site generator. It takes contents (markdown, less, scripts, etc), transforms them using plugins and outputs a static website (html, css, images, etc) that you can host anywhere.
 
@@ -212,17 +212,26 @@ example:
 
 var wintersmith = require('wintersmith');
 
-wintersmith('/path/to/my/config.json', callback(error, env) {
+// create the sites environment, can also be called with a config object. e.g.
+// {contents: '/some/contents', locals: {powerLevel: 10}}, ..}
+var env = wintersmith('/path/to/my/config.json');
+
+// build site
+env.build(function(error) {
   if (error) throw error;
+  console.log('Done!');
+});
 
-  // build site
-  env.build(function(error) { // .. });
+// preview
+env.preview(function(error, server) {
+  if (error) throw error;
+  console.log('Server running!');
+});
 
-  // preview
-  env.preview(function(error, server) { // preview server now running });
-
-  // do something with the content tree
-  env.load(function(error, result) { // .. });
+// do something with the content tree
+env.load(function(error, result) {
+  if (error) throw error;
+  console.log('Contents loaded!');
 });
 
 ```
