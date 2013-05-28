@@ -5,7 +5,7 @@ extends layout
 
 block content
   - var lineHeight = 2.2;
-  - var archive = _.chain(articles).groupBy(function(item) {
+  - var archive = _.chain(env.helpers.getArticles(contents)).groupBy(function(item) {
   -   return item.date.getFullYear()
   - }).value()
   - var map = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']

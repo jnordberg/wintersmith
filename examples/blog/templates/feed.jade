@@ -5,6 +5,7 @@ rss(version='2.0',
     xmlns:dc='http://purl.org/dc/elements/1.1/'
     xmlns:atom='http://www.w3.org/2005/Atom')
   channel
+    - var articles = env.helpers.getArticles(contents);
     title= locals.name
     atom:link(href=locals.url + '/feed.xml', rel='self', type='application/rss+xml')
     link= locals.url

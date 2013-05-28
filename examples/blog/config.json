@@ -5,7 +5,6 @@
     "owner": "Someone",
     "description": "Ramblings of an immor(t)al demigod"
   },
-  "views": "./views",
   "plugins": [
     "./plugins/paginator.coffee"
   ],
