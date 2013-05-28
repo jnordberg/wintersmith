@@ -102,6 +102,15 @@ exports.loadEnv = (argv, callback) ->
 
   ], callback
 
+if not stream.Writable?
+  # 0.10 writable stream for 0.8, not proper but works for this
+  class stream.Writable extends stream.Stream
+    constructor: ->
+      super()
+      @writable = true
+    write: (string, encodig='utf8') ->
+      @_write string, encodig, ->
+
 exports.NpmAdapter = class NpmAdapter extends stream.Writable
   ### Redirects output of npm to a logger ###
 
