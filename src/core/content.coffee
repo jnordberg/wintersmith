@@ -231,6 +231,9 @@ ContentTree.fromDirectory = (env, directory, callback) ->
 
 ContentTree.inspect = (tree, depth=0) ->
   ### Return a pretty formatted string representing the content *tree*. ###
+  if typeof tree is 'number'
+    # workaround for node.js calling inspect when converting objects to a string
+    return '[Function: ContentTree]'
   rv = []
   pad = ''
   for i in [0..depth]
