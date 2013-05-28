@@ -26,5 +26,8 @@
   "docs": {
     "source": "/Users/jnordberg/Development/wintersmith/src/core",
     "url": "https://github.com/jnordberg/wintersmith/blob/master/src/core/"
+  },
+  "jade": {
+    "pretty": true
   }
 }
