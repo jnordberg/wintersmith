@@ -5,6 +5,11 @@ html(lang='en')
       meta(charset='utf-8')
       meta(name='viewport', content='width=device-width')
       meta(name='description', content=locals.description)
+      meta(property='og:title', content='Wintersmith')
+      meta(property='og:url', content=locals.url)
+      meta(property='og:description', content=locals.description)
+      meta(property='og:image', content=locals.url+contents.images['wintersmith-og.png'].url)
+      meta(property='og:type', content='website')
       title Wintersmith
       link(rel='stylesheet', href=contents.styles['site.less'].url)
       script

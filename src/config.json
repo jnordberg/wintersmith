@@ -2,7 +2,7 @@
   "output": "./../",
   "locals": {
     "url": "http://wintersmith.io",
-    "description": "Flexible Node.js static site generator"
+    "description": "a flexible static site generator"
   },
   "require": {
     "_": "underscore",
