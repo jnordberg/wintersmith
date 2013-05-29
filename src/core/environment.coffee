@@ -256,11 +256,13 @@ class Environment
   preview: (callback) ->
     ### Start the preview server. Calls *callback* when server is up and
         running or if an error occurs. ###
+    @mode = 'preview'
     server = require './server'
     server.run this, callback
 
   build: (outputDir, callback) ->
     ### Build the content tree and render it to *outputDir*. ###
+    @mode = 'build'
     if arguments.length < 2
       # *outputDir* is optional and if omitted config.output is used
       callback = outputDir or ->

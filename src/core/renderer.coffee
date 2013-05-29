@@ -30,7 +30,6 @@ render = (env, outputDir, contents, templates, locals, callback) ->
   ### Render *contents* and *templates* using environment *env* to *outputDir*.
       The output directory will be created if it does not exist. ###
 
-  env.mode = 'render'
   env.logger.info "rendering tree:\n#{ ContentTree.inspect(contents, 1) }\n"
   env.logger.verbose "render output directory: #{ outputDir }"
 
