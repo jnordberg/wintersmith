@@ -5,6 +5,7 @@ winston = require 'winston'
 util = require 'util'
 
 class cli extends winston.Transport
+  ### Winston transport that logs info to stdout and errors stderr  ###
 
   name: 'cli'
 

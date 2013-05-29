@@ -13,6 +13,7 @@ extend = (obj, mixin) ->
     obj[name] = method
 
 stripExtension = (filename) ->
+  ### Remove the file-extension from *filename* ###
   filename.replace /(.+)\.[^.]+$/, '$1'
 
 readJSON = (filename, callback) ->
@@ -58,6 +59,7 @@ readdirRecursive = (directory, callback) ->
   walk '', (error) -> callback error, result
 
 pump = (source, destination, callback) ->
+  ### Pipe *source* stream to *destination* stream calling *callback* when done ###
   source.pipe destination
   source.on 'error', (error) ->
     callback? error

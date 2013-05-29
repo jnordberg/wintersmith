@@ -8,6 +8,7 @@ path = require 'path'
 {extend, readdirRecursive} = require './utils'
 
 class TemplatePlugin
+  ### A template plugin subclass have to implement a `render` instance method and a `fromFile` class method. ###
 
   render: (locals, callback) ->
     ### Render template using *locals* and *callback* with a ReadStream or Buffer containing the result. ###

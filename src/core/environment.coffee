@@ -25,6 +25,9 @@ class Environment extends EventEmitter
   TemplatePlugin: TemplatePlugin
 
   constructor: (config, @workDir, @logger) ->
+    ### Create a new Environment, *config* is a Config instance, *workDir* is the
+        working directory and *logger* is a log instance implementing methods for
+        error, warn, verbose and silly loglevels. ###
     @loadedModules = []
     @workDir = path.resolve @workDir
     @setConfig config
@@ -125,8 +128,7 @@ class Environment extends EventEmitter
   registerGenerator: (group, generator) ->
     ### Add a generator to the environment. The generator function is called with the env and the
         current content tree. It should return a object with nested ContentPlugin instances.
-        These will be merged into the final content tree. Generators can also return filenames
-        and a buffer/stream like: {filename: 'asd', stream: 'asd'}. See generator.coffee for more info ###
+        These will be merged into the final content tree. ###
     @generators.push
       group: group
       fn: generator
