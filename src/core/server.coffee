@@ -79,6 +79,11 @@ setup = (env) ->
   logop = (error) ->
     env.logger.error(error.message, error) if error?
 
+  changeHandler = (error) ->
+    ### Emits a change event if called without error ###
+    env.emit 'change' unless error?
+    logop error
+
   loadContents = (callback=logop) ->
     block.contentsLoad = true
     lookup = {}
@@ -166,16 +171,16 @@ setup = (env) ->
       lookup[normalizeUrl(newContent.url)] = newContent
 
       block.contentChange = false
+      env.emit 'change', content.filename
 
   # reload entire tree if a file is removed or added
   # patches to modify the already loaded tree instead are welcome :-)
-  contentWatcher.on 'add', -> loadContents() if not block.contentsLoad
-  contentWatcher.on 'unlink', -> loadContents() if not block.contentsLoad
+  contentWatcher.on 'add', -> loadContents(changeHandler) if not block.contentsLoad
+  contentWatcher.on 'unlink', -> loadContents(changeHandler) if not block.contentsLoad
 
   templateWatcher = chokidar.watch env.templatesPath,
     ignoreInitial: true
-  templateWatcher.on 'all', (event, path) ->
-    loadTemplates() if not block.templatesLoad
+  templateWatcher.on 'all', (event, path) -> loadTemplates(changeHandler) if not block.templatesLoad
 
   if env.config.views?
     viewsWatcher = chokidar.watch env.resolvePath(env.config.views),
@@ -183,7 +188,7 @@ setup = (env) ->
     viewsWatcher.on 'all', (event, path) ->
       if not block.viewsLoad
         delete require.cache[path]
-        loadViews()
+        loadViews changeHandler
 
   contentHandler = (request, response, callback) ->
     uri = normalizeUrl url.parse(request.url).pathname
@@ -298,6 +303,7 @@ run = (env, callback) ->
         restart (error) ->
           throw error if error
           env.logger.verbose 'config file change detected, server reloaded'
+          env.emit 'change'
 
   restart = (callback) ->
     env.logger.info 'restarting server'

@@ -3,6 +3,7 @@
 path = require 'path'
 async = require 'async'
 fs = require 'fs'
+{EventEmitter} = require 'events'
 
 utils = require './utils'
 
@@ -15,7 +16,7 @@ utils = require './utils'
 
 {readJSON, readJSONSync} = utils
 
-class Environment
+class Environment extends EventEmitter
   ### The Wintersmith environment. ###
 
   utils: utils
