@@ -156,16 +156,23 @@ class Environment extends EventEmitter
 
   loadPluginModule: (module, callback) ->
     ### Load a plugin *module*. Calls *callback* when plugin is done loading, or an error ocurred. ###
+    id = 'unknown'
+    done = (error) ->
+      error.message = "Error loading plugin '#{ id }': #{ error.message }" if error?
+      callback error
+
     if typeof module is 'string'
+      id = module
       try
         module = @loadModule module
       catch error
-        callback error
+        done error
         return
 
-    module.call null, this, (error) ->
-      error.message = "Error loading plugin '#{ module }': #{ error.message }" if error?
-      callback error
+    try
+      module.call null, this, done
+    catch error
+      done error
 
   loadViewModule: (id, callback) ->
     ### Load a view *module* and add it to the environment. ###
