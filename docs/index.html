@@ -454,12 +454,19 @@
   </a>
   constructor(config, @workDir, @logger)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L26">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L27">
       <span>➤</span>
     </a>
   
 </h4>
         
+  
+    <div class="docstring">
+      <p>Create a new Environment, <em>config</em> is a Config instance, <em>workDir</em> is the
+   working directory and <em>logger</em> is a log instance implementing methods for
+   error, warn, verbose and silly loglevels. </p>
+
+    </div>
   
 
       
@@ -469,7 +476,7 @@
   </a>
   reset()
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L32">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L36">
       <span>➤</span>
     </a>
   
@@ -489,7 +496,7 @@
   </a>
   setConfig(@config)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L47">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L51">
       <span>➤</span>
     </a>
   
@@ -504,7 +511,7 @@
   </a>
   setupLocals()
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L51">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L55">
       <span>➤</span>
     </a>
   
@@ -524,7 +531,7 @@
   </a>
   resolvePath(pathname)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L72">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L76">
       <span>➤</span>
     </a>
   
@@ -544,7 +551,7 @@
   </a>
   resolveContentsPath(pathname)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L76">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L80">
       <span>➤</span>
     </a>
   
@@ -564,7 +571,7 @@
   </a>
   resolveModule(module)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L80">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L84">
       <span>➤</span>
     </a>
   
@@ -584,7 +591,7 @@
   </a>
   relativePath(pathname)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L94">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L98">
       <span>➤</span>
     </a>
   
@@ -604,7 +611,7 @@
   </a>
   relativeContentsPath(pathname)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L98">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L102">
       <span>➤</span>
     </a>
   
@@ -624,7 +631,7 @@
   </a>
   registerContentPlugin(group, pattern, plugin)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L102">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L106">
       <span>➤</span>
     </a>
   
@@ -648,7 +655,7 @@
   </a>
   registerTemplatePlugin(pattern, plugin)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L115">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L119">
       <span>➤</span>
     </a>
   
@@ -669,7 +676,7 @@
   </a>
   registerGenerator(group, generator)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L124">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L128">
       <span>➤</span>
     </a>
   
@@ -679,8 +686,7 @@
     <div class="docstring">
       <p>Add a generator to the environment. The generator function is called with the env and the
    current content tree. It should return a object with nested ContentPlugin instances.
-   These will be merged into the final content tree. Generators can also return filenames
-   and a buffer/stream like: {filename: &#39;asd&#39;, stream: &#39;asd&#39;}. See generator.coffee for more info </p>
+   These will be merged into the final content tree. </p>
 
     </div>
   
@@ -692,7 +698,7 @@
   </a>
   registerView(name, view)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L133">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L136">
       <span>➤</span>
     </a>
   
@@ -712,7 +718,7 @@
   </a>
   getContentGroups()
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L137">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L140">
       <span>➤</span>
     </a>
   
@@ -732,7 +738,7 @@
   </a>
   loadModule(module)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L146">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L149">
       <span>➤</span>
     </a>
   
@@ -752,7 +758,7 @@
   </a>
   loadPluginModule(module, callback)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L156">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L159">
       <span>➤</span>
     </a>
   
@@ -772,7 +778,7 @@
   </a>
   loadViewModule(id, callback)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L169">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L179">
       <span>➤</span>
     </a>
   
@@ -792,7 +798,7 @@
   </a>
   loadPlugins(callback)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L181">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L191">
       <span>➤</span>
     </a>
   
@@ -812,7 +818,7 @@
   </a>
   loadViews(callback)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L201">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L211">
       <span>➤</span>
     </a>
   
@@ -832,7 +838,7 @@
   </a>
   getContents(callback)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L211">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L221">
       <span>➤</span>
     </a>
   
@@ -852,7 +858,7 @@
   </a>
   getTemplates(callback)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L231">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L241">
       <span>➤</span>
     </a>
   
@@ -872,7 +878,7 @@
   </a>
   getLocals(callback)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L235">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L245">
       <span>➤</span>
     </a>
   
@@ -892,7 +898,7 @@
   </a>
   load(callback)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L240">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L250">
       <span>➤</span>
     </a>
   
@@ -912,7 +918,7 @@
   </a>
   preview(callback)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L256">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L266">
       <span>➤</span>
     </a>
   
@@ -933,7 +939,7 @@
   </a>
   build(outputDir, callback)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L262">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L273">
       <span>➤</span>
     </a>
   
@@ -953,7 +959,7 @@
   </a>
   getGraph(callback)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L276">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L288">
       <span>➤</span>
     </a>
   
@@ -982,7 +988,7 @@
   </a>
   create(config, workDir, log)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L287">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L299">
       <span>➤</span>
     </a>
   
@@ -1516,7 +1522,7 @@
   </a>
   constructor(options)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/logger.coffee#L11">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/logger.coffee#L12">
       <span>➤</span>
     </a>
   
@@ -1531,7 +1537,7 @@
   </a>
   log(level, msg, meta, callback)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/logger.coffee#L15">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/logger.coffee#L16">
       <span>➤</span>
     </a>
   
@@ -1586,7 +1592,7 @@
   </a>
   render(locals, callback)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/templates.coffee#L12">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/templates.coffee#L13">
       <span>➤</span>
     </a>
   
@@ -1615,7 +1621,7 @@
   </a>
   fromFile(filepath, callback)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/templates.coffee#L16">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/templates.coffee#L17">
       <span>➤</span>
     </a>
   
