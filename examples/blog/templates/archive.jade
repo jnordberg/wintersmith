@@ -6,7 +6,7 @@ extends layout
 block content
   - var lineHeight = 2.2;
   - var archive = _.chain(env.helpers.getArticles(contents)).groupBy(function(item) {
-  -   return item.date.getFullYear()
+  -   return item.date.getUTCFullYear()
   - }).value()
   - var map = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
   section.archive
@@ -18,7 +18,7 @@ block content
         - var last = (years.length - 1 == i);
         li.year(style='height: '+h+'em')
           span.year-label(style='line-height: '+h+'em', class=(last?'last':''))= year
-          - var yearArticles = _.groupBy(archive[year], function(item) { return map[item.date.getMonth()] })
+          - var yearArticles = _.groupBy(archive[year], function(item) { return map[item.date.getUTCMonth()] })
           - var months = Object.keys(yearArticles);
           ul
             each month, i in months
