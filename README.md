@@ -150,7 +150,7 @@ The second one is `filename` which can be used to override the output filename o
 
 ### Templates
 
-When a page is rendered to a template the page instance is available as `page` in the template context. The content tree is also available as `contents` and `config.locals` is the root object.
+When a page is rendered to a template the page instance is available as `page` in the template context. The content tree is also available as `contents` and `config.locals` in the root object.
 
 ### The Page model
 
