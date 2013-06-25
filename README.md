@@ -70,6 +70,8 @@ The ContentTree is a nested object built up of ContentPlugins and looks somethin
 }
 ```
 
+![Wintersmith](http://wintersmith.io/images/flow.svg)
+
 This content tree is provided in full to the views when rendering. This gives you a lot of flexibility when writing plugins, you could for example write a plugin that generates a mosaic using images located in a specific directory.
 
 Wintersmith comes with a default Page plugin that renders markdown content using templates. This plugin takes markdown (combined with some metadata, more on this later) compiles it and provides it to a template along with the content tree and some utility functions.
@@ -102,9 +104,40 @@ port         | `8080`          | port preview server listens on
 
 All paths can either be relative or absolute. Relative paths will be resolved from the working directory or `--chdir` if set.
 
+## Content Plugins
+
+ContentPlugins transform content, each item in the content tree is represented by a ContentPlugin instance. Content plugins can be created from files matching a glob pattern or by generators.
+
+The ContentPlugin class is that all content plugins inherit from. Subclasses have to implement the `getFilename` and `getView` instance methods and the `fromFile` class method - more info in the [plugin guide][plugin-guide].
+
+All content plugins have the following properties (properties in wintersmith is simply a shortcut to a getter. i.e. `item.filename` is the same as calling `item.getFilename()`)
+
+Property     | Getter signature | Description
+-------------|----------------------------------------
+filename     | `getFilename()`  | filename content will be rendered to
+view         | `getView()`      | function used to render the plugin, e.g. the page plugin uses a view that passes the plugin and locals to a template
+url          | `getUrl(base)`   | url for the content. *base* is from where this url will be resolved and defaults to `config.baseUrl`. for example you can call `content.getUrl('http://myiste.com')` to get a permalink to that content
+
 ## The Page plugin
 
-A Page is either a markdown file with metadata on top or a json file located in the contents directory.
+Wintersmith ships with a page plugin, this plugin is what the markdown page and many other content plugins builds upon.
+
+### Model
+
+The Page model (inherits from ContentPlugin)
+
+Properties:
+
+Name         | Description
+-------------|------------
+metadata     | object containing the pages metadata
+title        | `metadata.title` or `Untitled`
+date         | Date object created from `metadata.date` if set, unix epoch time if not
+rfc822date   | a rfc-822 formatted string made from `date`
+body         | markdown source
+html         | parsed markdown as html
+
+A MarkdownPage is either a markdown file with metadata on top or a json file located in the contents directory.
 
 ```markdown
 ---
@@ -132,7 +165,7 @@ or use json to simply pass metadata to a template:
 }
 ```
 
-Pages will be rendered as html, so for example `index.md` would be rendered to `index.html` and `some-dir/data.json` to `some-dir/data.html`.
+Pages are by default rendered using the `template` view. This view passes the page to the template provided in the metadata. Omitting the template key or setting it to `none` will cause the page not to be rendered.
 
 ### Links
 
@@ -151,21 +184,6 @@ The second one is `filename` which can be used to override the output filename o
 ### Templates
 
 When a page is rendered to a template the page instance is available as `page` in the template context. The content tree is also available as `contents` and `config.locals` is the root object.
-
-### The Page model
-
-The Page model (inherits from ContentPlugin)
-
-Properties:
-
-Name         | Description
--------------|------------
-metadata     | object containing the pages metadata
-title        | `metadata.title` or `Untitled`
-date         | Date object created from `metadata.date` if set, unix epoch time if not
-rfc822date   | a rfc-822 formatted string made from `date`
-body         | markdown source
-html         | parsed markdown as html
 
 ## Plugins
 
