@@ -146,14 +146,14 @@ class Environment extends EventEmitter
       groups.push generator.group unless generator.group in groups
     return groups
 
-  loadModule: (module) ->
+  loadModule: (module, unloadOnReset=false) ->
     ### Requires and returns *module*, resolved from the current working directory. ###
     require 'coffee-script' if module[-7..] is '.coffee'
     @logger.silly "loading module: #{ module }"
     id = @resolveModule module
     @logger.silly "resolved: #{ id }"
     rv = require id
-    @loadedModules.push id
+    @loadedModules.push id if unloadOnReset
     return rv
 
   loadPluginModule: (module, callback) ->
@@ -180,7 +180,7 @@ class Environment extends EventEmitter
     ### Load a view *module* and add it to the environment. ###
     @logger.verbose "loading view: #{ id }"
     try
-      module = @loadModule id
+      module = @loadModule id, true
     catch error
       error.message = "Error loading view '#{ id }': #{ error.message }"
       callback error
