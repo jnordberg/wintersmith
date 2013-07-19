@@ -110,17 +110,17 @@ ContentPlugins transform content, each item in the content tree is represented b
 
 The ContentPlugin class is that all content plugins inherit from. Subclasses have to implement the `getFilename` and `getView` instance methods and the `fromFile` class method - more info in the [plugin guide][plugin-guide].
 
-All content plugins have the following properties (properties in wintersmith is simply a shortcut to a getter. i.e. `item.filename` is the same as calling `item.getFilename()`)
+All content plugins have the following properties (a property in wintersmith is simply a shortcut to a getter. i.e. `item.filename` is the same as calling `item.getFilename()`)
 
 Property     | Getter signature | Description
--------------|----------------------------------------
+-------------|------------------|---------------------
 filename     | `getFilename()`  | filename content will be rendered to
 view         | `getView()`      | function used to render the plugin, e.g. the page plugin uses a view that passes the plugin and locals to a template
 url          | `getUrl(base)`   | url for the content. *base* is from where this url will be resolved and defaults to `config.baseUrl`. for example you can call `content.getUrl('http://myiste.com')` to get a permalink to that content
 
 ## The Page plugin
 
-Wintersmith ships with a page plugin, this plugin is what the markdown page and many other content plugins builds upon.
+Wintersmith ships with a page plugin. This plugin is what the markdown page and many other content plugins build upon.
 
 ### Model
 
