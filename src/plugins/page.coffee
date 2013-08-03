@@ -31,11 +31,26 @@ module.exports = (env, callback) ->
     constructor: (@filepath, @metadata) ->
 
     getFilename: ->
-      if @metadata.filename?
-        dirname = path.dirname @filepath.relative
-        return path.join(dirname, @metadata.filename)
-      else
-        return env.utils.stripExtension(@filepath.relative) + '.html'
+
+      regularFilename = =>
+        path.join path.dirname(@filepath.relative), @basename
+
+      permalinkFilename = =>
+
+        dirname = path.dirname regularFilename()
+        basename = path.join path.basename(dirname), path.basename regularFilename()
+        dirname = path.dirname dirname
+
+        basename = @permalinkTemplate
+          .replace(":year", @date.getFullYear())
+          .replace(":month", ('0' + (@date.getMonth()+1)).slice(-2))
+          .replace(":day", ('0' + @date.getDate()).slice(-2))
+          .replace(":title", basename)
+        
+        path.join dirname, basename
+
+      if @metadata.permalink? then permalinkFilename() else regularFilename()
+
 
     getUrl: (base) ->
       # remove index.html for prettier links
@@ -77,6 +92,15 @@ module.exports = (env, callback) ->
 
     @property 'rfc822date', ->
       env.utils.rfc822(@date)
+
+    @property 'permalinkTemplate', ->
+      switch @metadata.permalink
+        when undefined then ":title"
+        when "date"    then ":year/:month/:day/:title"
+        else           @metadata.permalink
+
+    @property 'basename', ->
+      @metadata.filename or path.basename(env.utils.stripExtension(@filepath.relative) + '.html')
 
     @property 'hasMore', ->
       @_html ?= @getHtml()
