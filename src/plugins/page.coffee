@@ -41,15 +41,15 @@ module.exports = (env, callback) ->
         basename = path.join path.basename(dirname), path.basename regularFilename()
         dirname = path.dirname dirname
 
-        basename = @permalinkTemplate
+        basename = @permalink
           .replace(":year", @date.getFullYear())
           .replace(":month", ('0' + (@date.getMonth()+1)).slice(-2))
           .replace(":day", ('0' + @date.getDate()).slice(-2))
           .replace(":title", basename)
-        
+
         path.join dirname, basename
 
-      if @metadata.permalink? then permalinkFilename() else regularFilename()
+      if @permalink isnt 'none' then permalinkFilename() else regularFilename()
 
 
     getUrl: (base) ->
@@ -93,11 +93,8 @@ module.exports = (env, callback) ->
     @property 'rfc822date', ->
       env.utils.rfc822(@date)
 
-    @property 'permalinkTemplate', ->
-      switch @metadata.permalink
-        when undefined then ":title"
-        when "date"    then ":year/:month/:day/:title"
-        else           @metadata.permalink
+    @property 'permalink', ->
+      @metadata.permalink or env.config.defaultPermalink or 'none'
 
     @property 'basename', ->
       @metadata.filename or path.basename(env.utils.stripExtension(@filepath.relative) + '.html')
