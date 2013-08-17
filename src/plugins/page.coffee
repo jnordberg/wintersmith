@@ -1,5 +1,10 @@
 path = require 'path'
 async = require 'async'
+slugify = require 'slugg'
+
+replaceAll = (string, map) ->
+  re = new RegExp Object.keys(map).join('|'), 'gi'
+  return string.replace re, (match) -> map[match]
 
 module.exports = (env, callback) ->
 
@@ -31,26 +36,69 @@ module.exports = (env, callback) ->
     constructor: (@filepath, @metadata) ->
 
     getFilename: ->
+      ### Returns the filename for this page based on the filename template.
+          The default template (filenameTemplate config key) is ':file.html'.
 
-      regularFilename = =>
-        path.join path.dirname(@filepath.relative), @basename
+          Available variables:
 
-      permalinkFilename = =>
+            :year - Full year from page.date
+            :month - Zero-padded month from page.date
+            :day - Zero-padded day from page.date
+            :title - Slugified version of page.title
+            :basename - filename from @filepath
+            :file - basename without file extension
+            :ext - file extension
 
-        dirname = path.dirname regularFilename()
-        basename = path.join path.basename(dirname), path.basename regularFilename()
-        dirname = path.dirname dirname
+          You can also run javascript by wrapping it in double moustaches {{ }}, in that context
+          this page instance is available as *page* and the environment as *env*.
 
-        basename = @permalink
-          .replace(":year", @date.getFullYear())
-          .replace(":month", ('0' + (@date.getMonth()+1)).slice(-2))
-          .replace(":day", ('0' + @date.getDate()).slice(-2))
-          .replace(":title", basename)
+          Examples:
 
-        path.join dirname, basename
+            (for a page with the filename somedir/myfile.md and date set to 2001-02-03)
 
-      if @permalink isnt 'none' then permalinkFilename() else regularFilename()
+            template: :file.html (default)
+            output: somedir/myfile.html
 
+            template: /:year/:month/:day/index.html
+            output: 2001/02/03/index.html
+
+            template: :year-:title.html
+            output: somedir/2001-slugified-title.html
+
+            template: /otherdir/{{ page.metadata.category }}/:basename
+            output: otherdir/the-category/myfile.md
+
+      ###
+
+      template = @metadata.filename or env.config.filenameTemplate or ':file.html'
+      dirname = path.dirname @filepath.relative
+      basename = path.basename @filepath.relative
+      file = env.utils.stripExtension basename
+      ext = path.extname basename
+
+      filename = replaceAll template,
+        ':year': @date.getFullYear()
+        ':month': ('0' + (@date.getMonth()+1)).slice(-2)
+        ':day': ('0' + @date.getDate()).slice(-2)
+        ':title': slugify(@title)
+        ':file': file
+        ':ext': ext
+        ':basename': basename
+        ':dirname': dirname
+
+      # eval code wrapped in double moustaches, use with care ;)
+      vm = ctx = null
+      filename = filename.replace /\{\{(.*?)\}\}/g, (match, code) =>
+        vm ?= require 'vm'
+        ctx ?= vm.createContext {env: env, page: this}
+        return vm.runInContext code, ctx
+
+      if filename[0] is '/'
+        # filenames starting with a slash are absolute paths in the content tree
+        return filename.slice(1)
+      else
+        # otherwise they are resolved from their directory in the tree
+        return path.join dirname, filename
 
     getUrl: (base) ->
       # remove index.html for prettier links
@@ -92,12 +140,6 @@ module.exports = (env, callback) ->
 
     @property 'rfc822date', ->
       env.utils.rfc822(@date)
-
-    @property 'permalink', ->
-      @metadata.permalink or env.config.defaultPermalink or 'none'
-
-    @property 'basename', ->
-      @metadata.filename or path.basename(env.utils.stripExtension(@filepath.relative) + '.html')
 
     @property 'hasMore', ->
       @_html ?= @getHtml()
