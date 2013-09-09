@@ -328,6 +328,11 @@
 </h2>
         
   
+    <div class="docstring">
+      <p>Static file handler, simply serves content as-is. Last in chain. </p>
+
+    </div>
+  
 
         
   
@@ -440,6 +445,11 @@
   
 </h2>
         
+  
+    <div class="docstring">
+      <p>The Wintersmith environment. </p>
+
+    </div>
   
 
         
@@ -953,26 +963,6 @@
   
 
       
-        <h4>
-  <a name="Environment-getGraph" class="anchor" href="#Environment-getGraph">
-    <span>✼</span>
-  </a>
-  getGraph(callback)
-  
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L288">
-      <span>➤</span>
-    </a>
-  
-</h4>
-        
-  
-    <div class="docstring">
-      <p>Build a dependency graph </p>
-
-    </div>
-  
-
-      
     </section>
   
 
@@ -988,7 +978,7 @@
   </a>
   create(config, workDir, log)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L299">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L288">
       <span>➤</span>
     </a>
   
@@ -1017,486 +1007,6 @@
   
     
   
-    <section class="doc" id="graph.coffee">
-      <p class="filename"><a href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee">graph.coffee</a></p>
-      
-        <h2>
-  <a name="Node" class="anchor" href="#Node">
-    <span>✼</span>
-  </a>
-  Node
-  
-</h2>
-        
-  
-
-        
-  
-    <section class="methods">
-      
-      <h3>Instance Methods</h3>
-      
-        <h4>
-  <a name="Node-constructor" class="anchor" href="#Node-constructor">
-    <span>✼</span>
-  </a>
-  constructor(@id, @item)
-  
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L17">
-      <span>➤</span>
-    </a>
-  
-</h4>
-        
-  
-
-      
-        <h4>
-  <a name="Node-addEdge" class="anchor" href="#Node-addEdge">
-    <span>✼</span>
-  </a>
-  addEdge(node)
-  
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L20">
-      <span>➤</span>
-    </a>
-  
-</h4>
-        
-  
-
-      
-    </section>
-  
-
-        
-  
-
-      
-        <h2>
-  <a name="Graph" class="anchor" href="#Graph">
-    <span>✼</span>
-  </a>
-  Graph
-  
-</h2>
-        
-  
-
-        
-  
-    <section class="methods">
-      
-      <h3>Instance Methods</h3>
-      
-        <h4>
-  <a name="Graph-constructor" class="anchor" href="#Graph-constructor">
-    <span>✼</span>
-  </a>
-  constructor(@identify)
-  
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L26">
-      <span>➤</span>
-    </a>
-  
-</h4>
-        
-  
-    <div class="docstring">
-      <p><em>identify</em> is a function that identifies an item. should return
-   a unique string value representing that item. </p>
-
-    </div>
-  
-
-      
-        <h4>
-  <a name="Graph-addItem" class="anchor" href="#Graph-addItem">
-    <span>✼</span>
-  </a>
-  addItem(item)
-  
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L31">
-      <span>➤</span>
-    </a>
-  
-</h4>
-        
-  
-
-      
-        <h4>
-  <a name="Graph-addDependency" class="anchor" href="#Graph-addDependency">
-    <span>✼</span>
-  </a>
-  addDependency(item, dependency)
-  
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L37">
-      <span>➤</span>
-    </a>
-  
-</h4>
-        
-  
-    <div class="docstring">
-      <p>add a <em>dependency</em> for <em>item</em> </p>
-
-    </div>
-  
-
-      
-        <h4>
-  <a name="Graph-dependenciesFor" class="anchor" href="#Graph-dependenciesFor">
-    <span>✼</span>
-  </a>
-  dependenciesFor(item)
-  
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L42">
-      <span>➤</span>
-    </a>
-  
-</h4>
-        
-  
-    <div class="docstring">
-      <p>return a list of items that <em>item</em> depends on </p>
-
-    </div>
-  
-
-      
-        <h4>
-  <a name="Graph-dependsOn" class="anchor" href="#Graph-dependsOn">
-    <span>✼</span>
-  </a>
-  dependsOn(item)
-  
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L49">
-      <span>➤</span>
-    </a>
-  
-</h4>
-        
-  
-    <div class="docstring">
-      <p>return a list of items depending on <em>item</em> </p>
-
-    </div>
-  
-
-      
-        <h4>
-  <a name="Graph-nodeFor" class="anchor" href="#Graph-nodeFor">
-    <span>✼</span>
-  </a>
-  nodeFor(item)
-  
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L56">
-      <span>➤</span>
-    </a>
-  
-</h4>
-        
-  
-
-      
-        <h4>
-  <a name="Graph-resolveNode" class="anchor" href="#Graph-resolveNode">
-    <span>✼</span>
-  </a>
-  resolveNode(node, resolved, seen)
-  
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L59">
-      <span>➤</span>
-    </a>
-  
-</h4>
-        
-  
-
-      
-        <h4>
-  <a name="Graph-reverseLookup" class="anchor" href="#Graph-reverseLookup">
-    <span>✼</span>
-  </a>
-  reverseLookup(target)
-  
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L67">
-      <span>➤</span>
-    </a>
-  
-</h4>
-        
-  
-
-      
-    </section>
-  
-
-        
-  
-    <section class="methods">
-      
-      <h3>Class Methods</h3>
-      
-        <h4>
-  <a name="Graph-andler.proxy" class="anchor" href="#Graph-andler.proxy">
-    <span>✼</span>
-  </a>
-  andler.proxy(tree, fn)
-  
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L137">
-      <span>➤</span>
-    </a>
-  
-</h4>
-        
-  
-
-      
-    </section>
-  
-
-      
-        <h2>
-  <a name="GraphHandler" class="anchor" href="#GraphHandler">
-    <span>✼</span>
-  </a>
-  GraphHandler
-  
-</h2>
-        
-  
-
-        
-  
-    <section class="methods">
-      
-      <h3>Instance Methods</h3>
-      
-        <h4>
-  <a name="GraphHandler-constructor" class="anchor" href="#GraphHandler-constructor">
-    <span>✼</span>
-  </a>
-  constructor(@target, @fn)
-  
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L77">
-      <span>➤</span>
-    </a>
-  
-</h4>
-        
-  
-
-      
-        <h4>
-  <a name="GraphHandler-get" class="anchor" href="#GraphHandler-get">
-    <span>✼</span>
-  </a>
-  get(receiver, key)
-  
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L79">
-      <span>➤</span>
-    </a>
-  
-</h4>
-        
-  
-
-      
-        <h4>
-  <a name="GraphHandler-set" class="anchor" href="#GraphHandler-set">
-    <span>✼</span>
-  </a>
-  set(receiver, key, value)
-  
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L90">
-      <span>➤</span>
-    </a>
-  
-</h4>
-        
-  
-
-      
-        <h4>
-  <a name="GraphHandler-getOwnPropertyNames" class="anchor" href="#GraphHandler-getOwnPropertyNames">
-    <span>✼</span>
-  </a>
-  getOwnPropertyNames()
-  
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L94">
-      <span>➤</span>
-    </a>
-  
-</h4>
-        
-  
-
-      
-        <h4>
-  <a name="GraphHandler-keys" class="anchor" href="#GraphHandler-keys">
-    <span>✼</span>
-  </a>
-  keys()
-  
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L97">
-      <span>➤</span>
-    </a>
-  
-</h4>
-        
-  
-
-      
-        <h4>
-  <a name="GraphHandler-enumerate" class="anchor" href="#GraphHandler-enumerate">
-    <span>✼</span>
-  </a>
-  enumerate()
-  
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L100">
-      <span>➤</span>
-    </a>
-  
-</h4>
-        
-  
-
-      
-        <h4>
-  <a name="GraphHandler-getPropertyDescriptor" class="anchor" href="#GraphHandler-getPropertyDescriptor">
-    <span>✼</span>
-  </a>
-  getPropertyDescriptor(key)
-  
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L103">
-      <span>➤</span>
-    </a>
-  
-</h4>
-        
-  
-
-      
-        <h4>
-  <a name="GraphHandler-getOwnPropertyDescriptor" class="anchor" href="#GraphHandler-getOwnPropertyDescriptor">
-    <span>✼</span>
-  </a>
-  getOwnPropertyDescriptor(key)
-  
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L113">
-      <span>➤</span>
-    </a>
-  
-</h4>
-        
-  
-
-      
-        <h4>
-  <a name="GraphHandler-defineProperty" class="anchor" href="#GraphHandler-defineProperty">
-    <span>✼</span>
-  </a>
-  defineProperty(key, desc)
-  
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L118">
-      <span>➤</span>
-    </a>
-  
-</h4>
-        
-  
-
-      
-        <h4>
-  <a name="GraphHandler-has" class="anchor" href="#GraphHandler-has">
-    <span>✼</span>
-  </a>
-  has(key)
-  
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L121">
-      <span>➤</span>
-    </a>
-  
-</h4>
-        
-  
-
-      
-        <h4>
-  <a name="GraphHandler-hasOwn" class="anchor" href="#GraphHandler-hasOwn">
-    <span>✼</span>
-  </a>
-  hasOwn(key)
-  
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L124">
-      <span>➤</span>
-    </a>
-  
-</h4>
-        
-  
-
-      
-        <h4>
-  <a name="GraphHandler-delete" class="anchor" href="#GraphHandler-delete">
-    <span>✼</span>
-  </a>
-  delete(key)
-  
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L127">
-      <span>➤</span>
-    </a>
-  
-</h4>
-        
-  
-
-      
-        <h4>
-  <a name="GraphHandler-apply" class="anchor" href="#GraphHandler-apply">
-    <span>✼</span>
-  </a>
-  apply(receiver, args)
-  
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L131">
-      <span>➤</span>
-    </a>
-  
-</h4>
-        
-  
-
-      
-        <h4>
-  <a name="GraphHandler-construct" class="anchor" href="#GraphHandler-construct">
-    <span>✼</span>
-  </a>
-  construct(args)
-  
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/graph.coffee#L134">
-      <span>➤</span>
-    </a>
-  
-</h4>
-        
-  
-
-      
-    </section>
-  
-
-        
-  
-
-      
-    </section>
-  
-
-  
-    
-  
     <section class="doc" id="logger.coffee">
       <p class="filename"><a href="https://github.com/jnordberg/wintersmith/blob/master/src/core/logger.coffee">logger.coffee</a></p>
       
@@ -1508,6 +1018,11 @@
   
 </h2>
         
+  
+    <div class="docstring">
+      <p>Winston transport that logs info to stdout and errors stderr  </p>
+
+    </div>
   
 
         
@@ -1578,6 +1093,11 @@
   
 </h2>
         
+  
+    <div class="docstring">
+      <p>A template plugin subclass have to implement a <code>render</code> instance method and a <code>fromFile</code> class method. </p>
+
+    </div>
   
 
         
