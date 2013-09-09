@@ -89,6 +89,12 @@ module.exports = (env, callback) ->
       if result?.length is 3
         metadata = result[1]
         markdown = result[2]
+    else if content[0...12] is '```metadata\n'
+      # "Winter Matter"
+      end = content.indexOf '\n```\n'
+      if end isnt -1
+        metadata = content.substring 12, end
+        markdown = content.substring end + 5
 
     async.parallel
       metadata: (callback) ->
