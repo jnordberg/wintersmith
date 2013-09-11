@@ -2,7 +2,6 @@ optimist = require 'optimist'
 path = require 'path'
 
 {logger} = require './../core/logger'
-{readJSON} = require './../core/utils'
 
 usage = """
 
@@ -50,13 +49,8 @@ main = ->
         throw error
 
   if argv.version
-    readJSON path.join(__dirname, '../../package.json'), (error, result) ->
-      if error
-        logger.error error.message, error
-      else
-        console.log result.version
-        process.exit 0
-    return
+    console.log require './version'
+    process.exit 0
 
   if argv.help or !cmd
     console.log if cmd then cmd.usage else usage

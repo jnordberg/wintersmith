@@ -5,17 +5,29 @@ try {
 }
 catch (e) {
   console.log('Error: shelljs not found. Try reinstalling with npm install --dev');
+  process.exit(1);
 }
 
 var cs = require('coffee-script');
+var path = require('path');
 
 console.log('Compiling CoffeeScript');
-var files = ls('-R','./src');
-for(var i = 0, ii = files.length; i < ii; i++) {
-  path = files[i];
-  if(path.match('.coffee')) {
-    cs.compile(cat('./src/'+path)).to('./lib/'+path.replace('.coffee','.js'));
+
+var files = ls('-R', './src'), file, _in, _out;
+for (var i = 0; i < files.length; i++) {
+  file = files[i];
+  if (file == 'cli/version.coffee') continue; // written by compile script later
+  if (file.match(/\.coffee$/)) {
+  	_in = path.join('./src', file)
+  	_out = path.join('./lib', file.replace(/\.coffee$/, '.js'));
+  	console.log('  ' + _in + ' ->' + _out);
+    cs.compile(cat(_in)).to(_out);
   } else {
-    mkdir('-p','./lib/'+path);
+    mkdir('-p', './lib/' + file);
   }
 }
+
+// write version to lib/cli/version.js
+var version = JSON.parse(cat('package.json')).version;
+('module.exports = "' + version + '";\n').to('./lib/cli/version.js');
+console.log('Version: '+ version);
