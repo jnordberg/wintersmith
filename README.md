@@ -9,7 +9,8 @@ It ships with plugins for [markdown](http://daringfireball.net/projects/markdown
  * [Project site][website]
  * [API Documentation][docs]
  * [Wiki][wiki]
- * **#wintersmith** on freenode
+ * [stackoverflow tag](http://stackoverflow.com/questions/tagged/wintersmith)
+ * IRC - **#wintersmith** on freenode
 
 [website]: http://wintersmith.io "Wintersmith project website"
 [docs]: http://wintersmith.io/docs "Wintersmith API Documentation"
