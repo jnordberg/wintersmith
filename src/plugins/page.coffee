@@ -80,7 +80,7 @@ module.exports = (env, callback) ->
         ':year': @date.getFullYear()
         ':month': ('0' + (@date.getMonth()+1)).slice(-2)
         ':day': ('0' + @date.getDate()).slice(-2)
-        ':title': slugify(@title)
+        ':title': slugify(@title+'')
         ':file': file
         ':ext': ext
         ':basename': basename
