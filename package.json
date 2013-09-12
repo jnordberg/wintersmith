@@ -38,7 +38,7 @@
     "optimist": "0.3.x",
     "minimatch": "0.2.x",
     "mime": "1.2.x",
-    "js-yaml": "1.0.x",
+    "js-yaml": "2.1.x",
     "mkdirp": "0.3.x",
     "chokidar": "0.6.x",
     "server-destroy": "1.0.x",
