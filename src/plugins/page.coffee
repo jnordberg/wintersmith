@@ -21,11 +21,7 @@ module.exports = (env, callback) ->
       callback new Error "page '#{ @filename }' specifies unknown template '#{ @template }'"
       return
 
-    ctx =
-      env: env
-      page: this
-      contents: contents
-
+    ctx = {page: this}
     env.utils.extend ctx, locals
 
     template.render ctx, callback

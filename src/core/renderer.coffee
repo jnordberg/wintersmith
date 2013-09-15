@@ -8,13 +8,18 @@ mkdirp = require 'mkdirp'
 {Stream} = require 'stream'
 
 {ContentTree} = require './content'
-{pump} = require './utils'
+{pump, extend} = require './utils'
 
 if not setImmediate?
   setImmediate = process.nextTick
 
 renderView = (env, content, locals, contents, templates, callback) ->
   setImmediate ->
+    # add env and contents to view locals
+    _locals = {env, contents}
+    extend _locals, locals
+
+    # lookup view function if needed
     view = content.view
     if typeof view is 'string'
       name = view
@@ -22,7 +27,9 @@ renderView = (env, content, locals, contents, templates, callback) ->
       if not view?
         callback new Error "content '#{ content.filename }' specifies unknown view '#{ name }'"
         return
-    view.call content, env, locals, contents, templates, (error, result) ->
+
+    # run view
+    view.call content, env, _locals, contents, templates, (error, result) ->
       error.message = "#{ content.filename }: #{ error.message }" if error?
       callback error, result
 

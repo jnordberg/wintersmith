@@ -43,7 +43,7 @@ module.exports = (env, callback) ->
         return callback new Error "unknown paginator template '#{ options.template }'"
 
       # setup the template context
-      ctx = {env, contents, @articles, @prevPage, @nextPage}
+      ctx = {@articles, @prevPage, @nextPage}
 
       # extend the template context with the enviroment locals
       env.utils.extend ctx, locals
