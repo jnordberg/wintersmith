@@ -5,6 +5,12 @@ slugify = require 'slugg'
 replaceAll = (string, map) ->
   re = new RegExp Object.keys(map).join('|'), 'gi'
   return string.replace re, (match) -> map[match]
+  
+count = (string, substr) ->
+  num = pos = 0
+  return 1/0 unless substr.length
+  num++ while pos = 1 + string.indexOf(substr, pos)
+  num
 
 module.exports = (env, callback) ->
 
@@ -99,6 +105,14 @@ module.exports = (env, callback) ->
     getUrl: (base) ->
       # remove index.html for prettier links
       super(base).replace /index\.html$/, ''
+      
+    makeRelative: (path) ->
+      return path unless path.indexOf("/") == 0
+      console.log @getUrl()
+      depth = count(@getUrl(), '/') # 1 being /
+      ret = ""
+      ret += "../" while depth = depth - 1
+      ret + path.substr(1)
 
     getView: ->
       @metadata.view or 'template'
