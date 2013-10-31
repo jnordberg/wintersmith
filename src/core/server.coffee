@@ -222,11 +222,17 @@ setup = (env) ->
           renderView env, content, locals, tree, templates, (error, result) ->
             if error then callback error
             else if result?
+              mimeType = mime.lookup(content.filename)
+              charset = mime.charsets.lookup(mimeType)
+              if charset
+                contentType = "#{mimeType}; charset=#{charset}"
+              else
+                contentType = mimeType
               if result instanceof Stream
-                response.writeHead 200, 'Content-Type': mime.lookup(content.filename)
+                response.writeHead 200, 'Content-Type': contentType
                 pump result, response, (error) -> callback error, 200
               else if result instanceof Buffer
-                response.writeHead 200, 'Content-Type': mime.lookup(content.filename)
+                response.writeHead 200, 'Content-Type': contentType
                 response.write result
                 response.end()
                 callback null, 200
