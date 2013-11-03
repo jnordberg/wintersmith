@@ -66,7 +66,7 @@ module.exports = (env, callback) ->
 
       ###
 
-      template = @metadata.filename or env.config.filenameTemplate or ':file.html'
+      template = @filenameTemplate
       dirname = path.dirname @filepath.relative
       basename = path.basename @filepath.relative
       file = env.utils.stripExtension basename
@@ -124,8 +124,13 @@ module.exports = (env, callback) ->
       else
         return html
 
+    @property 'filenameTemplate', 'getFilenameTemplate'
+    getFilenameTemplate: ->
+      @metadata.filename or env.config.filenameTemplate or ':file.html'
+
     ### Template property used by the 'template' view ###
-    @property 'template', ->
+    @property 'template', 'getTemplate'
+    getTemplate: ->
       @metadata.template or env.config.defaultTemplate or 'none'
 
     @property 'title', ->
