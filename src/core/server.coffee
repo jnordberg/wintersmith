@@ -220,27 +220,28 @@ setup = (env) ->
         # render content
         content = generatorLookup[uri] or lookup[uri]
         if content?
+          pluginName = content.constructor.name
           renderView env, content, locals, tree, templates, (error, result) ->
-            if error then callback error
+            if error then callback error, 500, pluginName
             else if result?
-              mimeType = mime.lookup(content.filename)
-              charset = mime.charsets.lookup(mimeType)
+              mimeType = mime.lookup content.filename
+              charset = mime.charsets.lookup mimeType
               if charset
-                contentType = "#{mimeType}; charset=#{charset}"
+                contentType = "#{ mimeType }; charset=#{ charset }"
               else
                 contentType = mimeType
               if result instanceof Stream
                 response.writeHead 200, 'Content-Type': contentType
-                pump result, response, (error) -> callback error, 200
+                pump result, response, (error) -> callback error, 200, pluginName
               else if result instanceof Buffer
                 response.writeHead 200, 'Content-Type': contentType
                 response.write result
                 response.end()
-                callback null, 200
+                callback null, 200, pluginName
               else
                 callback new Error "View for content '#{ res.filename }' returned invalid response. Expected Buffer or Stream."
             else
-              callback() # not handled, no data from plugin
+              callback null, 404, pluginName # not handled, no data from plugin
         else
           callback() # not handled, no matching url
     ], callback
@@ -268,14 +269,17 @@ setup = (env) ->
       (callback) ->
         # finally pass the request to the contentHandler
         contentHandler request, response, callback
-    ], (error, responseCode) ->
+    ], (error, responseCode, pluginName) ->
       if error? or not responseCode?
         # request not handled or error
         responseCode = if error? then 500 else 404
         response.writeHead responseCode, 'Content-Type': 'text/plain'
         response.end if error? then error.message else '404 Not Found\n'
       delta = Date.now() - start
-      env.logger.info "#{ colorCode(responseCode) } #{ uri.bold } " + "#{ delta }ms".grey
+      logstr = "#{ colorCode(responseCode) } #{ uri.bold }"
+      logstr += " #{ pluginName }".grey if pluginName?
+      logstr += " #{ delta }ms".grey
+      env.logger.info logstr
       if error
         env.logger.error error.message, error
 
