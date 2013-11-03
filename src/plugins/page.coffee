@@ -129,7 +129,8 @@ module.exports = (env, callback) ->
       @metadata.filename or env.config.filenameTemplate or ':file.html'
 
     ### Template property used by the 'template' view ###
-    @property 'template', ->
+    @property 'template', 'getTemplate'
+    getTemplate: ->
       @metadata.template or env.config.defaultTemplate or 'none'
 
     @property 'title', ->
