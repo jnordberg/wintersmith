@@ -163,6 +163,7 @@ ContentTree.fromDirectory = (env, directory, callback) ->
     fs.readdir directory, callback
 
   resolveFilenames = (filenames, callback) ->
+    filenames.sort()
     async.map filenames, (filename, callback) ->
       relname = path.join reldir, filename
       callback null,
