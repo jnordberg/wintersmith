@@ -264,8 +264,10 @@ class Environment extends EventEmitter
     ], callback
 
   preview: (callback) ->
-    ### Start the preview server. Calls *callback* when server is up and
-        running or if an error occurs. ###
+    ### Start the preview server. Calls *callback* with the server instance when it is up and
+        running or if an error occurs. NOTE: The returned server instance will be invalid if the
+        config file changes and the server is restarted because of it. As a temporary workaround
+        you can set the _restartOnConfChange key in settings to false. ###
     @mode = 'preview'
     server = require './server'
     server.run this, callback

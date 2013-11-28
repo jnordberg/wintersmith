@@ -33,6 +33,7 @@ class Config
     port: 8080
     # options prefixed with _ are undocumented and should generally not be modified
     _fileLimit: 40 # max files to keep open at once
+    _restartOnConfChange: true # restart preview server on config change
 
   constructor: (options={}) ->
     for option, value of options

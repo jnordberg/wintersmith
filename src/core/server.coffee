@@ -300,7 +300,7 @@ run = (env, callback) ->
   server = null
   handler = null
 
-  if env.config.__filename?
+  if env.config._restartOnConfChange and env.config.__filename?
     # watch config file and reload when changed
     env.logger.verbose "watching config file #{ env.config.__filename } for changes"
     configWatcher = chokidar.watch env.config.__filename
@@ -340,7 +340,7 @@ run = (env, callback) ->
           callback? error
           callback = null
         server.on 'listening', ->
-          callback?()
+          callback? null, server
           callback = null
         server.listen env.config.port, env.config.hostname
     ], callback
@@ -351,11 +351,11 @@ run = (env, callback) ->
 
   env.logger.verbose 'starting preview server'
 
-  start (error) ->
+  start (error, server) ->
     if not error?
       host = env.config.hostname or 'localhost'
       serverUrl = "http://#{ host }:#{ env.config.port }#{ env.config.baseUrl }".bold
       env.logger.info "server running on: #{ serverUrl }"
-    callback error
+    callback error, server
 
 module.exports = {run, setup}
