@@ -297,7 +297,7 @@ Environment.create = (config, workDir, log=logger) ->
     config = Config.fromFileSync config
   else
     workDir ?= process.cwd()
-    if not config instanceof Config
+    if config not instanceof Config
       config = new Config config
 
   return new Environment config, workDir, log
