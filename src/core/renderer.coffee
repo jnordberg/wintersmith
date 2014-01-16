@@ -53,9 +53,7 @@ render = (env, outputDir, contents, templates, locals, callback) ->
         if result instanceof Stream
           pump result, writeStream, callback
         else
-          writeStream.write result
-          writeStream.end()
-          callback()
+          writeStream.end result, callback
       else
         env.logger.verbose "skipping #{ content.url }"
         callback()
