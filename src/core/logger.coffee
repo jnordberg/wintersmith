@@ -31,7 +31,7 @@ class cli extends winston.Transport
       if level isnt 'info'
         c = if level is 'warn' then 'yellow' else 'grey'
         msg = "#{ level[c] } #{ msg }"
-      if meta
+      if Object.keys(meta).length > 0
         msg += util.format ' %j', meta
       process.stdout.write "  #{ msg }\n"
 
