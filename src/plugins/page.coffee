@@ -16,7 +16,7 @@ module.exports = (env, callback) ->
     if @template == 'none'
       return callback null, null
 
-    template = templates[@template]
+    template = templates[path.normalize @template]
     if not template?
       callback new Error "page '#{ @filename }' specifies unknown template '#{ @template }'"
       return
