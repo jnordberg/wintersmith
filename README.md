@@ -181,7 +181,7 @@ Metadata is parsed using [js-yaml](https://github.com/nodeca/js-yaml) and will b
 
 There are two special metadata keys, The first one is `template` which specifies what template to render the page with. If the key is omitted or set to `none` the page will not be rendered (but still available in the content tree).
 
-The second one is `filename` which can be used to override the output filename of the page. See filename see [filename templating](https://github.com/jnordberg/wintersmith/wiki/Page-Plugin#filename-templating) for advanced usage.
+The second one is `filename` which can be used to override the output filename of the page. See [filename templating](https://github.com/jnordberg/wintersmith/wiki/Page-Plugin#filename-templating) for advanced usage.
 
 ### Templates
 
