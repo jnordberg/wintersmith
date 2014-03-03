@@ -207,8 +207,13 @@ ContentTree.fromDirectory = (env, directory, callback) ->
             loadContent env, filepath, (error, instance) ->
               if not error
                 instance.parent = tree
-                tree[basename] = instance
-                tree._[instance.__plugin.group].push instance
+                plugins = (p for p in env.postContentPlugins when minimatch thisInstance.filename, p.pattern, minimatchOptions)
+                handlePlugin = (thisInstance, plugin, next) -> plugin.class.handlePage(thisInstance, next)
+                async.reduce plugins, instance, handlePlugin, (err, instance) ->
+                  if err then return callback(err)
+                  tree[basename] = instance
+                  tree._[instance.__plugin.group].push instance
+              else
               callback error
 
           # This should never happen™

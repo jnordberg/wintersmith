@@ -40,6 +40,7 @@ class Environment extends EventEmitter
     @plugins = {StaticFile}
     @templatePlugins = []
     @contentPlugins = []
+    @postContentPlugins = []
     @helpers = {}
 
     while id = @loadedModules.pop()
@@ -112,6 +113,14 @@ class Environment extends EventEmitter
     @logger.verbose "registering content plugin #{ plugin.name } that handles: #{ pattern }"
     @plugins[plugin.name] = plugin
     @contentPlugins.push
+      group: group
+      pattern: pattern
+      class: plugin
+
+  registerPostContentPlugin: (group, pattern, plugin) ->
+    @logger.verbose "registering post-content plugin #{ plugin.name } that handles: #{ pattern }"
+    @plugins[plugin.name] = plugin
+    @postContentPlugins.push
       group: group
       pattern: pattern
       class: plugin
