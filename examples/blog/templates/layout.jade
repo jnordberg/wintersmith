@@ -10,16 +10,16 @@ html(lang='en')
       title
         block title
           = locals.name
-      link(rel='alternate', href=locals.url+'/feed.xml', type='application/rss+xml', title=locals.description)
+      link(rel='alternate', href=urlPackage.resolve(env.config.baseUrl, '/feed.xml'), type='application/rss+xml', title=locals.description)
       link(rel='stylesheet', href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic|Anonymous+Pro:400,700,400italic,700italic|Merriweather:400,700,300')
-      link(rel='stylesheet', href='/css/main.css')
+      link(rel='stylesheet', href=urlPackage.resolve(env.config.baseUrl, 'css/main.css'))
   body(class=bodyclass)
     header.header
       div.content-wrap
         block header
           div.logo
             h1
-              a(href=locals.url)= locals.name
+              a(href=env.config.baseUrl)= locals.name
             p.description= locals.description
     div#content
       div.content-wrap
