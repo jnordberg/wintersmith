@@ -8,9 +8,11 @@
   "plugins": [
     "./plugins/paginator.coffee"
   ],
+    "baseUrl": "/blog/",
   "require": {
     "moment": "moment",
     "_": "underscore",
+    "urlPackage": "url",
     "typogr": "typogr"
   },
   "jade": {

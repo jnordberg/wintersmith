@@ -7,7 +7,7 @@ rss(version='2.0',
   channel
     - var articles = env.helpers.getArticles(contents);
     title= locals.name
-    atom:link(href=locals.url + '/feed.xml', rel='self', type='application/rss+xml')
+    atom:link(href=urlPackage.resolve(env.config.baseUrl, '/feed.xml'), rel='self', type='application/rss+xml')
     link= locals.url
     description= locals.description
     pubDate= articles[0].rfc822date
