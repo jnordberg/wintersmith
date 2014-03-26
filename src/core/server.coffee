@@ -128,7 +128,7 @@ setup = (env) ->
       return false
     ignoreInitial: true
   contentWatcher.on 'change', (path) ->
-    return if not contents? or block.contentsLoad
+    return if not contents? or block.contentsLoad or block.contentChange
     # ignore if we dont have the tree loaded or it's loading
 
     block.contentChange = true
