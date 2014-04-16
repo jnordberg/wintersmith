@@ -1,11 +1,10 @@
-
 extends layout
 
 block append vars
   - bodyclass = 'article-detail'
 
 block prepend title
-  | #{ page.title + " - "}
+  | #{ ' - ' + page.title }
 
 block header
   include author
