@@ -22,8 +22,10 @@ runGenerator = (env, contents, generator, callback) ->
         tree.parent._.directories.push tree
         root[key] = tree
         resolve root[key], item
+      else if typeof item is "undefined"
+        console.trace(key)
       else
-        throw new Error "Invalid item for '#{ key }' encountered when resolving generator output"
+        throw new Error "Invalid item '#{item}' for '#{ key }' encountered when resolving generator output"
 
   generator.fn contents, (error, generated) ->
     tree = new ContentTree '', groups
