@@ -15,10 +15,17 @@ module.exports = (env, callback) ->
   for key, value of defaults
     options[key] ?= defaults[key]
 
+  findArticles = (contents) ->
+    articles = if contents?.index then [contents.index] else []
+    return articles.concat.apply articles, (findArticles(directory) for directory in contents._.directories)
+
   getArticles = (contents) ->
     # helper that returns a list of articles found in *contents*
     # note that each article is assumed to have its own directory in the articles directory
-    articles = contents[options.articles]._.directories.map (item) -> item.index
+    article_root = contents
+    for pathElement in options?.articles.split('/')
+      article_root = article_root[pathElement]
+    articles = findArticles(article_root)
     articles.sort (a, b) -> b.date - a.date
     return articles
 
