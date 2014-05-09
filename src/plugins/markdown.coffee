@@ -23,16 +23,12 @@ parseMarkdownSync = (content, baseUrl, options) ->
     url.resolve baseUrl, uri
 
   options.highlight = (code, lang) ->
-    try
-      lang = 'cpp' if lang is 'c'
-      return hljs.highlight(lang, code).value
+    try 
+      result = if lang and hljs.getLanguage(lang) then hljs.highlight(lang, code) else hljs.highlightAuto(code)
+      return result.value
     catch error
-      # if lang is unrecognized or nonexistent try to autodetect language
-      try
-        hljs.highlightAuto(code).value
-      catch error
-        return code
-
+      return code
+  
   marked.setOptions options
   return marked content
 
