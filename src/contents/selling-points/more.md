@@ -6,7 +6,7 @@ order: 4
 
 Write web applications using the latest technologies without having to host your own node.js servers, or use it to increase speeds on large-scale sites.
 
-Bundle JavaScript with [Browserify][1], write reusable styles with [LESS][2], [SASS][3] or [Stylus][4], include reusable web [component][5]'s. Or write your own &lt;insert-cool-web-tech-here&gt; plugin using the [API][6].
+Bundle JavaScript with [Browserify][1], write reusable styles with [LESS][2], [SASS][3] or [Stylus][4], include reusable web [components][5]. Or write your own &lt;insert-cool-web-tech-here&gt; plugin using the [API][6].
 
 No matter what plugins you use, the output will always be a static website you can host anywhere.
 
