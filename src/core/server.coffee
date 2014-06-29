@@ -129,7 +129,7 @@ setup = (env) ->
       return false
     ignoreInitial: true
   contentWatcher.on 'change', (path) ->
-    return if not contents? or block.contentsLoad
+    return if not contents? or block.contentsLoad or block.contentChange
     # ignore if we dont have the tree loaded or it's loading
 
     block.contentChange = true
@@ -151,7 +151,7 @@ setup = (env) ->
     group = tree._[content.__plugin.group]
 
     if not key?
-      throw new Error "Content #{ content.filename } not found in it's parent tree!"
+      throw new Error "Content #{ content.filename } not found in its parent tree!"
 
     loadContent env, filepath, (error, newContent) ->
       if error?
@@ -166,7 +166,7 @@ setup = (env) ->
 
       # also in the trees plugin group
       if not replaceInArray(group, content, newContent)
-        throw new Error "Content #{ content.filename } not found in it's plugin group!"
+        throw new Error "Content #{ content.filename } not found in its plugin group!"
 
       # keep the lookup map fresh
       delete lookup[normalizeUrl(content.url)]
