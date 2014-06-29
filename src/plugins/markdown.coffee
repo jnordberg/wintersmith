@@ -16,38 +16,37 @@ if not marked.InlineLexer.prototype._outputLink?
     link.href = @_resolveLink link.href
     return @_outputLink cap, link
 
+resolveLink = (content, uri, baseUrl) ->
+  ### Resolve *uri* relative to *content*, resolves using
+      *baseUrl* if no matching content is found. ###
+  uriParts = url.parse uri
+  if uriParts.protocol
+    # absolute uri
+    return uri
+  else
+    # search pathname in content tree relative to *content*
+    nav = content.parent
+    path = uriParts.pathname?.split('/') or []
+    while path.length and nav?
+      part = path.shift()
+      if part == ''
+        # uri begins with / go to contents root
+        nav = nav.parent while nav.parent
+      else if part == '..'
+        nav = nav.parent
+      else
+        nav = nav[part]
+    if nav?.getUrl?
+      return nav.getUrl() + [uriParts.hash]
+    return url.resolve baseUrl, uri
+
 parseMarkdownSync = (content, markdown, baseUrl, options) ->
   ### Parse *markdown* found on *content* node of contents and
   resolve links by navigating in the content tree. use *baseUrl* as a last resort
   returns html. ###
 
   marked.InlineLexer.prototype._resolveLink = (uri) ->
-    link = null
-    uriParts = url.parse uri
-    if uriParts.protocol
-      # absolute uri
-      link = uri
-    else if uriParts.pathname
-      # search pathname in content tree relative to *content*
-      nav = content.parent
-      path = uriParts.pathname.split '/'
-      while path.length
-        part = path.shift()
-        if part == ''
-          # uri begins with / go to contents root
-          nav = nav.parent while nav.parent
-        else if part == '..'
-          nav = nav.parent
-        else
-          try
-            nav = nav[part]
-            link = nav.getUrl() + [uriParts.hash] if nav.getUrl
-          catch error
-            # error while navigating in content tree
-            break
-      
-    
-    link ?= url.resolve baseUrl, uri 
+    resolveLink content, uri, baseUrl
 
   options.highlight = (code, lang) ->
     try 
@@ -128,6 +127,8 @@ module.exports = (env, callback) ->
       markdown: (callback) ->
         callback null, markdown
     , callback
+
+  MarkdownPage.resolveLink = resolveLink
 
   class JsonPage extends MarkdownPage
     ### Plugin that allows pages to be created with just metadata form a JSON file ###
