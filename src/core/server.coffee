@@ -66,11 +66,11 @@ setup = (env) ->
 
   # tasks that will block the request until completed
   block =
-    contentChange: false
     contentsLoad: false
     templatesLoad: false
     viewsLoad: false
     localsLoad: false
+    files: {}
 
   isReady = ->
     ### Returns true if we have no running tasks ###
@@ -128,11 +128,17 @@ setup = (env) ->
           return true
       return false
     ignoreInitial: true
-  contentWatcher.on 'change', (path) ->
-    return if not contents? or block.contentsLoad or block.contentChange
-    # ignore if we dont have the tree loaded or it's loading
 
-    block.contentChange = true
+  contentWatcher.on 'change', (path) ->
+
+    # ignore if we dont have the tree loaded or it's still loading
+    return if not contents? or block.contentsLoad
+
+    # also ignore if we are already working on this file
+    # (windows sometimes sends multiple change events for the same file)
+    return if block.files[path] is true
+
+    block.files[path] = true
 
     content = null
     for item in ContentTree.flatten(contents)
@@ -157,7 +163,6 @@ setup = (env) ->
       if error?
         contents = null
         lookup = {}
-        block.contentChange = false
         return
 
       # replace old contents
@@ -172,7 +177,7 @@ setup = (env) ->
       delete lookup[normalizeUrl(content.url)]
       lookup[normalizeUrl(newContent.url)] = newContent
 
-      block.contentChange = false
+      delete block.files[path]
       env.emit 'change', content.filename
 
   # reload entire tree if a file is removed or added
