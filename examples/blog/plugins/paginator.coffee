@@ -46,7 +46,7 @@ module.exports = (env, callback) ->
         return callback new Error "unknown paginator template '#{ options.template }'"
 
       # setup the template context
-      ctx = {@articles, @prevPage, @nextPage}
+      ctx = {@articles, @pageNum, @prevPage, @nextPage}
 
       # extend the template context with the enviroment locals
       env.utils.extend ctx, locals
@@ -79,6 +79,7 @@ module.exports = (env, callback) ->
     for page in pages
       rv.pages["#{ page.pageNum }.page"] = page # file extension is arbitrary
     rv['index.page'] = pages[0] # alias for first page
+    rv['last.page'] = pages[(numPages-1)] # alias for last page
 
     # callback with the generated contents
     callback null, rv
