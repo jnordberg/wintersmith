@@ -72,5 +72,37 @@ proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 ```
 
-This is where I leave you to your own devices. Join **#wintersmith** on freenode if you have any questions.
 
+### Links
+
+Links can be added via the markdown syntax
+ * absolute links
+ * relative to current node in the content tree
+ * relative to root node in the content tree
+ * anchor on a node of the content tree
+ * all other links will be resolved based on the url of the current page
+
+Here are some markdown examples followed by the generated links
+
+```markdown
+ * [absolute url to wintersmith website](http://wintersmith.io/)
+```
+ * [absolute url to wintersmith website](http://wintersmith.io/)
+
+```markdown
+ * [relative to the current content tree node](../bamboo-cutter/index.md)
+```
+* [relative to the current content tree node](../bamboo-cutter/index.md)
+
+```markdown
+ * [relative to the content tree root node](/articles/red-herring/index.md)
+```
+ * [relative to the content tree root node](/articles/red-herring/index.md)
+
+```markdown
+ * [anchor on the content tree](../markdown-syntax/index.md#link)
+```
+ * [anchor on the content tree](../markdown-syntax/index.md#link)
+
+
+This is where I leave you to your own devices. Join **#wintersmith** on freenode if you have any questions.

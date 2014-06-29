@@ -16,11 +16,38 @@ if not marked.InlineLexer.prototype._outputLink?
     link.href = @_resolveLink link.href
     return @_outputLink cap, link
 
-parseMarkdownSync = (content, baseUrl, options) ->
-  ### Parse markdown *content* and resolve links using *baseUrl*, returns html. ###
+parseMarkdownSync = (content, markdown, baseUrl, options) ->
+  ### Parse *markdown* found on *content* node of contents and
+  resolve links by navigating in the content tree. use *baseUrl* as a last resort
+  returns html. ###
 
   marked.InlineLexer.prototype._resolveLink = (uri) ->
-    url.resolve baseUrl, uri
+    link = null
+    uriParts = url.parse uri
+    if uriParts.protocol
+      # absolute uri
+      link = uri
+    else if uriParts.pathname
+      # search pathname in content tree relative to *content*
+      nav = content.parent
+      path = uriParts.pathname.split '/'
+      while path.length
+        part = path.shift()
+        if part == ''
+          # uri begins with / go to contents root
+          nav = nav.parent while nav.parent
+        else if part == '..'
+          nav = nav.parent
+        else
+          try
+            nav = nav[part]
+            link = nav.getUrl() + [uriParts.hash] if nav.getUrl
+          catch error
+            # error while navigating in content tree
+            break
+      
+    
+    link ?= url.resolve baseUrl, uri 
 
   options.highlight = (code, lang) ->
     try 
@@ -30,7 +57,7 @@ parseMarkdownSync = (content, baseUrl, options) ->
       return code
   
   marked.setOptions options
-  return marked content
+  return marked markdown
 
 module.exports = (env, callback) ->
 
@@ -45,7 +72,7 @@ module.exports = (env, callback) ->
     getHtml: (base=env.config.baseUrl) ->
       ### parse @markdown and return html. also resolves any relative urls to absolute ones ###
       options = env.config.markdown or {}
-      return parseMarkdownSync @markdown, @getLocation(base), options
+      return parseMarkdownSync this, @markdown, @getLocation(base), options
 
   MarkdownPage.fromFile = (filepath, callback) ->
     async.waterfall [
