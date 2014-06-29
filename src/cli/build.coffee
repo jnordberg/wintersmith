@@ -72,6 +72,7 @@ build = (argv) ->
   ], (error) ->
     if error
       logger.error error.message, error
+      process.exit 1
     else
       stop = new Date()
       delta = stop - start

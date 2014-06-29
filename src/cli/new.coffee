@@ -91,6 +91,7 @@ createSite = (argv) ->
   async.series [validateDestination, copyTemplate, installDeps], (error) ->
     if error
       logger.error error.message, error
+      process.exit 1
     else
       logger.info 'done!'
 
