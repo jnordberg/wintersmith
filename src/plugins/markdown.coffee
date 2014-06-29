@@ -49,12 +49,14 @@ parseMarkdownSync = (content, markdown, baseUrl, options) ->
     resolveLink content, uri, baseUrl
 
   options.highlight = (code, lang) ->
-    try 
-      result = if lang and hljs.getLanguage(lang) then hljs.highlight(lang, code) else hljs.highlightAuto(code)
-      return result.value
+    try
+      if lang is 'auto'
+        return hljs.highlightAuto(code).value
+      else if hljs.getLanguage lang
+        return hljs.highlight(lang, code).value
     catch error
       return code
-  
+
   marked.setOptions options
   return marked markdown
 
