@@ -32,6 +32,7 @@ sleep = (callback) -> setTimeout callback, 50
 
 normalizeUrl = (anUrl) ->
   anUrl += 'index.html' if anUrl[anUrl.length - 1] is '/'
+  anUrl += '/index.html' if anUrl.match(/^([^.]*[^/])$/)
   anUrl = decodeURI anUrl
   return anUrl
 
