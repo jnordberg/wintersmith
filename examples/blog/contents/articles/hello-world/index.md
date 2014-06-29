@@ -72,37 +72,10 @@ proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 ```
 
+## Links in the markdown to other items in the content tree will be resolved for you.
 
-### Links
+For example a link to `../bamboo-cutter/index.md` resolves to [`/articles/bamboo-cutter/`](../bamboo-cutter/index.md).
 
-Links can be added via the markdown syntax
- * absolute links
- * relative to current node in the content tree
- * relative to root node in the content tree
- * anchor on a node of the content tree
- * all other links will be resolved based on the url of the current page
-
-Here are some markdown examples followed by the generated links
-
-```markdown
- * [absolute url to wintersmith website](http://wintersmith.io/)
-```
- * [absolute url to wintersmith website](http://wintersmith.io/)
-
-```markdown
- * [relative to the current content tree node](../bamboo-cutter/index.md)
-```
-* [relative to the current content tree node](../bamboo-cutter/index.md)
-
-```markdown
- * [relative to the content tree root node](/articles/red-herring/index.md)
-```
- * [relative to the content tree root node](/articles/red-herring/index.md)
-
-```markdown
- * [anchor on the content tree](../markdown-syntax/index.md#link)
-```
- * [anchor on the content tree](../markdown-syntax/index.md#link)
-
+---
 
 This is where I leave you to your own devices. Join **#wintersmith** on freenode if you have any questions.
