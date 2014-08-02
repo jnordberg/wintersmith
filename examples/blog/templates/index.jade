@@ -11,7 +11,7 @@ block content
           a(href=article.url)= article.title
       section.content
         if article.intro.length > 0
-          | !{ typogr(article.intro).typogrify() }
+          != typogr(article.intro).typogrify()
         if article.hasMore
           p.more
             a(href=article.url) more
