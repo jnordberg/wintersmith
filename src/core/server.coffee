@@ -32,6 +32,7 @@ sleep = (callback) -> setTimeout callback, 50
 
 normalizeUrl = (anUrl) ->
   anUrl += 'index.html' if anUrl[anUrl.length - 1] is '/'
+  anUrl += '/index.html' if anUrl.match(/^([^.]*[^/])$/)
   anUrl = decodeURI anUrl
   return anUrl
 
@@ -65,11 +66,11 @@ setup = (env) ->
 
   # tasks that will block the request until completed
   block =
-    contentChange: false
     contentsLoad: false
     templatesLoad: false
     viewsLoad: false
     localsLoad: false
+    files: {}
 
   isReady = ->
     ### Returns true if we have no running tasks ###
@@ -127,11 +128,17 @@ setup = (env) ->
           return true
       return false
     ignoreInitial: true
-  contentWatcher.on 'change', (path) ->
-    return if not contents? or block.contentsLoad
-    # ignore if we dont have the tree loaded or it's loading
 
-    block.contentChange = true
+  contentWatcher.on 'change', (path) ->
+
+    # ignore if we dont have the tree loaded or it's still loading
+    return if not contents? or block.contentsLoad
+
+    # also ignore if we are already working on this file
+    # (windows sometimes sends multiple change events for the same file)
+    return if block.files[path] is true
+
+    block.files[path] = true
 
     content = null
     for item in ContentTree.flatten(contents)
@@ -150,13 +157,12 @@ setup = (env) ->
     group = tree._[content.__plugin.group]
 
     if not key?
-      throw new Error "Content #{ content.filename } not found in it's parent tree!"
+      throw new Error "Content #{ content.filename } not found in its parent tree!"
 
     loadContent env, filepath, (error, newContent) ->
       if error?
         contents = null
         lookup = {}
-        block.contentChange = false
         return
 
       # replace old contents
@@ -165,13 +171,13 @@ setup = (env) ->
 
       # also in the trees plugin group
       if not replaceInArray(group, content, newContent)
-        throw new Error "Content #{ content.filename } not found in it's plugin group!"
+        throw new Error "Content #{ content.filename } not found in its plugin group!"
 
       # keep the lookup map fresh
       delete lookup[normalizeUrl(content.url)]
       lookup[normalizeUrl(newContent.url)] = newContent
 
-      block.contentChange = false
+      delete block.files[path]
       env.emit 'change', content.filename
 
   # reload entire tree if a file is removed or added
@@ -239,7 +245,7 @@ setup = (env) ->
                 response.end()
                 callback null, 200, pluginName
               else
-                callback new Error "View for content '#{ res.filename }' returned invalid response. Expected Buffer or Stream."
+                callback new Error "View for content '#{ content.filename }' returned invalid response. Expected Buffer or Stream."
             else
               callback null, 404, pluginName # not handled, no data from plugin
         else

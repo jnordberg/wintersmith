@@ -222,6 +222,7 @@ if require.main is module
   async.waterfall [ensureCacheDir, fetchListing, writeListing], (error) ->
     if error?
       logger.error error.message, error
+      process.exit 1
     else
       logger.verbose 'plugin listing updated'
 

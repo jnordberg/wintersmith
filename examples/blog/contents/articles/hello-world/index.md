@@ -72,5 +72,10 @@ proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 ```
 
-This is where I leave you to your own devices. Join **#wintersmith** on freenode if you have any questions.
+## Links in the markdown to other items in the content tree will be resolved for you.
 
+For example a link to `../bamboo-cutter/index.md` resolves to [`/articles/bamboo-cutter/`](../bamboo-cutter/index.md).
+
+---
+
+This is where I leave you to your own devices. Join **#wintersmith** on freenode if you have any questions.

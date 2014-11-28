@@ -6,6 +6,8 @@ path = require 'path'
 url = require 'url'
 yaml = require 'js-yaml'
 
+hljs.configure {classPrefix: ''} # keep compatibility with old stylesheets (pre hljs 8.0.0)
+
 # monkeypatch to add url resolving to marked
 if not marked.InlineLexer.prototype._outputLink?
   marked.InlineLexer.prototype._outputLink = marked.InlineLexer.prototype.outputLink
@@ -14,24 +16,49 @@ if not marked.InlineLexer.prototype._outputLink?
     link.href = @_resolveLink link.href
     return @_outputLink cap, link
 
-parseMarkdownSync = (content, baseUrl, options) ->
-  ### Parse markdown *content* and resolve links using *baseUrl*, returns html. ###
+resolveLink = (content, uri, baseUrl) ->
+  ### Resolve *uri* relative to *content*, resolves using
+      *baseUrl* if no matching content is found. ###
+  uriParts = url.parse uri
+  if uriParts.protocol
+    # absolute uri
+    return uri
+  else
+    # search pathname in content tree relative to *content*
+    nav = content.parent
+    path = uriParts.pathname?.split('/') or []
+    while path.length and nav?
+      part = path.shift()
+      if part == ''
+        # uri begins with / go to contents root
+        nav = nav.parent while nav.parent
+      else if part == '..'
+        nav = nav.parent
+      else
+        nav = nav[part]
+    if nav?.getUrl?
+      return nav.getUrl() + [uriParts.hash]
+    return url.resolve baseUrl, uri
+
+parseMarkdownSync = (content, markdown, baseUrl, options) ->
+  ### Parse *markdown* found on *content* node of contents and
+  resolve links by navigating in the content tree. use *baseUrl* as a last resort
+  returns html. ###
 
   marked.InlineLexer.prototype._resolveLink = (uri) ->
-    url.resolve baseUrl, uri
+    resolveLink content, uri, baseUrl
 
   options.highlight = (code, lang) ->
-    if lang?
-      try
-        lang = 'cpp' if lang is 'c'
+    try
+      if lang is 'auto'
+        return hljs.highlightAuto(code).value
+      else if hljs.getLanguage lang
         return hljs.highlight(lang, code).value
-      catch error
-        return code
-    else
+    catch error
       return code
 
   marked.setOptions options
-  return marked content
+  return marked markdown
 
 module.exports = (env, callback) ->
 
@@ -46,7 +73,7 @@ module.exports = (env, callback) ->
     getHtml: (base=env.config.baseUrl) ->
       ### parse @markdown and return html. also resolves any relative urls to absolute ones ###
       options = env.config.markdown or {}
-      return parseMarkdownSync @markdown, @getLocation(base), options
+      return parseMarkdownSync this, @markdown, @getLocation(base), options
 
   MarkdownPage.fromFile = (filepath, callback) ->
     async.waterfall [
@@ -102,6 +129,8 @@ module.exports = (env, callback) ->
       markdown: (callback) ->
         callback null, markdown
     , callback
+
+  MarkdownPage.resolveLink = resolveLink
 
   class JsonPage extends MarkdownPage
     ### Plugin that allows pages to be created with just metadata form a JSON file ###

@@ -47,6 +47,7 @@ preview = (argv) ->
   ], (error) ->
     if error
       logger.error error.message, error
+      process.exit 1
 
 module.exports = preview
 module.exports.usage = usage
