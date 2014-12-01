@@ -1,6 +1,5 @@
 ### environment.coffee ###
 
-router = new require 'router'
 path = require 'path'
 async = require 'async'
 fs = require 'fs'
