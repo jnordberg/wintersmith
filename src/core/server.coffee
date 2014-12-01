@@ -282,7 +282,7 @@ setup = (env) ->
           callback()
 
       (callback) ->
-        # load templates if needed and not already loading
+        # load middleware if needed and not already loading
         if not block.middlewaresLoad and not middlewares?
           loadMiddlewares callback
         else
@@ -302,6 +302,7 @@ setup = (env) ->
       (callback) ->
         # finally pass the request to the contentHandler
         contentHandler request, response, callback
+
     ], (error, responseCode, pluginName) ->
       if error? or not responseCode?
         # request not handled or error
