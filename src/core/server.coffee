@@ -1,5 +1,4 @@
 ### server.coffee ###
-
 async = require 'async'
 chokidar = require 'chokidar'
 colors = require 'colors'
@@ -61,12 +60,14 @@ setup = (env) ->
 
   contents = null
   templates = null
+  middlewares = null
   locals = null
   lookup = {} # url to content map
 
   # tasks that will block the request until completed
   block =
     contentsLoad: false
+    middlewaresLoad: false
     templatesLoad: false
     viewsLoad: false
     localsLoad: false
@@ -110,6 +111,14 @@ setup = (env) ->
     block.viewsLoad = true
     env.loadViews (error) ->
       block.viewsLoad = false
+      callback error
+
+  loadMiddlewares = (callback=logop) ->
+    block.middlewaresLoad = true
+    middlewares = []
+    env.loadMiddlewares (error, result)->
+      middlewares = result
+      block.middlewaresLoad = false
       callback error
 
   loadLocals = (callback=logop) ->
@@ -192,6 +201,7 @@ setup = (env) ->
   if env.config.views?
     viewsWatcher = chokidar.watch env.resolvePath(env.config.views),
       ignoreInitial: true
+
     viewsWatcher.on 'all', (event, path) ->
       if not block.viewsLoad
         delete require.cache[path]
@@ -263,15 +273,32 @@ setup = (env) ->
           loadContents callback
         else
           callback()
+
       (callback) ->
         # load templates if needed and not already loading
         if not block.templatesLoad and not templates?
           loadTemplates callback
         else
           callback()
+
+      (callback) ->
+        # load templates if needed and not already loading
+        if not block.middlewaresLoad and not middlewares?
+          loadMiddlewares callback
+        else
+          callback()
+
       (callback) ->
         # block until we are ready
         async.until isReady, sleep, callback
+
+      (callback) ->
+        # pass the request to any middlewares handler that might apply
+        for middleware in middlewares
+            middleware.dispatch request, response, callback
+
+        callback()
+
       (callback) ->
         # finally pass the request to the contentHandler
         contentHandler request, response, callback
@@ -292,6 +319,7 @@ setup = (env) ->
   # preload
   loadContents()
   loadTemplates()
+  loadMiddlewares()
   loadViews()
   loadLocals()
 

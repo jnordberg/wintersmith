@@ -1,5 +1,6 @@
 ### environment.coffee ###
 
+router = new require 'router'
 path = require 'path'
 async = require 'async'
 fs = require 'fs'
@@ -10,6 +11,7 @@ utils = require './utils'
 {Config} = require './config'
 {ContentPlugin, ContentTree, StaticFile} = require './content'
 {TemplatePlugin, loadTemplates} = require './templates'
+{MiddlewarePlugin, loadMiddleware} = require './middleware'
 {logger} = require './logger'
 {render} = require './renderer'
 {runGenerator} = require './generator'
@@ -22,6 +24,7 @@ class Environment extends EventEmitter
   utils: utils
   ContentTree: ContentTree
   ContentPlugin: ContentPlugin
+  MiddlewarePlugin: MiddlewarePlugin
   TemplatePlugin: TemplatePlugin
 
   constructor: (config, @workDir, @logger) ->
@@ -38,6 +41,7 @@ class Environment extends EventEmitter
     @views = {none: (args..., callback) -> callback()}
     @generators = []
     @plugins = {StaticFile}
+    @middlewarePlugins = []
     @templatePlugins = []
     @contentPlugins = []
     @helpers = {}
@@ -125,6 +129,16 @@ class Environment extends EventEmitter
       pattern: pattern
       class: plugin
 
+  registerMiddlewarePlugin: (plugin) ->
+    ### Add a middleware *plugin* to the environment.
+        middleware plugins are instantiated only in the preview server
+        before the standard request handlers
+    ###
+    @logger.verbose "registering middleware plugin #{ plugin.name }"
+    @plugins[plugin.name] = plugin
+    @middlewarePlugins.push
+      class: plugin
+
   registerGenerator: (group, generator) ->
     ### Add a generator to the environment. The generator function is called with the env and the
         current content tree. It should return a object with nested ContentPlugin instances.
@@ -208,6 +222,7 @@ class Environment extends EventEmitter
         , callback
     ], callback
 
+
   loadViews: (callback) ->
     ### Loads files found in the *@config.views* directory and registers them as views. ###
     return callback() if not @config.views?
@@ -217,6 +232,9 @@ class Environment extends EventEmitter
         modules = filenames.map (filename) => "#{ @config.views }/#{ filename }"
         async.forEach modules, @loadViewModule.bind(this), callback
     ], callback
+
+  loadMiddlewares: (callback) ->
+    loadMiddleware this, callback
 
   getContents: (callback) ->
     ### Build the ContentTree from *@contentsPath*, also runs any registered generators. ###
@@ -257,6 +275,7 @@ class Environment extends EventEmitter
         ], callback
       (_, callback) =>
         async.parallel
+          middleware: (callback) => @loadMiddleware callback
           contents: (callback) => @getContents callback
           templates: (callback) => @getTemplates callback
           locals: (callback) => @getLocals callback
