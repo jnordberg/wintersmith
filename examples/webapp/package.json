@@ -5,5 +5,5 @@
     "wintersmith-nunjucks": "*",
     "browsernizr": "*"
   },
-  "repository": "none"
+  "private": true
 }
