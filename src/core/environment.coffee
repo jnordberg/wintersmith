@@ -148,7 +148,7 @@ class Environment extends EventEmitter
 
   loadModule: (module, unloadOnReset=false) ->
     ### Requires and returns *module*, resolved from the current working directory. ###
-    require 'coffee-script' if module[-7..] is '.coffee'
+    require 'coffee-script/register' if module[-7..] is '.coffee'
     @logger.silly "loading module: #{ module }"
     id = @resolveModule module
     @logger.silly "resolved: #{ id }"
