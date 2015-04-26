@@ -1,6 +1,6 @@
 ### logger.coffee ###
 
-colors = require 'colors'
+chalk = require 'chalk'
 winston = require 'winston'
 util = require 'util'
 
@@ -15,7 +15,7 @@ class cli extends winston.Transport
 
   log: (level, msg, meta, callback) ->
     if level == 'error'
-      process.stderr.write "\n  error".red + " #{ msg }\n"
+      process.stderr.write "\n  #{ chalk.red 'error' } #{ msg }\n"
       if @level == 'verbose' && meta?
         if meta.stack?
           stack = meta.stack.substr meta.stack.indexOf('\n') + 1
@@ -30,7 +30,7 @@ class cli extends winston.Transport
     else if !@quiet
       if level isnt 'info'
         c = if level is 'warn' then 'yellow' else 'grey'
-        msg = "#{ level[c] } #{ msg }"
+        msg = "#{ chalk[c] level } #{ msg }"
       if Object.keys(meta).length > 0
         msg += util.format ' %j', meta
       process.stdout.write "  #{ msg }\n"

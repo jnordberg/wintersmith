@@ -1,5 +1,5 @@
 async = require 'async'
-colors = require 'colors'
+chalk = require 'chalk'
 fs = require 'fs'
 path = require 'path'
 rimraf = require 'rimraf'
@@ -76,7 +76,7 @@ build = (argv) ->
     else
       stop = new Date()
       delta = stop - start
-      logger.info "done in #{ delta.toString().bold } ms\n"
+      logger.info "done in #{ chalk.bold delta } ms\n"
 
 module.exports = build
 module.exports.usage = usage

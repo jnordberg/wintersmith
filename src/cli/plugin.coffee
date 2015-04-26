@@ -1,4 +1,5 @@
 async = require 'async'
+chalk = require 'chalk'
 fs = require 'fs'
 path = require 'path'
 npm = require 'npm'
@@ -19,8 +20,8 @@ usage = """
 
   commands:
 
-    #{ 'list'.bold } - list available plugins
-    #{ 'install'.bold } <plugin> - install plugin
+    #{ chalk.bold 'list' } - list available plugins
+    #{ chalk.bold 'install' } <plugin> - install plugin
 
   options:
 
@@ -105,8 +106,8 @@ displayListing = (list, callback) ->
     line = "#{ lpad(plugin.name, pad) }  #{ clip(plugin.description, maxw - pad - 2) }"
     left = maxw - line.length
     if left > plugin.maintainers.length
-      line += lpad(plugin.maintainers, left).grey
-    logger.info line.replace /^\s*(\S+)  /, (m) -> m.bold
+      line += chalk.grey lpad(plugin.maintainers, left)
+    logger.info line.replace /^\s*(\S+)  /, (m) -> chalk.bold m
 
   callback null, list
 

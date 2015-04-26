@@ -4,7 +4,7 @@ async = require 'async'
 fs = require 'fs'
 path = require 'path'
 url = require 'url'
-colors = require 'colors'
+chalk = require 'chalk'
 minimatch = require 'minimatch'
 
 # options passed to minimatch for ignore and plugin matching
@@ -250,11 +250,14 @@ ContentTree.inspect = (tree, depth=0) ->
   for k in keys
     v = tree[k]
     if v instanceof ContentTree
-      s = "#{ k }/\n".bold
+      s = "#{ chalk.bold k }/\n"
       s += ContentTree.inspect v, depth + 1
     else
-      s = if v.pluginColor isnt 'none' then k[v.pluginColor] else k
-      s += " (#{ v.pluginInfo })".grey
+      cfn = (s) -> s
+      if v.pluginColor isnt 'none'
+        unless cfn = chalk[v.pluginColor]
+          throw new Error "Plugin #{ k } specifies invalid pluginColor: #{ v.pluginColor }"
+      s = "#{ cfn k } (#{ chalk.grey v.pluginInfo })"
     rv.push pad + s
   rv.join '\n'
 

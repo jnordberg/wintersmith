@@ -2,7 +2,7 @@
 
 async = require 'async'
 chokidar = require 'chokidar'
-colors = require 'colors'
+chalk = require 'chalk'
 http = require 'http'
 mime = require 'mime'
 url = require 'url'
@@ -17,16 +17,15 @@ enableDestroy = require 'server-destroy'
 {runGenerator} = require './generator'
 
 colorCode = (code) ->
-  s = code.toString()
   switch Math.floor code / 100
     when 2
-      return s.green
+      return chalk.green code
     when 4
-      return s.yellow
+      return chalk.yellow code
     when 5
-      return s.red
+      return chalk.red code
     else
-      return s
+      return code.toString()
 
 sleep = (callback) -> setTimeout callback, 50
 
@@ -282,9 +281,9 @@ setup = (env) ->
         response.writeHead responseCode, 'Content-Type': 'text/plain'
         response.end if error? then error.message else '404 Not Found\n'
       delta = Date.now() - start
-      logstr = "#{ colorCode(responseCode) } #{ uri.bold }"
-      logstr += " #{ pluginName }".grey if pluginName?
-      logstr += " #{ delta }ms".grey
+      logstr = "#{ colorCode(responseCode) } #{ chalk.bold uri }"
+      logstr += " #{ chalk.grey pluginName }" if pluginName?
+      logstr += chalk.grey " #{ delta }ms"
       env.logger.info logstr
       if error
         env.logger.error error.message, error
@@ -365,8 +364,8 @@ run = (env, callback) ->
   start (error, server) ->
     if not error?
       host = env.config.hostname or 'localhost'
-      serverUrl = "http://#{ host }:#{ env.config.port }#{ env.config.baseUrl }".bold
-      env.logger.info "server running on: #{ serverUrl }"
+      serverUrl = "http://#{ host }:#{ env.config.port }#{ env.config.baseUrl }"
+      env.logger.info "server running on: #{ chalk.bold serverUrl }"
     callback error, server
 
 module.exports = {run, setup}

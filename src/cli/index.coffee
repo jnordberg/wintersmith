@@ -1,3 +1,4 @@
+chalk = require 'chalk'
 optimist = require 'optimist'
 path = require 'path'
 
@@ -9,10 +10,10 @@ usage = """
 
   commands:
 
-    #{ 'build'.bold } [options] - build a site
-    #{ 'preview'.bold } [options] - run local webserver
-    #{ 'new'.bold } <location> - create a new site
-    #{ 'plugin'.bold } - manage plugins
+    #{ chalk.bold 'build' } [options] - build a site
+    #{ chalk.bold 'preview' } [options] - run local webserver
+    #{ chalk.bold 'new' } <location> - create a new site
+    #{ chalk.bold 'plugin' } - manage plugins
 
     also see [command] --help
 
