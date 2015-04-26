@@ -60,6 +60,7 @@ exports.loadEnv = (argv, callback) ->
 
     (config, callback) ->
       # ovveride config options with any command line options
+      config._cliopts = {} # used to restore command line overrides when server is restarted
       for key, value of argv
         # don't include optimist stuff and cli-specific options
         excluded = ['_', 'chdir', 'config', 'clean']
@@ -78,7 +79,7 @@ exports.loadEnv = (argv, callback) ->
                 alias = module.replace(/\/$/, '').split('/')[-1..]
               reqs[alias] = module
             value = reqs
-        config[key] = value
+        config[key] = config._cliopts[key] = value
       callback null, config
 
     (config, callback) ->

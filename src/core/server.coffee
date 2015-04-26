@@ -316,6 +316,11 @@ run = (env, callback) ->
       catch error
         env.logger.error "Error reloading config: #{ error.message }", error
       if config?
+        # restore any cli options passed in when starting
+        if cliopts = env.config._cliopts
+          config._cliopts = {}
+          for key, value of cliopts
+            config[key] = config._cliopts[key] = value
         env.setConfig config
         restart (error) ->
           throw error if error
