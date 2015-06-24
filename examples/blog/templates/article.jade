@@ -5,13 +5,13 @@ block append vars
   - bodyclass = 'article-detail'
 
 block prepend title
-  | #{ page.title + " - "}
+  | #{ page.title + ' - '}
 
 block header
   include author
   h1= page.title
   p.author
-    | #{ "Written by " }
+    | #{ 'Written by ' }
     mixin author(page.metadata.author)
 
 block content
@@ -21,5 +21,3 @@ block content
 block prepend footer
   div.nav
     a(href=contents.index.url) « Full blog
-
-
