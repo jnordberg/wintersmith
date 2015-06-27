@@ -32,16 +32,12 @@ section {
 pre {
   white-space: pre;
   /* CSS2 */
-
   white-space: pre-wrap;
   /* CSS 2.1 */
-
   white-space: pre-line;
   /* CSS 3 (and 2.1 as well, actually) */
-
   word-wrap: break-word;
   /* IE */
-
 }
 /* Custom text-selection colors (remove any text shadows: twitter.com/miketaylr/status/12228805301) */
 ::-moz-selection {

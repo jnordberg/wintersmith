@@ -65,7 +65,7 @@
   </a>
   constructor(options)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/config.coffee#L37">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/config.coffee#L38">
       <span>➤</span>
     </a>
   
@@ -89,7 +89,7 @@
   </a>
   fromFile(path, callback)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/config.coffee#L43">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/config.coffee#L44">
       <span>➤</span>
     </a>
   
@@ -109,7 +109,7 @@
   </a>
   fromFileSync(path)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/config.coffee#L58">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/config.coffee#L59">
       <span>➤</span>
     </a>
   
@@ -936,8 +936,10 @@
         
   
     <div class="docstring">
-      <p>Start the preview server. Calls <em>callback</em> when server is up and
-   running or if an error occurs. </p>
+      <p>Start the preview server. Calls <em>callback</em> with the server instance when it is up and
+   running or if an error occurs. NOTE: The returned server instance will be invalid if the
+   config file changes and the server is restarted because of it. As a temporary workaround
+   you can set the _restartOnConfChange key in settings to false. </p>
 
     </div>
   
@@ -949,7 +951,7 @@
   </a>
   build(outputDir, callback)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L273">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L275">
       <span>➤</span>
     </a>
   
@@ -978,7 +980,7 @@
   </a>
   create(config, workDir, log)
   
-    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L288">
+    <a title="View Source" class="source" href="https://github.com/jnordberg/wintersmith/blob/master/src/core/environment.coffee#L290">
       <span>➤</span>
     </a>
   
