@@ -3,6 +3,7 @@
     "wintersmith-browserify": "*",
     "wintersmith-less": "*",
     "wintersmith-nunjucks": "*",
+    "wintersmith-livereload": "*",
     "browsernizr": "*"
   },
   "private": true
