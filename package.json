@@ -29,7 +29,7 @@
     "chalk": "~1.0.0",
     "chokidar": "~1.0.4",
     "coffee-script": "~1.9.2",
-    "highlight.js": "~8.5.0",
+    "highlight.js": "~8.6.0",
     "jade": "~1.9.2",
     "js-yaml": "~3.3.0",
     "marked": "~0.3.3",
