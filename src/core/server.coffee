@@ -120,6 +120,25 @@ setup = (env) ->
       block.localsLoad = false
       callback error
 
+  moduleWatcher = chokidar.watch env.loadedModules,
+    ignored: (path) ->
+      for pattern in env.config.ignore
+        if minimatch env.relativeContentsPath(path), pattern
+          return true
+
+      # dont include node_modules
+      if path.indexOf("#{env.workDir}/node_modules") != -1
+        return true
+
+      return false
+    ignoreInitial: true
+
+  moduleWatcher.on 'change', (path) ->
+    id = env.resolveModule path
+    env.unloadModule id
+    env.loadPluginModule id, ->
+      env.emit 'change', id
+
   contentWatcher = chokidar.watch env.contentsPath,
     ignored: (path) ->
       for pattern in env.config.ignore
