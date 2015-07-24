@@ -156,6 +156,11 @@ class Environment extends EventEmitter
     @loadedModules.push id if unloadOnReset
     return rv
 
+  unloadModule: (module) ->
+    @logger.silly "unloading module: #{ module }"
+    id = @resolveModule module
+    delete require.cache[id]
+
   loadPluginModule: (module, callback) ->
     ### Load a plugin *module*. Calls *callback* when plugin is done loading, or an error ocurred. ###
     id = 'unknown'
