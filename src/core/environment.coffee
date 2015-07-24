@@ -153,7 +153,7 @@ class Environment extends EventEmitter
     id = @resolveModule module
     @logger.silly "resolved: #{ id }"
     rv = require id
-    @loadedModules.push id if unloadOnReset
+    @loadedModules.push id
     return rv
 
   unloadModule: (module) ->
