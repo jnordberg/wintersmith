@@ -161,6 +161,10 @@ class Environment extends EventEmitter
     id = @resolveModule module
     delete require.cache[id]
 
+    loadedIndex = @loadedModules.indexOf id
+    if loadedIndex > -1
+      @loadedModules.splice(loadedIndex, 1)
+
   loadPluginModule: (module, callback) ->
     ### Load a plugin *module*. Calls *callback* when plugin is done loading, or an error ocurred. ###
     id = 'unknown'
