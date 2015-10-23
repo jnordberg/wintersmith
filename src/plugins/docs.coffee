@@ -1,7 +1,7 @@
 sh = require 'shelljs'
 path = require 'path'
 
-coffeedoc = path.resolve __dirname, '../node_modules/.bin/coffeedoc'
+coffeedoc = require.resolve 'coffeedoc/bin/coffeedoc'
 tempPath = '/tmp/coffeedoc'
 
 beginswith = (haystack, needle) ->
