@@ -246,7 +246,10 @@ setup = (env) ->
               else
                 callback new Error "View for content '#{ content.filename }' returned invalid response. Expected Buffer or Stream."
             else
-              callback null, 404, pluginName # not handled, no data from plugin
+              # not handled, no data from plugin
+              response.writeHead 404, 'Content-Type': 'text/plain'
+              response.end '404 Not Found\n'
+              callback null, 404, pluginName
         else
           callback() # not handled, no matching url
     ], callback
