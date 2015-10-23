@@ -6,8 +6,8 @@ npm = require 'npm'
 mkdirp = require 'mkdirp'
 childProcess = require 'child_process'
 
-{NpmAdapter, getStorageDir, loadEnv, commonOptions} = require './common'
-{fileExists, readJSON, extend} = require './../core/utils'
+{NpmAdapter, getStorageDir, loadEnv, commonOptions, extendOptions} = require './common'
+{fileExists, readJSON} = require './../core/utils'
 {logger} = require './../core/logger'
 
 maxListAge = 3 * 24 * 60 * 60 * 1000 # 3 days, in ms
@@ -32,11 +32,11 @@ usage = """
 """
 
 options =
-  update:
-    alias: 'U'
-    default: false
+  alias:
+    update: 'U'
+  boolean: ['update']
 
-extend options, commonOptions
+extendOptions options, commonOptions
 
 max = (array, get) ->
   get ?= (item) -> item
@@ -139,7 +139,7 @@ normalizePluginName = (name) ->
   name.replace /^wintersmith\-/, ''
 
 main = (argv) ->
-  action = argv._[1]
+  action = argv._[3]
 
   if not action?
     console.log usage
@@ -151,7 +151,7 @@ main = (argv) ->
   installPlugin = (res, callback) ->
     [env, list] = res
 
-    name = argv._[2]
+    name = argv._[4]
     plugin = null
 
     for p in list.plugins

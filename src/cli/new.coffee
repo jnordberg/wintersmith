@@ -40,16 +40,18 @@ usage = """
 """
 
 options =
-  force:
-    alias: 'f'
-  template:
-    alias: 'T'
-    default: 'blog'
+  string: ['template']
+  boolean: ['force']
+  alias:
+    force: 'f'
+    template: 'T'
+  default:
+    template: 'blog'
 
 createSite = (argv) ->
   ### copy example directory to *location* ###
 
-  location = argv._[1]
+  location = argv._[3]
   if !location? or !location.length
     logger.error 'you must specify a location'
     return

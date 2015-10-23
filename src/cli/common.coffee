@@ -8,35 +8,41 @@ stream = require 'stream'
 {readJSON, fileExists} = require './../core/utils'
 
 exports.commonOptions = defaults =
-  config:
-    alias: 'c'
-    default: './config.json'
-  chdir:
-    alias: 'C'
-    default: null
-  contents:
-    alias: 'i'
-  templates:
-    alias: 't'
-  locals:
-    alias: 'L'
-  require:
-    alias: 'R'
-  plugins:
-    alias: 'P'
-  ignore:
-    alias: 'I'
+  string: ['chdir', 'config', 'contents', 'templates', 'locals', 'require', 'plugins', 'ignore']
+  default:
+    config: './config.json'
+    chdir: null
+  alias:
+    config: 'c'
+    chdir: 'C'
+    contents: 'i'
+    templates: 't'
+    locals: 'L'
+    require: 'R'
+    plugins: 'P'
+    ignore: 'I'
 
 exports.commonUsage = [
   "-C, --chdir [path]            change the working directory"
-  "  -c, --config [path]           path to config (defaults to #{ defaults.config.default })"
-  "  -i, --contents [path]         contents location (defaults to #{ defaults.contents.default })"
-  "  -t, --templates [path]        template location (defaults to #{ defaults.templates.default })"
+  "  -c, --config [path]           path to config (defaults to #{ defaults.default.config })"
+  "  -i, --contents [path]         contents location (defaults to #{ Config.defaults.contents })"
+  "  -t, --templates [path]        template location (defaults to #{ Config.defaults.templates })"
   "  -L, --locals [path]           optional path to json file containing template context data"
   "  -R, --require                 comma separated list of modules to add to the template context"
   "  -P, --plugins                 comma separated list of modules to load as plugins"
   "  -I, --ignore                  comma separated list of files/glob-patterns to ignore"
 ].join '\n'
+
+exports.extendOptions = (base, extra) ->
+  for type in ['string', 'boolean']
+    base[type] ?= []
+    if extra[type]?
+      base[type] = base[type].concat extra[type]
+  for type in ['alias', 'default']
+    base[type] ?= {}
+    if extra[type]?
+      base[type][key] = value for key, value of extra[type]
+  return
 
 exports.loadEnv = (argv, callback) ->
   ### creates a new wintersmith environment
@@ -60,12 +66,16 @@ exports.loadEnv = (argv, callback) ->
 
     (config, callback) ->
       # ovveride config options with any command line options
-      config._cliopts = {} # used to restore command line overrides when server is restarted
+      config._cliopts = {} # used to restore command line overrides when
+                           # preview server is restarted and config is reloaded
       for key, value of argv
-        # don't include optimist stuff and cli-specific options
+        # don't include cli-specific options
         excluded = ['_', 'chdir', 'config', 'clean']
-        if key[0] is '$' or key.length is 1 or key in excluded
+        if key in excluded
           continue
+        if key in ['port']
+          # numeric values
+          value = Number value
         if key in ['ignore', 'require', 'plugins']
           # split comma separated values to arrays
           value = value.split ','

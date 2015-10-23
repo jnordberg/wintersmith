@@ -1,11 +1,10 @@
 async = require 'async'
 util = require 'util'
 
-{extend} = require './../core/utils'
 {Config} = require './../core/config'
 {logger} = require './../core/logger'
 
-{loadEnv, commonUsage, commonOptions} = require './common'
+{loadEnv, commonUsage, commonOptions, extendOptions} = require './common'
 
 usage = """
 
@@ -13,8 +12,8 @@ usage = """
 
   options:
 
-    -p, --port [port]             port to run server on (defaults to 8080)
-    -d, --domain [domain]         host to run server on (defaults to localhost)
+    -p, --port [port]             port to run server on (defaults to #{ Config.defaults.port })
+    -H, --hostname [host]         host to bind server onto (defaults to INADDR_ANY)
     #{ commonUsage }
 
     all options can also be set in the config file
@@ -27,12 +26,12 @@ usage = """
 """
 
 options =
-  port:
-    alias: 'p'
-  domain:
-    alias: 'd'
+  string: ['port', 'hostname']
+  alias:
+    port: 'p'
+    hostname: 'H'
 
-extend options, commonOptions
+extendOptions options, commonOptions
 
 preview = (argv) ->
   logger.info 'starting preview server'

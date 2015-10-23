@@ -1,8 +1,10 @@
 chalk = require 'chalk'
-optimist = require 'optimist'
+parseArgv = require 'minimist'
 path = require 'path'
 
 {logger} = require './../core/logger'
+{extendOptions} = require './common'
+
 
 usage = """
 
@@ -27,46 +29,48 @@ usage = """
 """
 
 globalOptions =
-  verbose:
-    alias: 'v'
-  quiet:
-    alias: 'q'
-  version:
-    alias: 'V'
-  help:
-    alias: 'h'
+  boolean: ['verbose', 'quiet', 'version', 'help']
+  alias:
+    verbose: 'v'
+    quiet: 'q'
+    version: 'V'
+    help: 'h'
 
-main = ->
+main = (argv) ->
 
-  argv = optimist.options(globalOptions).argv
-  if argv._[0]?
+  opts = parseArgv argv, globalOptions
+  cmd = argv[2]
+
+  if cmd?
     try
-      cmd = require "./#{ argv._[0] }"
+      cmd = require "./#{ cmd }"
     catch error
       if error.code is 'MODULE_NOT_FOUND'
-        console.log "'#{ argv._[0] }' - no such command"
+        console.log "'#{ cmd }' - no such command"
         process.exit 1
       else
         throw error
 
-  if argv.version
+  if opts.version
     console.log require './version'
     process.exit 0
 
-  if argv.help or !cmd
+  if opts.help or !cmd
     console.log if cmd then cmd.usage else usage
     process.exit 0
 
-  if argv.verbose
-    if '-vv' in process.argv
+  if opts.verbose
+    if '-vv' in argv
       logger.transports.cli.level = 'silly'
     else
       logger.transports.cli.level = 'verbose'
 
-  if argv.quiet
+  if opts.quiet
     logger.transports.cli.quiet = true
 
   if cmd
-    cmd optimist.options(globalOptions).options(cmd.options).argv
+    extendOptions cmd.options, globalOptions
+    opts = parseArgv argv, cmd.options
+    cmd opts
 
 module.exports.main = main

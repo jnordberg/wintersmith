@@ -4,8 +4,8 @@ fs = require 'fs'
 path = require 'path'
 rimraf = require 'rimraf'
 
-{extend, fileExistsSync} = require './../core/utils'
-{loadEnv, commonOptions, commonUsage} = require './common'
+{fileExistsSync} = require './../core/utils'
+{loadEnv, commonOptions, commonUsage, extendOptions} = require './common'
 {logger} = require './../core/logger'
 
 usage = """
@@ -34,13 +34,13 @@ usage = """
 """
 
 options =
-  output:
-    alias: 'o'
-  clean:
-    alias: 'X'
-    default: false
+  alias:
+    output: 'o'
+    clean: 'X'
+  boolean: ['clean']
+  string: ['output']
 
-extend options, commonOptions
+extendOptions options, commonOptions
 
 build = (argv) ->
   start = new Date()

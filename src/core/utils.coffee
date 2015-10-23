@@ -11,6 +11,7 @@ fileExistsSync = fs.existsSync or path.existsSync
 extend = (obj, mixin) ->
   for name, method of mixin
     obj[name] = method
+  return
 
 stripExtension = (filename) ->
   ### Remove the file-extension from *filename* ###
