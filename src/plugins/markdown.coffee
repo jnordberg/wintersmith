@@ -23,6 +23,9 @@ resolveLink = (content, uri, baseUrl) ->
   if uriParts.protocol
     # absolute uri
     return uri
+  else if uriParts.hash is uri
+    # internal anchor
+    return uri
   else
     # search pathname in content tree relative to *content*
     nav = content.parent
