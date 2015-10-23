@@ -39,7 +39,7 @@ globalOptions =
 main = (argv) ->
 
   opts = parseArgv argv, globalOptions
-  cmd = argv[2]
+  cmd = opts._[2]
 
   if cmd?
     try
