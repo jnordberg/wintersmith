@@ -77,6 +77,7 @@ build = (argv) ->
       stop = new Date()
       delta = stop - start
       logger.info "done in #{ chalk.bold delta } ms\n"
+      process.exit()
 
 module.exports = build
 module.exports.usage = usage
