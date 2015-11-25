@@ -276,6 +276,7 @@ ContentTree.merge = (root, tree) ->
   for key, item of tree
     if item instanceof ContentPlugin
       root[key] = item
+      item.parent = root
       root._[item.__plugin.group].push item
     else if item instanceof ContentTree
       if not root[key]?
