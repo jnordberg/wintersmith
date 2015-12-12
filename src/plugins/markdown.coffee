@@ -6,8 +6,6 @@ path = require 'path'
 url = require 'url'
 yaml = require 'js-yaml'
 
-hljs.configure {classPrefix: ''} # keep compatibility with old stylesheets (pre hljs 8.0.0)
-
 # monkeypatch to add url resolving to marked
 if not marked.InlineLexer.prototype._outputLink?
   marked.InlineLexer.prototype._outputLink = marked.InlineLexer.prototype.outputLink
@@ -64,6 +62,15 @@ parseMarkdownSync = (content, markdown, baseUrl, options) ->
   return marked markdown
 
 module.exports = (env, callback) ->
+  # Highlight.js configuration
+  hljsConfigDefaults =
+    classPrefix: ''
+
+  hljsConfig = env.config.highlightjs or {}
+  for key, value of hljsConfigDefaults
+    hljsConfig[key] ?= hljsConfigDefaults[key]
+
+  hljs.configure hljsConfig
 
   class MarkdownPage extends env.plugins.Page
 
