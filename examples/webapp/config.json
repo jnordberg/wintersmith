@@ -5,6 +5,9 @@
     "description": "Forget about drag'n'drop, this is where it's at!",
     "keywords": "awesome, fast, snappy, instant, horse, pony, unicorn"
   },
+  "nunjucks": {
+    "autoescape": false
+  },
   "plugins": [
     "wintersmith-browserify",
     "wintersmith-less",
