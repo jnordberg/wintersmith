@@ -229,7 +229,7 @@ setup = (env) ->
           renderView env, content, locals, tree, templates, (error, result) ->
             if error then callback error, 500, pluginName
             else if result?
-              mimeType = mime.lookup content.filename
+              mimeType = mime.lookup content.filename, mime.lookup(uri)
               charset = mime.charsets.lookup mimeType
               if charset
                 contentType = "#{ mimeType }; charset=#{ charset }"
