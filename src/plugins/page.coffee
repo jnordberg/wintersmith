@@ -113,7 +113,7 @@ module.exports = (env, callback) ->
     @property 'intro', 'getIntro'
     getIntro: (base) ->
       html = @getHtml(base)
-      cutoffs = ['<span class="more', '<h2', '<hr']
+      cutoffs = env.config.introCutoffs or ['<span class="more', '<h2', '<hr']
       idx = Infinity
       for cutoff in cutoffs
         i = html.indexOf cutoff

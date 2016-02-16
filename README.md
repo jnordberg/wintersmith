@@ -100,6 +100,7 @@ plugins      | `[]`            | list of plugins to load
 ignore       | `[]`            | list of files or pattern to ignore
 output       | `./build`       | output directory, this is where the generated site is output when building
 filenameTemplate | `:file.html`| outputs filenames and paths according to a template. ([documentation](https://github.com/jnordberg/wintersmith/wiki/Page-Plugin#filename-templating))
+introCutoffs | `['<span class="more', '<h2', '<hr']` | list of strings to search for when determining if a page has an intro
 baseUrl      | `/`             | base url that site lives on, e.g. `/blog/`.
 hostname     | `null`          | hostname to bind preview server to, null = INADDR_ANY
 port         | `8080`          | port preview server listens on
