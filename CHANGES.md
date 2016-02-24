@@ -1,3 +1,12 @@
+## 2.3.0
+*2016-02-24*
+
+* [Removed individual file change monitoring during preview](https://github.com/jnordberg/wintersmith/commit/1f905cc2b48fe0fffd07dbc14bb7f10dc9b780e7)
+* [Add config option to change the list of intro cutoff strings](https://github.com/jnordberg/wintersmith/pull/304)
+* [Use laquo and raquo in blog template](https://github.com/jnordberg/wintersmith/pull/302)
+* [Fallback to the normalized URI when determining the content type of files in the preview server](https://github.com/jnordberg/wintersmith/pull/303)
+* [Update dependencies](https://github.com/jnordberg/wintersmith/commit/0a4489e3299c69a702381684820d1e5176f1867e)
+
 ## 2.2.5
 *2016-01-02*
 
