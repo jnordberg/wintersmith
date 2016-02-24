@@ -69,7 +69,6 @@ setup = (env) ->
     templatesLoad: false
     viewsLoad: false
     localsLoad: false
-    files: {}
 
   isReady = ->
     ### Returns true if we have no running tasks ###
@@ -80,9 +79,10 @@ setup = (env) ->
   logop = (error) ->
     env.logger.error(error.message, error) if error?
 
-  changeHandler = (error) ->
+  changeHandler = (error, path) ->
     ### Emits a change event if called without error ###
-    env.emit 'change' unless error?
+    unless error?
+      env.emit 'change', path
     logop error
 
   loadContents = (callback=logop) ->
@@ -128,61 +128,8 @@ setup = (env) ->
       return false
     ignoreInitial: true
 
-  contentWatcher.on 'change', (path) ->
-
-    # ignore if we dont have the tree loaded or it's still loading
-    return if not contents? or block.contentsLoad
-
-    # also ignore if we are already working on this file
-    # (windows sometimes sends multiple change events for the same file)
-    return if block.files[path] is true
-
-    block.files[path] = true
-
-    content = null
-    for item in ContentTree.flatten(contents)
-      if item.__filename is path
-        content = item
-        break
-    if not content
-      throw new Error "Got a change event for item not previously in tree: #{ path }"
-
-    filepath =
-      relative: env.relativeContentsPath path
-      full: path
-
-    tree = content.parent
-    key = keyForValue tree, content
-    group = tree._[content.__plugin.group]
-
-    if not key?
-      throw new Error "Content #{ content.filename } not found in its parent tree!"
-
-    loadContent env, filepath, (error, newContent) ->
-      if error?
-        contents = null
-        lookup = {}
-        return
-
-      # replace old contents
-      newContent.parent = tree
-      tree[key] = newContent
-
-      # also in the trees plugin group
-      if not replaceInArray(group, content, newContent)
-        throw new Error "Content #{ content.filename } not found in its plugin group!"
-
-      # keep the lookup map fresh
-      delete lookup[normalizeUrl(content.url)]
-      lookup[normalizeUrl(newContent.url)] = newContent
-
-      delete block.files[path]
-      env.emit 'change', content.filename
-
-  # reload entire tree if a file is removed or added
-  # patches to modify the already loaded tree instead are welcome :-)
-  contentWatcher.on 'add', -> loadContents(changeHandler) if not block.contentsLoad
-  contentWatcher.on 'unlink', -> loadContents(changeHandler) if not block.contentsLoad
+  # reload content tree on changes
+  contentWatcher.on 'all', (path) -> loadContents(changeHandler, path) if not block.contentsLoad
 
   templateWatcher = chokidar.watch env.templatesPath,
     ignoreInitial: true
