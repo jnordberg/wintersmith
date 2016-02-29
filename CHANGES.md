@@ -1,3 +1,8 @@
+## 2.3.1
+*2016-02-29*
+
+* [Fix regression where resolved filenames where no longer emitted with the 'change' event during preview](https://github.com/jnordberg/wintersmith/commit/145875ec1d502d57a6fdefbb8ed9404e53abb5b7)
+
 ## 2.3.0
 *2016-02-24*
 
