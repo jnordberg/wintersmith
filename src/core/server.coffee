@@ -129,7 +129,17 @@ setup = (env) ->
     ignoreInitial: true
 
   # reload content tree on changes
-  contentWatcher.on 'all', (path) -> loadContents(changeHandler, path) if not block.contentsLoad
+  contentWatcher.on 'all', (type, filename) ->
+    return if block.contentsLoad
+    loadContents (error) ->
+      contentFilename = null
+      if not error? and filename?
+        # resolve filename for changed content
+        for content in ContentTree.flatten contents
+          if content.__filename is filename
+            contentFilename = content.filename
+            break
+      changeHandler error, contentFilename
 
   templateWatcher = chokidar.watch env.templatesPath,
     ignoreInitial: true
