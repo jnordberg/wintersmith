@@ -1,3 +1,8 @@
+## 2.3.2
+*2016-06-06*
+
+* [Update dependencies](https://github.com/jnordberg/wintersmith/commit/5634b192d80c18f5d13c012a23c632cc086c2795)
+
 ## 2.3.1
 *2016-02-29*
 
