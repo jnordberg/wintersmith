@@ -1,3 +1,8 @@
+## 2.3.3
+*2016-09-15*
+
+* [Fix bug where the render callback could be called before the all the data where written to disk](https://github.com/jnordberg/wintersmith/commit/4e255568fb0a66b680e85d6c1948ba5448197f7c)
+
 ## 2.3.2
 *2016-06-06*
 
