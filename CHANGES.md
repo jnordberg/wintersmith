@@ -1,3 +1,10 @@
+## 2.3.4
+*2016-12-11*
+
+* [Update dependencies](https://github.com/jnordberg/wintersmith/commit/a5087b8abaf3589c0ebf897c9bcde24f8cd7d5d0)
+* [Use npms.io for plugin listings instead of npm's built-in search](https://github.com/jnordberg/wintersmith/commit/5641e420e65c92f40e8ad1f2d6ee5acb4bdb1972)
+* [Fix hardcoded http protocol in blog template](https://github.com/jnordberg/wintersmith/commit/053c36d5f3055534eaca9dd29b51707db1fe0e2d)
+
 ## 2.3.3
 *2016-09-15*
 
