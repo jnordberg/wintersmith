@@ -1,3 +1,8 @@
+## 2.3.5
+*2016-12-11*
+
+* [Depend on jade-legacy instead of deprecated jade module](https://github.com/jnordberg/wintersmith/commit/31ddafaa45306b3b8ac57cd99873c9157c703822)
+
 ## 2.3.4
 *2016-12-11*
 
