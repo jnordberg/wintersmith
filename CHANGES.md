@@ -1,3 +1,8 @@
+## 2.3.6
+*2016-12-12*
+
+* [Fix bug causing ignore option to break contents loading](https://github.com/jnordberg/wintersmith/commit/e0c5c5f799feb87e50f6acf4bed8e0ddc0d549a7)
+
 ## 2.3.5
 *2016-12-11*
 
