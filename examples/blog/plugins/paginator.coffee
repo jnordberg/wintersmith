@@ -18,6 +18,15 @@ module.exports = (env, callback) ->
   getArticles = (contents) ->
     # helper that returns a list of articles found in *contents*
     # note that each article is assumed to have its own directory in the articles directory
+    # use root level articles if articles is empty or false (above or in config.json under paginator)
+    # root level articles defined by the `article.jade` template
+    # the structe is similar: folder -> index.md, folder name become the slug
+    unless options.articles
+      articles = []
+      for key, value of contents
+        if value['index.md']? and value['index.md'].metadata?.template is 'article.jade' then articles.push value['index.md']
+    else
+      articles = contents[options.articles]._.directories.map (item) -> item.index
     articles = contents[options.articles]._.directories.map (item) -> item.index
     # skip articles that does not have a template associated
     articles = articles.filter (item) -> item.template isnt 'none'
