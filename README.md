@@ -2,7 +2,7 @@
 
 Wintersmith is a simple yet flexible static site generator. It takes contents (markdown, less, scripts, etc), transforms them using plugins and outputs a static website (html, css, images, etc) that you can host anywhere.
 
-It ships with plugins for [markdown](http://daringfireball.net/projects/markdown/) and [jade templates](https://github.com/visionmedia/jade), if you need something else check the [plugin listing][plugin-listing] or [write your own][plugin-guide]!
+It ships with plugins for [markdown](http://daringfireball.net/projects/markdown/) and [jade templates](https://github.com/pugjs/pug), if you need something else check the [plugin listing][plugin-listing] or [write your own][plugin-guide]!
 
 ## Resources
 
@@ -13,14 +13,14 @@ It ships with plugins for [markdown](http://daringfireball.net/projects/markdown
  * IRC - **#wintersmith** on freenode
 
 [website]: http://wintersmith.io "Wintersmith project website"
-[docs]: http://wintersmith.io/docs "Wintersmith API Documentation"
+[docs]: http://wintersmith.io/docs/ "Wintersmith API Documentation"
 [wiki]: https://github.com/jnordberg/wintersmith/wiki "Wintersmith wiki"
 [plugin-listing]: https://github.com/jnordberg/wintersmith/wiki/Plugins "Wintersmith plugin listing"
 [plugin-guide]: https://github.com/jnordberg/wintersmith/wiki/Writing-plugins "Wintersmith plugin guide"
 
 ## Quick-start
 
-First install wintersmith using [npm](http://npmjs.org/):
+First install wintersmith using [npm](https://www.npmjs.com/):
 
 ```bash
 $ npm install wintersmith -g
@@ -262,6 +262,6 @@ Check the source or [api docs][docs] for a full list of methods.
 
 ## About
 
-Wintersmith is written by [Johan Nordberg](http://johan-nordberg.com) using [CoffeeScript](http://coffeescript.org/) and licensed under the [MIT-license](http://en.wikipedia.org/wiki/MIT_License).
+Wintersmith is written by [Johan Nordberg](http://johan-nordberg.com) using [CoffeeScript](http://coffeescript.org/) and licensed under the [MIT-license](https://en.wikipedia.org/wiki/MIT_License).
 
 The name is a nod to [blacksmith](https://github.com/flatiron/blacksmith) which inspired this project.
