@@ -48,6 +48,8 @@ class ContentPlugin
     base ?= @__env.config.baseUrl
     if not base.match /\/$/
       base += '/'
+    for s, r of @__env.config?.patchUrl
+      filename = filename.replace new RegExp(s), r
     if process.platform is 'win32'
       filename = filename.replace /\\/g, '/' #'
     return url.resolve base, filename
