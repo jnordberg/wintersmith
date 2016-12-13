@@ -181,8 +181,8 @@ ContentTree.fromDirectory = (env, directory, callback) ->
             env.logger.verbose "ignoring #{ filename.relative } (matches: #{ pattern })"
             include = false
             break
-        callback include
-      , (result) -> callback null, result
+        callback null, include
+      , callback
     else
       callback null, filenames
 
