@@ -73,9 +73,9 @@ module.exports = (env, callback) ->
       ext = path.extname basename
 
       filename = replaceAll template,
-        ':year': @date.getFullYear()
-        ':month': ('0' + (@date.getMonth()+1)).slice(-2)
-        ':day': ('0' + @date.getDate()).slice(-2)
+        ':year': @date.getUTCFullYear()
+        ':month': ('0' + (@date.getUTCMonth()+1)).slice(-2)
+        ':day': ('0' + @date.getUTCDate()).slice(-2)
         ':title': slugify(@title+'')
         ':file': file
         ':ext': ext
