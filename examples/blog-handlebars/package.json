@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "moment": "~2.3.1",
+    "underscore": "~1.4.4",
+    "typogr": "~0.5.2",
+    "wintersmith-handlebars": "0.0.3"
+  },
+  "repository": "none"
+}

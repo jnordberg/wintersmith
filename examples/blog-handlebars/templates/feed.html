@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:wfw="http://wellformedweb.org/CommentAPI/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>{{name}}</title>
+    <atom:link href="{{url}}/feed.xml" rel="self" type="application/rss+xml"></atom:link>
+    <link>{{url}}</link>
+    <description>{{description}}</description>
+    <generator>Wintersmith - https://github.com/jnordberg/wintersmith</generator>
+    <language>en</language>
+{{# feed env contents }}
+	    <item>
+	    	<title>{{title}}</title>
+	    	<link>{{../url}}{{url}}</link>
+	    	<guid isPermaLink="true">{{../url}}{{url}}</guid>
+	    	<pubDate>{{rfc822date}}</pubDate>
+	    	<author>{{author}}</author>
+	    	<description>{{html}}</description>
+		</item>
+{{/ feed }}
+</channel>
+</rss>
