@@ -302,7 +302,7 @@ Environment.create = (config, workDir, log=logger) ->
 
   return new Environment config, workDir, log
 
-Environment.defaultPlugins = ['page', 'jade', 'markdown']
+Environment.defaultPlugins = ['page', 'pug', 'markdown']
 
 ### Exports ###
 

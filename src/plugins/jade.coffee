@@ -1,11 +1,11 @@
 async = require 'async'
 fs = require 'fs'
-jade = require 'jade-legacy'
+pug = require 'pug'
 path = require 'path'
 
 module.exports = (env, callback) ->
 
-  class JadeTemplate extends env.TemplatePlugin
+  class PugTemplate extends env.TemplatePlugin
 
     constructor: (@fn) ->
 
@@ -15,19 +15,20 @@ module.exports = (env, callback) ->
       catch error
         callback error
 
-  JadeTemplate.fromFile = (filepath, callback) ->
+  PugTemplate.fromFile = (filepath, callback) ->
     async.waterfall [
       (callback) ->
         fs.readFile filepath.full, callback
       (buffer, callback) =>
-        conf = env.config.jade or {}
+        conf = env.config.pug or {}
         conf.filename = filepath.full
         try
-          rv = jade.compile buffer.toString(), conf
+          rv = pug.compile buffer.toString(), conf
           callback null, new this rv
         catch error
           callback error
     ], callback
 
-  env.registerTemplatePlugin '**/*.jade', JadeTemplate
+  env.registerTemplatePlugin '**/*.jade', PugTemplate
+  env.registerTemplatePlugin '**/*.pug', PugTemplate
   callback()
