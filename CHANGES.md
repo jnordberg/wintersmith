@@ -1,3 +1,8 @@
+## 2.3.7 - proposed
+*2017-03-19*
+
+* Migrate from Jade to Pug (Same plugin, new name)
+
 ## 2.3.6
 *2016-12-12*
 
