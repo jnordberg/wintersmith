@@ -1,3 +1,11 @@
+## 2.4.0
+*2017-05-15*
+
+* [Better error reporting when template requires are missing](https://github.com/jnordberg/wintersmith/commit/5766cb533b503cc91dea03547dc9ce2698204240)
+* [Update dependencies](https://github.com/jnordberg/wintersmith/commit/4d1beb7250d44841547cc667c1fe8fbc88e18c5b)
+* Switched from `~` to `^` semver versioning for dependencies
+* Update for npm 5
+
 ## 2.3.6
 *2016-12-12*
 
