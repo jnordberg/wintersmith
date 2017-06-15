@@ -69,7 +69,10 @@ class Environment extends EventEmitter
       logger.verbose "loading module '#{ id }' available in locals as '#{ alias }'"
       if @locals[alias]?
         logger.warn "module '#{ id }' overwrites previous local with the same key ('#{ alias }')"
-      @locals[alias] = @loadModule id
+      try
+        @locals[alias] = @loadModule id
+      catch error
+        logger.warn "unable to load '#{ id }': #{ error.message }"
 
     return
 
