@@ -21,7 +21,9 @@ rss(version='2.0',
         pubDate= article.rfc822date
         guid(isPermaLink='true')= permalink
         - var author = contents.authors[article.metadata.author + '.json'];
-        - if (!author) {author = { metadata: {name: null}} };
-        author= author.metadata.name
+        if author
+            author= author.metadata.name
+        else
+            author= article.author
         //- passing locals.url resolves all relative urls to absolute
         description= article.getHtml(locals.url)
