@@ -1,7 +1,7 @@
 ---
 title: Try it!
 image: images/console.svg
-order: 4
+order: 5
 ---
 
 Install [node.js][1] if you haven't already and head over to the [quick-start guide][2].
