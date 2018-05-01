@@ -1,6 +1,6 @@
 ---
 title: Wintersmith
-template: index.jade
+template: index.pug
 ---
 
 

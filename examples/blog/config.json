@@ -13,7 +13,7 @@
     "_": "underscore",
     "typogr": "typogr"
   },
-  "jade": {
+  "pug": {
     "pretty": true
   },
   "markdown": {
