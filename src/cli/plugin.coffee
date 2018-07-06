@@ -4,15 +4,11 @@ fs = require 'fs'
 path = require 'path'
 npm = require 'npm'
 mkdirp = require 'mkdirp'
-childProcess = require 'child_process'
+https = require 'https'
 
-{NpmAdapter, getStorageDir, loadEnv, commonOptions, extendOptions} = require './common'
+{NpmAdapter, loadEnv, commonOptions, extendOptions} = require './common'
 {fileExists, readJSON} = require './../core/utils'
 {logger} = require './../core/logger'
-
-maxListAge = 3 * 24 * 60 * 60 * 1000 # 3 days, in ms
-cacheDir = path.resolve getStorageDir(), './cache/'
-listFile = path.join cacheDir, 'plugins.json'
 
 usage = """
 
@@ -27,14 +23,10 @@ usage = """
 
     -C, --chdir [path]      change the working directory
     -c, --config [path]     path to config
-    -U, --update            force plugin listing refresh
 
 """
 
-options =
-  alias:
-    update: 'U'
-  boolean: ['update']
+options = {}
 
 extendOptions options, commonOptions
 
@@ -55,52 +47,42 @@ clip = (string, maxlen) ->
   return string if string.length <= maxlen
   return string[0...maxlen-2].trim() + ".."
 
-isPlugin = (module) ->
-  'wintersmith-plugin' in module.keywords
-
-ensureCacheDir = (callback) ->
-  mkdirp cacheDir, (error) -> callback error
-
 fetchListing = (callback) ->
-  async.waterfall [
-    (callback) -> npm.load {logstream: new NpmAdapter(logger)}, callback
-    (_, callback) -> npm.commands.search 'wintersmith', true, 60, callback
-    (result, callback) ->
-      plugins = (value for key, value of result).filter(isPlugin)
-      updated = Date.now()
-      plugins.sort (a, b) ->
-        an = normalizePluginName a.name
-        bn = normalizePluginName b.name
-        return -1 if an < bn
-        return 1 if an > bn
+  request = https.get 'https://api.npms.io/v2/search?q=keywords:wintersmith-plugin&size=200', (response) ->
+    if response.statusCode isnt 200
+      error = new Error "Unexpected response when searching registry, HTTP #{ response.statusCode }"
+    if not /^application\/json/.test response.headers['content-type']
+      error = new Error "Invalid content-type: #{ response.headers['content-type'] }"
+    if error?
+      response.resume()
+      callback error
+      return
+    data = []
+    response.on 'data', (chunk) -> data.push chunk
+    response.on 'end', ->
+      try
+        parsed = JSON.parse Buffer.concat data
+      catch error
+        callback error
+        return
+      listing = parsed.results.map (result) -> result.package
+      listing.sort (a, b) ->
+        return 1 if a.name > b.name
+        return -1 if a.name < b.name
         return 0
-      callback null, {updated, plugins}
-  ], callback
-
-loadListing = (callback) ->
-  fileExists listFile, (exists) ->
-    if exists
-      readJSON listFile, callback
-    else
-      logger.info 'fetching listing for the first time... hang on'
-      fetchListing (error, list) ->
-        list?._needsSave = true
-        callback error, list
-
-writeListing = (list, callback) ->
-  json = JSON.stringify list
-  fs.writeFile listFile, json, (error) ->
-    callback error, list
+      callback null, listing
 
 displayListing = (list, callback) ->
-  display = list.plugins.map (plugin) ->
+  display = list.map (plugin) ->
     name = normalizePluginName plugin.name
     description = plugin.description
-    maintainers = plugin.maintainers.map((name) -> name[1..]).join(' ')
-    return {name, description, maintainers}
+    maintainers = plugin.maintainers.map((v) -> v.username).join(' ')
+    homepage = plugin.links?.homepage ? plugin.links?.npm
+    return {name, description, maintainers, homepage}
 
   pad = max(display, (item) -> item.name.length)
   maxw = process.stdout.getWindowSize()[0] - 2
+  margin = ([0...pad].map -> ' ').join ''
 
   for plugin in display
     line = "#{ lpad(plugin.name, pad) }  #{ clip(plugin.description, maxw - pad - 2) }"
@@ -108,19 +90,11 @@ displayListing = (list, callback) ->
     if left > plugin.maintainers.length
       line += chalk.grey lpad(plugin.maintainers, left)
     logger.info line.replace /^\s*(\S+)  /, (m) -> chalk.bold m
+    if plugin.homepage? and plugin.homepage.length < maxw - pad - 2
+      logger.info "#{ margin }  #{ chalk.gray plugin.homepage }"
+    logger.info ''
 
   callback null, list
-
-updateIfNeeded = (list, callback) ->
-  if list._needsSave
-    delete list._needsSave
-    writeListing list, callback
-  else
-    delta = Date.now() - list.updated
-    if delta > maxListAge
-      logger.verbose 'plugin listing stale, updating'
-      childProcess.fork module.id, [logger.transports.cli.level]
-    callback()
 
 waterfall = (flow, callback) ->
   ### async.waterfall that allows for parallel tasks ###
@@ -154,7 +128,7 @@ main = (argv) ->
     name = argv._[4]
     plugin = null
 
-    for p in list.plugins
+    for p in list
       if normalizePluginName(p.name) is normalizePluginName(name)
         plugin = p
         break
@@ -171,7 +145,7 @@ main = (argv) ->
           callback()
         else
           logger.warn "package.json missing, creating minimal package"
-          fs.writeFile packageFile, '{\n  "dependencies": {}\n}\n', callback
+          fs.writeFile packageFile, '{\n  "dependencies": {},\n  "private": true\n}\n', callback
 
     readConfig = (callback) ->
       readJSON configFile, callback
@@ -200,12 +174,9 @@ main = (argv) ->
 
   switch action
     when 'list'
-      if argv.update
-        cmd = [ensureCacheDir, fetchListing, displayListing, writeListing]
-      else
-        cmd = [ensureCacheDir, loadListing, displayListing, updateIfNeeded]
+      cmd = [fetchListing, displayListing]
     when 'install'
-      cmd = [[loadCurrentEnv, loadListing], installPlugin]
+      cmd = [[loadCurrentEnv, fetchListing], installPlugin]
 
     else
       cmd = [(callback) -> callback new Error "Unknown plugin action: #{ action }"]
@@ -217,15 +188,6 @@ main = (argv) ->
     else
       process.exit 0
 
-if require.main is module
-  logLevel = process.argv[2] or 'info'
-  logger.transports.cli.level = logLevel
-  async.waterfall [ensureCacheDir, fetchListing, writeListing], (error) ->
-    if error?
-      logger.error error.message, error
-      process.exit 1
-    else
-      logger.verbose 'plugin listing updated'
 
 module.exports = main
 module.exports.usage = usage

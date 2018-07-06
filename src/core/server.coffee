@@ -82,7 +82,7 @@ setup = (env) ->
   changeHandler = (error, path) ->
     ### Emits a change event if called without error ###
     unless error?
-      env.emit 'change', path
+      env.emit 'change', path, false
     logop error
 
   loadContents = (callback=logop) ->
@@ -121,16 +121,16 @@ setup = (env) ->
       callback error
 
   contentWatcher = chokidar.watch env.contentsPath,
-    ignored: (path) ->
-      for pattern in env.config.ignore
-        if minimatch env.relativeContentsPath(path), pattern
-          return true
-      return false
     ignoreInitial: true
 
   # reload content tree on changes
   contentWatcher.on 'all', (type, filename) ->
     return if block.contentsLoad
+    relpath = env.relativeContentsPath filename
+    for pattern in env.config.ignore
+      if minimatch relpath, pattern
+        env.emit 'change', relpath, true
+        return
     loadContents (error) ->
       contentFilename = null
       if not error? and filename?
