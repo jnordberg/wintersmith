@@ -2,7 +2,7 @@
 
 Wintersmith is a simple yet flexible static site generator. It takes contents (markdown, less, scripts, etc), transforms them using plugins and outputs a static website (html, css, images, etc) that you can host anywhere.
 
-It ships with plugins for [markdown](http://daringfireball.net/projects/markdown/) and [jade templates](https://github.com/visionmedia/jade), if you need something else check the [plugin listing][plugin-listing] or [write your own][plugin-guide]!
+It ships with plugins for [markdown](http://daringfireball.net/projects/markdown/) and [pug templates](https://github.com/pugjs/pug), if you need something else check the [plugin listing][plugin-listing] or [write your own][plugin-guide]!
 
 ## Resources
 
@@ -79,7 +79,7 @@ Wintersmith comes with a default Page plugin that renders markdown content using
 
 This brings us to the second component, the template directory. All templates found in this directory are loaded and are also passed to the content plugins when rendering.
 
-By default only `.jade` templates are loaded, but you can easily add template plugins to use a template engine of your choosing.
+By default only `.pug` templates are loaded, but you can easily add template plugins to use a template engine of your choosing.
 
 Check the `examples/` directory for some inspiration on how you can use wintersmith or the [showcase](https://github.com/jnordberg/wintersmith/wiki/Showcase) to see what others are doing.
 
@@ -148,7 +148,7 @@ A MarkdownPage is either a markdown file with metadata on top or a json file loc
 title: My first post
 date: 2012-12-12 12:12
 author: John Hjort <foo@bar.com>
-template: article.jade
+template: article.pug
 ----
 
 # Hello friends!
@@ -161,7 +161,7 @@ or use json to simply pass metadata to a template:
 
 ```json
 {
-  "template": "template.jade",
+  "template": "template.pug",
   "stuff": {
   	"things": 123,
   	"moar": [1, 2, 3]

@@ -2,7 +2,7 @@
 title: README
 author: the-wintersmith
 date: 2013-04-30
-template: article.jade
+template: article.pug
 ---
 
 Welcome to your new blog! This is the default blog template with RSS, pagination and an archive. There are other templates available -- run `wintersmith new --help` to list them.
@@ -29,7 +29,7 @@ Good, now, the directory structure of your blog is as follows:
 │   │   └── red-herring
 │   │       ├── banana.png
 │   │       └── index.md
-│   ├── authors               <- author metadata, check author.jade
+│   ├── authors               <- author metadata, check author.pug
 │   │   ├── baker.json
 │   │   └── the-wintersmith.json
 │   ├── css
@@ -38,12 +38,12 @@ Good, now, the directory structure of your blog is as follows:
 ├── plugins
 │   └── paginator.coffee      <- paginator plugin
 ├── templates
-│   ├── archive.jade
-│   ├── article.jade
-│   ├── author.jade
-│   ├── feed.jade
-│   ├── index.jade
-│   └── layout.jade
+│   ├── archive.pug
+│   ├── article.pug
+│   ├── author.pug
+│   ├── feed.pug
+│   ├── index.pug
+│   └── layout.pug
 └── views
     └── articles.coffee       <- view that lists articles
 ```
