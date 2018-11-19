@@ -249,9 +249,10 @@ footer .copy, footer .copy a {
   margin-bottom: -1px;
   text-decoration: none;
 }
+
 .archive li:not(:last-child) {
-	border-bottom: 1px solid #d2d2d2;
-	margin-bottom: -1px;
+  border-bottom: 1px solid #d2d2d2;
+  margin-bottom: -1px;
 }
 
 .archive a.last, .archive span.last {
@@ -263,6 +264,9 @@ footer .copy, footer .copy a {
   width: 21em;
   text-indent: 1em;
   white-space: nowrap;
+  overflow: hidden;
+  display: inline-block;
+  text-overflow: ellipsis;
 }
 
 .archive .year-label,
@@ -284,6 +288,7 @@ footer .copy, footer .copy a {
 .archive ul {
   list-style: none;
   margin: 0;
+  overflow: hidden;
 }
 
 .archive ul li {
@@ -411,7 +416,7 @@ code.lang-markdown .bullet {
   .archive * {
     float: none !important;
     line-height: 1.6 !important;
-    width: auto !important;
+    width: 100% !important;
     height: auto !important;
     text-align: left !important;
     border: 0 !important;
