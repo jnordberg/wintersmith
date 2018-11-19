@@ -1,3 +1,13 @@
+## 2.5.0
+*2018-11-19*
+
+* Switch from `jade-legacy` to `pug` (thanks @sirodoht @VaelynPhi @SuriyaaKudoIsc @yusufhm)
+* Upgrade to winston 3
+* Upgrade to mime 2
+* Upgrade to npm 6
+* Update other dependencies minor versions (see https://github.com/jnordberg/wintersmith/commit/6e23ba624bbcd39f4a234429255991052bb780f0)
+* [Fix rendering bug in blog example](https://github.com/jnordberg/wintersmith/pull/335)
+
 ## 2.4.0
 *2017-05-15*
 
