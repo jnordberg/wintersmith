@@ -29,5 +29,5 @@ module.exports = (env, callback) ->
           callback error
     ], callback
 
-  env.registerTemplatePlugin '**/*.pug', PugTemplate
+  env.registerTemplatePlugin '**/*.*(pug|jade)', PugTemplate
   callback()
