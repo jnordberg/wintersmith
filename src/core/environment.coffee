@@ -56,7 +56,7 @@ class Environment extends EventEmitter
     ### Resolve locals and loads any required modules. ###
     @locals = {}
 
-    # Load locals json if neccessary
+    # Load locals json if necessary
     if typeof @config.locals == 'string'
       filename = @resolvePath @config.locals
       @logger.verbose "loading locals from: #{ filename }"
@@ -64,7 +64,7 @@ class Environment extends EventEmitter
     else
       @locals = @config.locals
 
-    # Load and add modules specefied with the require option to the locals context.
+    # Load and add modules specified with the require option to the locals context.
     for alias, id of @config.require
       logger.verbose "loading module '#{ id }' available in locals as '#{ alias }'"
       if @locals[alias]?
@@ -85,7 +85,7 @@ class Environment extends EventEmitter
     path.resolve @contentsPath, pathname or ''
 
   resolveModule: (module) ->
-    ### Resolve *module* to an absolute path, mimicing the node.js module loading system. ###
+    ### Resolve *module* to an absolute path, mimicking the node.js module loading system. ###
     switch module[0]
       when '.'
         require.resolve @resolvePath module
@@ -108,7 +108,7 @@ class Environment extends EventEmitter
 
   registerContentPlugin: (group, pattern, plugin) ->
     ### Add a content *plugin* to the environment. Files in the contents directory
-        matching the glob *pattern* will be instanciated using the plugin's `fromFile`
+        matching the glob *pattern* will be instantiated using the plugin's `fromFile`
         factory method. The *group* argument is used to group the loaded instances under
         each directory. I.e. plugin instances with the group 'textFiles' can be found
         in `contents.somedir._.textFiles`. ###
@@ -160,7 +160,7 @@ class Environment extends EventEmitter
     return rv
 
   loadPluginModule: (module, callback) ->
-    ### Load a plugin *module*. Calls *callback* when plugin is done loading, or an error ocurred. ###
+    ### Load a plugin *module*. Calls *callback* when plugin is done loading, or an error occurred. ###
     id = 'unknown'
     done = (error) ->
       error.message = "Error loading plugin '#{ id }': #{ error.message }" if error?
