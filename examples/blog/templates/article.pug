@@ -12,7 +12,7 @@ block header
   h1= page.title
   p.author
     | #{ 'Written by ' }
-    mixin author(page.metadata.author)
+    +author(page.metadata.author)
 
 block content
   article.article
