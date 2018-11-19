@@ -11,7 +11,7 @@ module.exports = (env, callback) ->
 
     render: (locals, callback) ->
       try
-        callback null, new Buffer @fn(locals)
+        callback null, Buffer.from @fn(locals)
       catch error
         callback error
 
