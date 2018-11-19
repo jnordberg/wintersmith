@@ -14,9 +14,6 @@ class cli extends winston.Transport
     @quiet = options.quiet or false
 
   log: (info, callback) ->
-    if Object.keys(info).length != 2
-      console.log('---- info ----')
-      console.log(info)
     {level, message} = info
     meta = info.meta ? {}
     if level == 'error'
