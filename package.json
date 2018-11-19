@@ -1,6 +1,6 @@
 {
   "name": "wintersmith",
-  "version": "2.4.1",
+  "version": "2.5.0",
   "author": "Johan Nordberg <code@johan-nordberg.com>",
   "description": "A flexible static site generator.",
   "license": "MIT",
@@ -25,27 +25,27 @@
     "url": "https://github.com/jnordberg/wintersmith.git"
   },
   "dependencies": {
-    "async": "^2.1.4",
-    "chalk": "^1.1.3",
-    "chokidar": "^1.6.1",
-    "coffee-script": "^1.12.1",
-    "highlight.js": "^9.12.0",
+    "async": "^2.6.1",
+    "chalk": "^2.4.1",
+    "chokidar": "^2.0.4",
+    "coffee-script": "^1.12.7",
+    "highlight.js": "^9.13.1",
     "jade-legacy": "^1.11.1",
-    "js-yaml": "^3.7.0",
-    "marked": "^0.3.12",
+    "js-yaml": "^3.12.0",
+    "marked": "^0.5.1",
     "mime": "^2.3.1",
     "minimatch": "^3.0.3",
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
     "ncp": "^2.0.0",
-    "npm": "^5.0.3",
-    "rimraf": "^2.6.1",
+    "npm": "^6.4.1",
+    "rimraf": "^2.6.2",
     "server-destroy": "^1.0.1",
     "slugg": "^1.2.1",
     "winston": "^3.1.0"
   },
   "devDependencies": {
-    "shelljs": "^0.7.8"
+    "shelljs": "^0.8.3"
   },
   "engine": {
     "node": ">=4"
