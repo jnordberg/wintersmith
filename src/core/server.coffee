@@ -55,6 +55,9 @@ buildLookupMap = (contents) ->
     map[normalizeUrl(item.url)] = item
   return map
 
+lookupCharset = (mimeType) ->
+  return if /^text\/|^application\/(javascript|json)/.test(mimeType) then 'UTF-8' else null
+
 setup = (env) ->
   ### Create a preview request handler. ###
 
@@ -186,8 +189,8 @@ setup = (env) ->
           renderView env, content, locals, tree, templates, (error, result) ->
             if error then callback error, 500, pluginName
             else if result?
-              mimeType = mime.lookup content.filename, mime.lookup(uri)
-              charset = mime.charsets.lookup mimeType
+              mimeType = mime.getType(content.filename) ? mime.getType(uri)
+              charset = lookupCharset mimeType
               if charset
                 contentType = "#{ mimeType }; charset=#{ charset }"
               else
