@@ -61,12 +61,12 @@ main = (argv) ->
 
   if opts.verbose
     if '-vv' in argv
-      logger.transports.cli.level = 'silly'
+      logger.transports[0].level = 'silly'
     else
-      logger.transports.cli.level = 'verbose'
+      logger.transports[0].level = 'verbose'
 
   if opts.quiet
-    logger.transports.cli.quiet = true
+    logger.transports[0].quiet = true
 
   if cmd
     extendOptions cmd.options, globalOptions
