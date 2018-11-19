@@ -260,6 +260,10 @@ env.load(function(error, result) {
 
 Check the source or [api docs][docs] for a full list of methods.
 
+## Contributing
+
+To run a development that compiles the coffee script files on the fly use the `./bin/dev/cli` command. The chdir `-C <path>` flag is handy for pointing it to a test project to experiment with.
+
 ## About
 
 Wintersmith is written by [Johan Nordberg](http://johan-nordberg.com) using [CoffeeScript](http://coffeescript.org/) and licensed under the [MIT-license](http://en.wikipedia.org/wiki/MIT_License).
