@@ -25,24 +25,24 @@
     "url": "https://github.com/jnordberg/wintersmith.git"
   },
   "dependencies": {
-    "async": "^2.6.1",
-    "chalk": "^2.4.1",
-    "chokidar": "^2.0.4",
+    "async": "^3.1.0",
+    "chalk": "^2.4.2",
+    "chokidar": "^3.0.2",
     "coffee-script": "^1.12.7",
-    "highlight.js": "^9.13.1",
-    "js-yaml": "^3.12.0",
-    "marked": "^0.5.1",
-    "mime": "^2.3.1",
-    "minimatch": "^3.0.3",
+    "highlight.js": "^9.15.8",
+    "js-yaml": "^3.13.1",
+    "marked": "^0.7.0",
+    "mime": "^2.4.4",
+    "minimatch": "^3.0.4",
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
     "ncp": "^2.0.0",
-    "npm": "^6.4.1",
-    "pug": "^2.0.3",
-    "rimraf": "^2.6.2",
+    "npm": "^6.10.1",
+    "pug": "^2.0.4",
+    "rimraf": "^2.6.3",
     "server-destroy": "^1.0.1",
     "slugg": "^1.2.1",
-    "winston": "^3.1.0"
+    "winston": "^3.2.1"
   },
   "devDependencies": {
     "shelljs": "^0.8.3"
