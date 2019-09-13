@@ -28,6 +28,7 @@ class Environment extends EventEmitter
     ### Create a new Environment, *config* is a Config instance, *workDir* is the
         working directory and *logger* is a log instance implementing methods for
         error, warn, verbose and silly loglevels. ###
+    super()
     @loadedModules = []
     @workDir = path.resolve @workDir
     @setConfig config
@@ -151,7 +152,7 @@ class Environment extends EventEmitter
 
   loadModule: (module, unloadOnReset=false) ->
     ### Requires and returns *module*, resolved from the current working directory. ###
-    require 'coffee-script/register' if module[-7..] is '.coffee'
+    require 'coffeescript/register' if module[-7..] is '.coffee'
     @logger.silly "loading module: #{ module }"
     id = @resolveModule module
     @logger.silly "resolved: #{ id }"

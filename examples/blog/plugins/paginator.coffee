@@ -29,6 +29,7 @@ module.exports = (env, callback) ->
     ### A page has a number and a list of articles ###
 
     constructor: (@pageNum, @articles) ->
+      super()
 
     getFilename: ->
       if @pageNum is 1

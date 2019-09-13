@@ -8,6 +8,7 @@ module.exports = (env, callback) ->
   class PugTemplate extends env.TemplatePlugin
 
     constructor: (@fn) ->
+      super()
 
     render: (locals, callback) ->
       try
