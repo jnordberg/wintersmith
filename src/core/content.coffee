@@ -75,6 +75,7 @@ class StaticFile extends ContentPlugin
   ### Static file handler, simply serves content as-is. Last in chain. ###
 
   constructor: (@filepath) ->
+    super()
 
   getView: ->
     return (args..., callback) ->

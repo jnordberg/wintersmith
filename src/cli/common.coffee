@@ -126,8 +126,8 @@ exports.NpmAdapter = class NpmAdapter extends stream.Writable
   ### Redirects output of npm to a logger ###
 
   constructor: (@logger) ->
-    @buffer = ''
     super {decodeStrings: false}
+    @buffer = ''
 
   _write: (chunk, encoding, callback) ->
     @buffer += chunk

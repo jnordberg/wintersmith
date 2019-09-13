@@ -75,6 +75,7 @@ module.exports = (env, callback) ->
   class MarkdownPage extends env.plugins.Page
 
     constructor: (@filepath, @metadata, @markdown) ->
+      super()
 
     getLocation: (base) ->
       uri = @getUrl base

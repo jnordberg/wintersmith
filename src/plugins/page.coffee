@@ -30,6 +30,7 @@ module.exports = (env, callback) ->
     ### Page base class, a page is content that has metadata, html and a template that renders it ###
 
     constructor: (@filepath, @metadata) ->
+      super()
 
     getFilename: ->
       ### Returns the filename for this page based on the filename template.
@@ -98,7 +99,7 @@ module.exports = (env, callback) ->
 
     getUrl: (base) ->
       # remove index.html for prettier links
-      super(base).replace /([\/^])index\.html$/, '$1'
+        super(base).replace /([\/^])index\.html$/, '$1'
 
     getView: ->
       @metadata.view or 'template'
